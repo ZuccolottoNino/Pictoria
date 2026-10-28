@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Núcleo 2</title>
+<style>
+  html, body { height: 100%; margin: 0; }
+  body { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2rem;
+         font-family: "Segoe UI", system-ui, sans-serif; background: #f4f1ec; color: #1b2b34; text-align: center; cursor: none; }
+  h1 { font-size: clamp(2rem, 8vmin, 5rem); }
+  p { font-size: clamp(1rem, 2.6vmin, 1.6rem); color: #4a5b64; }
+</style>
+</head>
+<body>
+  <h1>Contenido del núcleo 2</h1>
+  <p>Reemplazá este archivo por tu núcleo real.<br>Presioná Espacio para simular que terminó.</p>
+
+  <script src="../js/puente.js"></script>
+  <script>
+    window.addEventListener("keydown", function (e) {
+      if (e.code === "Space") { e.preventDefault(); Infografia.terminar(); }
+    });
+  </script>
+</body>
+</html>
