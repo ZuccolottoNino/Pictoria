@@ -3,23 +3,269 @@
 <head>
 <meta charset="UTF-8">
 <title>Núcleo 1</title>
+<link rel="stylesheet" href="../libs/fuentes.css">
 <style>
-  html, body { height: 100%; margin: 0; }
-  body { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2rem;
-         font-family: "Segoe UI", system-ui, sans-serif; background: #f4f1ec; color: #1b2b34; text-align: center; cursor: none; }
-  h1 { font-size: clamp(2rem, 8vmin, 5rem); }
-  p { font-size: clamp(1rem, 2.6vmin, 1.6rem); color: #4a5b64; }
+  :root {
+    --tinta: #343a5c;
+    --tinta-suave: #4b5170;
+    --violeta: #b266ff;
+    --azul-dato: #5a69b8;
+    --fondo-a: #fafaff;
+    --fondo-b: #eceefb;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { height: 100%; overflow: hidden; background: #0b0d1a; cursor: none; }
+
+  /* Escenario de tamaño fijo 1920x1080: puente.js lo escala a cualquier pantalla */
+  #escenario { font-family: "Inter", system-ui, sans-serif; color: var(--tinta); background: linear-gradient(160deg, var(--fondo-a), var(--fondo-b)); }
+
+  .slide { background: linear-gradient(160deg, var(--fondo-a), var(--fondo-b)); overflow: hidden; }
+  .slide[hidden] { display: none; }
+
+  h1, h2, .numero, .porcentaje { font-family: "Space Grotesk", system-ui, sans-serif; }
+
+  /* ---------- Compartido ---------- */
+  .mascota { position: absolute; width: 520px; height: 640px; }
+  .mascota svg { width: 100%; height: 100%; overflow: visible; display: block; }
+  .sombra { position: absolute; width: 560px; height: 70px; border-radius: 50%;
+            background: radial-gradient(ellipse at center, rgba(178,102,255,.55), rgba(178,102,255,0) 70%); }
+  .tarjeta { position: absolute; background: #fff; border: 3px solid #eceefc; border-radius: 44px;
+             box-shadow: 0 24px 70px rgba(120, 110, 200, .16); }
+  .mor { color: var(--violeta); font-weight: 600; }
+  .texto b { font-weight: 600; }
+  .pista { position: absolute; left: 50%; bottom: 56px; transform: translateX(-50%); padding: 14px 34px;
+           border-radius: 999px; background: rgba(178,102,255,.12); color: #7b3fd0; font-size: 28px; font-weight: 600; }
+
+  /* ---------- Pantalla 1 ---------- */
+  #t1 { position: absolute; left: 110px; top: 90px; width: 1350px; font-size: 88px; line-height: 1.1; font-weight: 700; }
+  #m1 { left: 70px; top: 300px; }
+  #sombra1 { left: 90px; top: 940px; }
+  #tarjeta1 { left: 760px; top: 400px; width: 1060px; height: 420px; display: flex; align-items: center; padding: 0 70px; gap: 40px; }
+  #tarjeta1 .texto { font-size: 40px; line-height: 1.4; width: 520px; color: var(--tinta); }
+  #apps { position: relative; width: 340px; height: 340px; flex: none; }
+  .app { position: absolute; width: 160px; height: 190px; border-radius: 26px; display: flex; align-items: center; justify-content: center;
+         font-family: "Space Grotesk", sans-serif; font-weight: 700; font-size: 78px; box-shadow: 0 16px 34px rgba(30,30,80,.28); }
+  .app small { position: absolute; right: 16px; bottom: 12px; font-size: 18px; font-family: "Inter", sans-serif; font-weight: 600; opacity: .75; }
+  .app.ae { background: #00005b; color: #9999ff; left: 0;   top: 20px; }
+  .app.ps { background: #001e36; color: #31a8ff; left: 175px; top: 0; }
+  .app.ai { background: #330000; color: #ff9a00; left: 88px;  top: 160px; }
+
+  /* ---------- Pantalla 2 ---------- */
+  #t2 { position: absolute; left: 90px; top: 100px; padding: 26px 64px; border-radius: 44px; background: #f2f3fd; border: 3px solid #e4e6fa;
+        font-size: 80px; font-weight: 700; color: var(--tinta); }
+  #t2 .adobe { letter-spacing: .02em; }
+  #m2 { left: 50px; top: 300px; }
+  #sombra2 { left: 70px; top: 940px; }
+  #tarjeta2 { left: 560px; top: 340px; width: 1290px; height: 460px; display: flex; align-items: center; padding: 0 80px; }
+  #tarjeta2 .izq { width: 520px; }
+  .numero { font-size: 150px; font-weight: 700; color: var(--azul-dato); line-height: 1; letter-spacing: -.02em; }
+  #tarjeta2 .sub { margin-top: 14px; font-size: 36px; color: var(--tinta); }
+  #avatares { display: flex; gap: 14px; margin-top: 36px; }
+  .av { width: 66px; height: 66px; border-radius: 50%; border: 3px solid rgba(255,255,255,.9); }
+  .av:nth-child(1) { background: #9fdcf5; } .av:nth-child(2) { background: #8fa7f0; } .av:nth-child(3) { background: #d6d4f4; }
+  .av:nth-child(4) { background: #f6bde5; } .av:nth-child(5) { background: #ffcfa6; } .av:nth-child(6) { background: #fde7c8; }
+  .divisor { width: 3px; align-self: stretch; margin: 60px 60px; background: #e6e8fa; border-radius: 3px; }
+  #tarjeta2 .der { display: flex; align-items: center; gap: 44px; }
+  .reloj { position: relative; width: 250px; height: 250px; flex: none; }
+  .reloj svg { width: 100%; height: 100%; transform: rotate(-90deg); }
+  .porcentaje { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-size: 68px; font-weight: 700; color: var(--azul-dato); }
+  #tarjeta2 .leyenda { font-size: 34px; line-height: 1.35; width: 330px; }
 </style>
 </head>
 <body>
-  <h1>Contenido del núcleo 1</h1>
-  <p>Reemplazá este archivo por tu núcleo real.<br>Presioná Espacio para simular que terminó.</p>
 
-  <script src="../js/puente.js"></script>
-  <script>
-    window.addEventListener("keydown", function (e) {
-      if (e.code === "Space") { e.preventDefault(); Infografia.terminar(); }
-    });
-  </script>
+<div id="escenario">
+
+  <!-- ===================== PANTALLA 1 ===================== -->
+  <section id="p1" class="slide">
+    <h1 id="t1">¡Felicidades por llegar a la última instancia de tu evolución!</h1>
+
+    <div class="sombra" id="sombra1"></div>
+    <!-- Mascota provisoria: reemplazala por <img src="../img/mascota-feliz.png"> -->
+    <div class="mascota" id="m1">
+      <svg viewBox="0 0 400 490">
+        <defs><radialGradient id="g1" cx="38%" cy="28%" r="80%"><stop offset="0" stop-color="#f6f1ff"/><stop offset="1" stop-color="#b7b0ec"/></radialGradient></defs>
+        <ellipse cx="200" cy="345" rx="82" ry="108" fill="url(#g1)"/>
+        <ellipse cx="108" cy="285" rx="26" ry="54" fill="url(#g1)" transform="rotate(32 108 285)"/>
+        <ellipse cx="292" cy="285" rx="26" ry="54" fill="url(#g1)" transform="rotate(-32 292 285)"/>
+        <circle cx="200" cy="170" r="132" fill="url(#g1)"/>
+        <path d="M130 160 q24 -30 48 0" stroke="#2b2a4a" stroke-width="9" fill="none" stroke-linecap="round"/>
+        <path d="M222 160 q24 -30 48 0" stroke="#2b2a4a" stroke-width="9" fill="none" stroke-linecap="round"/>
+        <path d="M168 205 q32 44 64 0 z" fill="#4b3a8a"/>
+        <ellipse cx="128" cy="205" rx="20" ry="12" fill="#f5a9d8" opacity=".55"/>
+        <ellipse cx="272" cy="205" rx="20" ry="12" fill="#f5a9d8" opacity=".55"/>
+        <path d="M60 80 l8 -26 l8 26 l26 8 l-26 8 l-8 26 l-8 -26 l-26 -8z" fill="#c99bff"/>
+        <path d="M335 70 l6 -20 l6 20 l20 6 l-20 6 l-6 20 l-6 -20 l-20 -6z" fill="#c99bff"/>
+      </svg>
+    </div>
+
+    <div class="tarjeta" id="tarjeta1">
+      <p class="texto">Veamos <span class="mor">la importancia</span> que estás ganando en el <b>mundo</b> con una encuesta que se les hizo a creadores que utilizan el <span class="mor">ecosistema de Adobe.</span></p>
+      <div id="apps">
+        <div class="app ae">Ae<small>AEP</small></div>
+        <div class="app ps">Ps<small>PSD</small></div>
+        <div class="app ai">Ai<small>AI</small></div>
+      </div>
+    </div>
+
+    <div class="pista" id="pista1">Apretá el botón para ver los programas</div>
+  </section>
+
+  <!-- ===================== PANTALLA 2 ===================== -->
+  <section id="p2" class="slide">
+    <h2 id="t2">Encuesta de uso en <span class="adobe">ADOBE</span> (2025)</h2>
+
+    <div class="sombra" id="sombra2"></div>
+    <div class="mascota" id="m2">
+      <svg viewBox="0 0 400 490">
+        <defs><radialGradient id="g2" cx="38%" cy="28%" r="80%"><stop offset="0" stop-color="#f6f1ff"/><stop offset="1" stop-color="#b7b0ec"/></radialGradient></defs>
+        <ellipse cx="200" cy="345" rx="82" ry="108" fill="url(#g2)"/>
+        <ellipse cx="292" cy="290" rx="24" ry="50" fill="url(#g2)" transform="rotate(-35 292 290)"/>
+        <circle cx="200" cy="170" r="132" fill="url(#g2)"/>
+        <ellipse cx="148" cy="170" rx="26" ry="30" fill="#1e1b3a"/>
+        <ellipse cx="252" cy="170" rx="26" ry="30" fill="#1e1b3a"/>
+        <path d="M118 150 q30 -22 60 -4" stroke="#2b2a4a" stroke-width="9" fill="none" stroke-linecap="round"/>
+        <path d="M222 146 q30 -18 60 4" stroke="#2b2a4a" stroke-width="9" fill="none" stroke-linecap="round"/>
+        <path d="M172 232 q28 14 56 -4" stroke="#4b3a8a" stroke-width="8" fill="none" stroke-linecap="round"/>
+        <path d="M110 330 l7 -22 l7 22 l22 7 l-22 7 l-7 22 l-7 -22 l-22 -7z" fill="#fff" opacity=".9"/>
+      </svg>
+    </div>
+
+    <div class="tarjeta" id="tarjeta2">
+      <div class="izq">
+        <div class="numero" id="num">+16.000</div>
+        <div class="sub">Creadores encuestados</div>
+        <div id="avatares"><div class="av"></div><div class="av"></div><div class="av"></div><div class="av"></div><div class="av"></div><div class="av"></div></div>
+      </div>
+      <div class="divisor"></div>
+      <div class="der">
+        <div class="reloj">
+          <svg viewBox="0 0 200 200">
+            <defs>
+              <linearGradient id="gd" x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0" stop-color="#9fd8f5"/><stop offset=".55" stop-color="#f7b6e6"/><stop offset="1" stop-color="#ffd2b0"/>
+              </linearGradient>
+            </defs>
+            <circle cx="100" cy="100" r="80" fill="none" stroke="#eceefa" stroke-width="26"/>
+            <circle id="donut" cx="100" cy="100" r="80" fill="none" stroke="url(#gd)" stroke-width="26" stroke-linecap="round"
+                    stroke-dasharray="502.65" stroke-dashoffset="70.4"/>
+          </svg>
+          <div class="porcentaje" id="pct">86%</div>
+        </div>
+        <p class="leyenda"><span class="mor">Utiliza IA generativa</span> como herramienta en su trabajo creativo</p>
+      </div>
+    </div>
+  </section>
+</div>
+
+<script src="../libs/gsap.min.js"></script>
+<script src="../libs/SplitText.min.js"></script>
+<script src="../js/puente.js"></script>
+<script>
+  gsap.registerPlugin(SplitText);
+  Infografia.escalar("#escenario", 1920, 1080);
+
+  var CIRC = 2 * Math.PI * 80;      // largo del círculo del gráfico
+  var DATO_PORCENTAJE = 0.86;
+  var DATO_CREADORES = 16000;
+
+  var flotantes = [];               // animaciones en bucle de la pantalla actual
+  var entrada = null;               // timeline de entrada en curso
+  var splitT1 = null;
+  var programasVisibles = false;
+
+  function miles(n) { return String(Math.round(n)).replace(/\B(?=(\d{3})+(?!\d))/g, "."); }
+
+  function flotar(mascota, sombra) {
+    flotantes.push(gsap.to(mascota, { y: -22, duration: 1.9, ease: "sine.inOut", yoyo: true, repeat: -1 }));
+    flotantes.push(gsap.to(sombra,  { scaleX: 0.78, opacity: 0.55, duration: 1.9, ease: "sine.inOut", yoyo: true, repeat: -1 }));
+  }
+  function detener() {
+    flotantes.forEach(function (t) { t.kill(); }); flotantes = [];
+    if (entrada) { entrada.kill(); entrada = null; }
+  }
+
+  /* Anima el número, el gráfico de torta y los avatares de la pantalla 2 */
+  function animarDatos() {
+    var o = { n: 0, p: 0 };
+    var num = document.getElementById("num"), pct = document.getElementById("pct");
+    gsap.set("#donut", { strokeDashoffset: CIRC });
+    num.textContent = "+0"; pct.textContent = "0%";
+    return gsap.timeline()
+      .to(o, { n: DATO_CREADORES, duration: 1.9, ease: "power2.out", onUpdate: function () { num.textContent = "+" + miles(o.n); } }, 0)
+      .to("#donut", { strokeDashoffset: CIRC * (1 - DATO_PORCENTAJE), duration: 1.9, ease: "power2.out" }, 0)
+      .to(o, { p: DATO_PORCENTAJE * 100, duration: 1.9, ease: "power2.out", onUpdate: function () { pct.textContent = Math.round(o.p) + "%"; } }, 0)
+      .fromTo("#avatares .av", { scale: 0, autoAlpha: 0 }, { scale: 1, autoAlpha: 1, stagger: 0.1, duration: 0.5, ease: "back.out(2)" }, 0.4);
+  }
+
+  function iniciar() {
+    Infografia.presentacion([
+
+      /* ============ Pantalla 1 ============ */
+      {
+        el: "#p1",
+        preparar: function () {
+          programasVisibles = false;
+          splitT1 = SplitText.create("#t1", { type: "words" });
+          gsap.set(splitT1.words, { autoAlpha: 0, y: 50 });
+          gsap.set(["#m1", "#sombra1"], { autoAlpha: 0, y: 90 });
+          gsap.set("#tarjeta1", { autoAlpha: 0, y: 60 });
+          gsap.set("#apps .app", { autoAlpha: 0, scale: 0, rotation: function (i) { return [-8, 7, -3][i]; } });
+          gsap.set("#pista1", { autoAlpha: 0 });
+        },
+        entrar: function () {
+          entrada = gsap.timeline()
+            .to(splitT1.words, { autoAlpha: 1, y: 0, stagger: 0.07, duration: 0.7, ease: "back.out(1.6)" })
+            .to(["#m1", "#sombra1"], { autoAlpha: 1, y: 0, duration: 0.9, ease: "power3.out" }, "-=0.4")
+            .to("#tarjeta1", { autoAlpha: 1, y: 0, duration: 0.8, ease: "power3.out" }, "-=0.5")
+            .to("#pista1", { autoAlpha: 1, duration: 0.5 })
+            .add(function () { flotar("#m1", "#sombra1"); });
+          return entrada;
+        },
+        salir: detener,
+        interactuar: function (tipo) {
+          if (!programasVisibles) {
+            programasVisibles = true;
+            gsap.to("#pista1", { autoAlpha: 0, duration: 0.3 });
+            gsap.to("#apps .app", { autoAlpha: 1, scale: 1, duration: 0.7, stagger: 0.18, ease: "back.out(2.2)" });
+          } else {
+            gsap.fromTo("#apps .app", { y: 0 }, { y: -34, duration: 0.25, yoyo: true, repeat: 1, stagger: 0.1, ease: "power2.out" });
+          }
+          gsap.fromTo("#m1 svg", { scale: 1 }, { scale: 1.06, duration: 0.2, yoyo: true, repeat: 1, transformOrigin: "50% 100%" });
+        }
+      },
+
+      /* ============ Pantalla 2 ============ */
+      {
+        el: "#p2",
+        transicion: "deslizar",
+        preparar: function () {
+          gsap.set("#t2", { autoAlpha: 0, y: -50 });
+          gsap.set(["#m2", "#sombra2"], { autoAlpha: 0, y: 90 });
+          gsap.set("#tarjeta2", { autoAlpha: 0, y: 60 });
+          gsap.set("#avatares .av", { autoAlpha: 0 });
+          gsap.set("#donut", { strokeDashoffset: CIRC });
+          document.getElementById("num").textContent = "+0";
+          document.getElementById("pct").textContent = "0%";
+        },
+        entrar: function () {
+          entrada = gsap.timeline()
+            .to("#t2", { autoAlpha: 1, y: 0, duration: 0.7, ease: "back.out(1.6)" })
+            .to(["#m2", "#sombra2"], { autoAlpha: 1, y: 0, duration: 0.9, ease: "power3.out" }, "-=0.4")
+            .to("#tarjeta2", { autoAlpha: 1, y: 0, duration: 0.8, ease: "power3.out" }, "-=0.5")
+            .add(animarDatos(), "-=0.2")
+            .add(function () { flotar("#m2", "#sombra2"); });
+          return entrada;
+        },
+        salir: detener,
+        interactuar: function () { animarDatos(); }   // el botón repite la animación de los datos
+      }
+
+    ], { transicion: "fundido", duracion: 0.8 });
+  }
+
+  /* Esperamos a que las fuentes carguen para que SplitText mida bien */
+  (document.fonts && document.fonts.ready ? document.fonts.ready : Promise.resolve()).then(iniciar);
+</script>
 </body>
 </html>

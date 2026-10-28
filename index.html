@@ -14,9 +14,9 @@
   }
   * { box-sizing: border-box; margin: 0; padding: 0; }
   html, body { height: 100%; overflow: hidden; background: var(--fondo); cursor: none; }
+  body.con-panel { cursor: auto; }
   body { font-family: "Segoe UI", system-ui, -apple-system, Roboto, sans-serif; color: var(--texto); }
 
-  /* Pantallas del contenedor (inicio, standby, fin) */
   #pantalla {
     position: fixed; inset: 0;
     display: flex; flex-direction: column; align-items: center; justify-content: center;
@@ -25,25 +25,34 @@
   #pantalla[hidden] { display: none; }
   #pantalla h1 { font-size: clamp(2.4rem, 8vmin, 6rem); font-weight: 700; letter-spacing: -0.02em; line-height: 1.05; }
   #pantalla p.sub { font-size: clamp(1.1rem, 3vmin, 2rem); color: var(--texto-suave); max-width: 40ch; }
-  #pantalla .aviso {
-    margin-top: 4vmin; font-size: clamp(1rem, 2.4vmin, 1.5rem); color: var(--acento);
-    animation: respirar 2.4s ease-in-out infinite;
-  }
-  #pantalla .aro {
-    width: 14vmin; height: 14vmin; border-radius: 50%;
-    border: 0.6vmin solid var(--acento);
-    animation: pulso 2.4s ease-in-out infinite;
-  }
+  #pantalla .aviso { margin-top: 4vmin; font-size: clamp(1rem, 2.4vmin, 1.5rem); color: var(--acento); animation: respirar 2.4s ease-in-out infinite; }
+  #pantalla .aro { width: 14vmin; height: 14vmin; border-radius: 50%; border: 0.6vmin solid var(--acento); animation: pulso 2.4s ease-in-out infinite; }
   @keyframes respirar { 0%, 100% { opacity: .35; } 50% { opacity: 1; } }
   @keyframes pulso { 0%, 100% { transform: scale(.85); opacity: .5; } 50% { transform: scale(1); opacity: 1; } }
 
-  /* Núcleo (iframe) */
   #nucleo { position: fixed; inset: 0; width: 100%; height: 100%; border: 0; background: #fff; }
   #nucleo[hidden] { display: none; }
 
-  /* Velo para las transiciones */
   #velo { position: fixed; inset: 0; background: var(--fondo); opacity: 0; pointer-events: none; transition: opacity var(--fade) ease; z-index: 10; }
   #velo.activo { opacity: 1; }
+
+  /* Panel de pruebas: reemplaza a los sensores mientras desarrollás */
+  #panel {
+    position: fixed; right: 12px; bottom: 12px; z-index: 20;
+    display: flex; flex-direction: column; gap: 8px; padding: 10px;
+    background: rgba(0,0,0,.82); border: 1px solid #ffffff30; border-radius: 10px;
+    font-size: 13px; color: #fff; user-select: none;
+  }
+  #panel[hidden] { display: none; }
+  #panel .fila { display: flex; gap: 6px; flex-wrap: wrap; }
+  #panel button {
+    font: inherit; color: #fff; background: #26414f; border: 1px solid #ffffff30; border-radius: 6px;
+    padding: 8px 10px; cursor: pointer;
+  }
+  #panel button:hover { background: #335767; }
+  #panel button:active { background: var(--acento); color: #000; }
+  #panel .etq { color: #9fb4bd; font-size: 11px; }
+  #panel #estado { color: var(--acento); min-height: 1.2em; }
 
   @media (prefers-reduced-motion: reduce) {
     #pantalla .aviso, #pantalla .aro { animation: none; }
@@ -57,17 +66,29 @@
 <iframe id="nucleo" title="Contenido" hidden></iframe>
 <div id="velo"></div>
 
+<div id="panel" hidden>
+  <div class="etq">Teclado → elegir núcleo</div>
+  <div class="fila" id="fila-nucleos"></div>
+  <div class="etq">Gesto de mano → siguiente pantalla</div>
+  <div class="fila"><button type="button" tabindex="-1" data-accion="SIGUIENTE">Siguiente ▶</button></div>
+  <div class="etq">Botón → interactuar (mantener = pulsación larga)</div>
+  <div class="fila"><button type="button" tabindex="-1" id="btn-interactuar">Interactuar</button></div>
+  <div class="fila"><button type="button" tabindex="-1" data-accion="REINICIAR">Reiniciar</button></div>
+  <div id="estado"></div>
+  <div class="etq">Tecla D: ocultar/mostrar este panel</div>
+</div>
+
 <script>
 /* ============================================================
-   CONFIGURACIÓN: lo único que necesitás tocar
+   CONFIGURACIÓN
    ============================================================ */
 const CONFIG = {
   titulo: "Título de tu infografía",
   subtitulo: "Subtítulo o bajada",
-  textoInicio: "Presioná una tecla para empezar",
-  textoStandby: "Presioná una tecla para continuar",
+  textoInicio: "Elegí un núcleo para empezar",
+  textoStandby: "Hacé el gesto para continuar",
   textoFin: "Gracias por participar",
-  textoReinicio: "Presioná una tecla para volver al inicio",
+  textoReinicio: "Hacé el gesto para volver al inicio",
 
   nucleos: [
     { archivo: "nucleos/nucleo1.html", titulo: "Núcleo 1", subtitulo: "Descripción corta del núcleo 1" },
@@ -75,16 +96,27 @@ const CONFIG = {
     { archivo: "nucleos/nucleo3.html", titulo: "Núcleo 3", subtitulo: "Descripción corta del núcleo 3" }
   ],
 
-  teclasAvanzar: ["Space", "Enter", "ArrowRight"], // ideal para un botón físico mapeado a una tecla
-  teclaReiniciar: "KeyR",                           // vuelve al inicio desde cualquier pantalla
-  inactividadMs: 120000,                            // 2 min sin actividad → vuelve al inicio (0 = desactivado)
-  pantallaCompleta: true,                           // entra en pantalla completa con la primera tecla
+  /* Qué tecla dispara qué acción. En la instalación real:
+     - el teclado elige el núcleo,
+     - el gesto (MediaPipe) llamará a Acciones.emitir("SIGUIENTE"),
+     - el botón llamará a Acciones.emitir("INTERACTUAR", { tipo: "corto" | "largo" }). */
+  teclas: {
+    SIGUIENTE:   ["Space", "ArrowRight"],   // placeholder del gesto
+    INTERACTUAR: ["KeyI", "Enter"],         // placeholder del botón
+    NUCLEO:      { Digit1: 0, Digit2: 1, Digit3: 2, Numpad1: 0, Numpad2: 1, Numpad3: 2 },
+    REINICIAR:   "KeyR",
+    PANEL:       "KeyD"
+  },
+
+  pulsacionLargaMs: 600,   // a partir de acá, el botón cuenta como pulsación larga
+  panelPruebas: true,      // mostrar el panel de botones (poné false en la instalación)
+  inactividadMs: 120000,   // sin actividad → vuelve al inicio (0 = desactivado)
+  pantallaCompleta: true,
   fadeMs: 600
 };
 
 /* ============================================================
-   SECUENCIA DE PASOS (se arma sola a partir de CONFIG.nucleos)
-   inicio → núcleo 1 → standby → núcleo 2 → standby → núcleo 3 → fin
+   SECUENCIA: inicio → núcleo 1 → standby → núcleo 2 → standby → núcleo 3 → fin
    ============================================================ */
 const pasos = [{ tipo: "inicio" }];
 CONFIG.nucleos.forEach((_, i) => {
@@ -99,14 +131,18 @@ pasos.push({ tipo: "fin" });
 const pantalla = document.getElementById("pantalla");
 const iframe   = document.getElementById("nucleo");
 const velo     = document.getElementById("velo");
+const panel    = document.getElementById("panel");
+const estado   = document.getElementById("estado");
 
 document.documentElement.style.setProperty("--fade", CONFIG.fadeMs + "ms");
 
 let pasoActual = 0;
-let ocupado = false;     // evita doble avance durante una transición
+let ocupado = false;
+let nucleoListo = false;   // el núcleo avisa cuando ya puede recibir acciones
 let temporizadorInactividad = null;
 
 const esperar = ms => new Promise(r => setTimeout(r, ms));
+const avisar = txt => { estado.textContent = txt; };
 
 function dibujarPantalla(paso) {
   let html = "";
@@ -123,6 +159,7 @@ function dibujarPantalla(paso) {
 
 async function irA(indice) {
   ocupado = true;
+  nucleoListo = false;
   velo.classList.add("activo");
   await esperar(CONFIG.fadeMs);
 
@@ -136,7 +173,7 @@ async function irA(indice) {
     iframe.src = CONFIG.nucleos[paso.nucleo].archivo;
   } else {
     iframe.hidden = true;
-    iframe.src = "about:blank";   // descarga el núcleo anterior de memoria
+    iframe.src = "about:blank";
     pantalla.hidden = false;
     dibujarPantalla(paso);
   }
@@ -147,10 +184,17 @@ async function irA(indice) {
   reiniciarInactividad();
 }
 
-function avanzar() {
+function avanzarPaso() {
   if (ocupado) return;
   const siguiente = pasoActual + 1;
   irA(siguiente < pasos.length ? siguiente : 0);
+}
+
+function irANucleo(n) {
+  if (ocupado) return;
+  const indice = pasos.findIndex(p => p.tipo === "nucleo" && p.nucleo === n);
+  if (indice === -1 || indice === pasoActual) return;
+  irA(indice);
 }
 
 function reiniciar() {
@@ -158,7 +202,50 @@ function reiniciar() {
   irA(0);
 }
 
-/* ---------- Inactividad (para stands/exposiciones) ---------- */
+/* ============================================================
+   BUS DE ACCIONES
+   Todos los sensores terminan acá. Los núcleos nunca ven teclas ni cámara.
+   ============================================================ */
+function emitir(accion, datos = {}) {
+  reiniciarInactividad();
+  const tipoPaso = pasos[pasoActual].tipo;
+  avisar(accion + (datos.tipo ? " (" + datos.tipo + ")" : "") + (datos.nucleo !== undefined ? " " + (datos.nucleo + 1) : ""));
+
+  if (accion === "IR_A_NUCLEO") { irANucleo(datos.nucleo); return; }
+  if (accion === "REINICIAR")   { reiniciar(); return; }
+
+  // Fuera de un núcleo (inicio, standby, fin), SIGUIENTE avanza en el contenedor
+  if (accion === "SIGUIENTE" && tipoPaso !== "nucleo") { avanzarPaso(); return; }
+
+  // Dentro de un núcleo, el núcleo decide qué hacer con la acción
+  if (tipoPaso === "nucleo" && nucleoListo && !ocupado) {
+    iframe.contentWindow.postMessage({ origen: "contenedor", tipo: "accion", accion, datos }, "*");
+  }
+}
+window.Acciones = { emitir };   // <- acá se enchufa MediaPipe más adelante
+
+/* ---------- Botón de interacción: distingue pulsación corta y larga ---------- */
+function crearDetectorPulsacion() {
+  let activo = false, temporizador = null;
+  return {
+    abajo() {
+      if (activo) return;
+      activo = true;
+      temporizador = setTimeout(() => {
+        if (activo) { activo = false; emitir("INTERACTUAR", { tipo: "largo" }); }
+      }, CONFIG.pulsacionLargaMs);
+    },
+    arriba() {
+      if (!activo) return;
+      activo = false;
+      clearTimeout(temporizador);
+      emitir("INTERACTUAR", { tipo: "corto" });
+    }
+  };
+}
+const botonInteractuar = crearDetectorPulsacion();
+
+/* ---------- Inactividad ---------- */
 function reiniciarInactividad() {
   clearTimeout(temporizadorInactividad);
   if (CONFIG.inactividadMs > 0 && pasoActual !== 0) {
@@ -166,7 +253,23 @@ function reiniciarInactividad() {
   }
 }
 
-/* ---------- Teclado (cuando el foco está en el contenedor) ---------- */
+/* ---------- Teclado (llega tanto del contenedor como reenviado por los núcleos) ---------- */
+function procesarTecla(code, abajo) {
+  const T = CONFIG.teclas;
+
+  if (T.INTERACTUAR.includes(code)) {
+    abajo ? botonInteractuar.abajo() : botonInteractuar.arriba();
+    return true;
+  }
+  if (!abajo) return false;
+
+  if (T.SIGUIENTE.includes(code))        { emitir("SIGUIENTE"); return true; }
+  if (code in T.NUCLEO)                  { emitir("IR_A_NUCLEO", { nucleo: T.NUCLEO[code] }); return true; }
+  if (code === T.REINICIAR)              { emitir("REINICIAR"); return true; }
+  if (code === T.PANEL)                  { alternarPanel(); return true; }
+  return false;
+}
+
 function pidePantallaCompleta() {
   if (CONFIG.pantallaCompleta && !document.fullscreenElement) {
     document.documentElement.requestFullscreen?.().catch(() => {});
@@ -174,30 +277,56 @@ function pidePantallaCompleta() {
 }
 
 window.addEventListener("keydown", (e) => {
-  if (e.repeat) return;
+  if (e.repeat) { e.preventDefault(); return; }
   pidePantallaCompleta();
-  reiniciarInactividad();
-
-  if (e.code === CONFIG.teclaReiniciar) { reiniciar(); return; }
-
-  const tipo = pasos[pasoActual].tipo;
-  // Solo avanza en pantallas del contenedor. Dentro de un núcleo, avanza cuando el núcleo avisa que terminó.
-  if (tipo !== "nucleo" && CONFIG.teclasAvanzar.includes(e.code)) {
-    e.preventDefault();
-    avanzar();
-  }
+  if (procesarTecla(e.code, true)) e.preventDefault();
+});
+window.addEventListener("keyup", (e) => {
+  if (procesarTecla(e.code, false)) e.preventDefault();
 });
 
-/* ---------- Mensajes desde los núcleos (puente.js) ---------- */
+/* ---------- Mensajes desde los núcleos ---------- */
 window.addEventListener("message", (e) => {
   if (e.source !== iframe.contentWindow) return;
   const msg = e.data;
   if (!msg || msg.origen !== "infografia") return;
 
-  if (msg.tipo === "terminado")  avanzar();
-  if (msg.tipo === "actividad")  reiniciarInactividad();
-  if (msg.tipo === "reiniciar")  reiniciar();
+  switch (msg.tipo) {
+    case "listo":      nucleoListo = true; break;
+    case "terminado":  nucleoListo = false; avanzarPaso(); break;
+    case "actividad":  reiniciarInactividad(); break;
+    case "reiniciar":  reiniciar(); break;
+    case "tecla":      procesarTecla(msg.code, msg.abajo); break;   // teclas con el foco dentro del núcleo
+  }
 });
+
+/* ---------- Panel de pruebas ---------- */
+function alternarPanel() {
+  panel.hidden = !panel.hidden;
+  document.body.classList.toggle("con-panel", !panel.hidden);
+}
+
+(function armarPanel() {
+  const fila = document.getElementById("fila-nucleos");
+  CONFIG.nucleos.forEach((n, i) => {
+    const b = document.createElement("button");
+    b.type = "button"; b.tabIndex = -1; b.textContent = "Núcleo " + (i + 1);
+    b.addEventListener("click", () => emitir("IR_A_NUCLEO", { nucleo: i }));
+    fila.appendChild(b);
+  });
+  panel.querySelectorAll("[data-accion]").forEach(b =>
+    b.addEventListener("click", () => emitir(b.dataset.accion)));
+
+  const bi = document.getElementById("btn-interactuar");
+  bi.addEventListener("pointerdown", () => botonInteractuar.abajo());
+  bi.addEventListener("pointerup",   () => botonInteractuar.arriba());
+  bi.addEventListener("pointerleave",() => botonInteractuar.arriba());
+
+  // Evita que los botones del panel roben el foco y reaccionen a Espacio/Enter
+  panel.addEventListener("mousedown", e => e.preventDefault());
+
+  if (CONFIG.panelPruebas) alternarPanel();
+})();
 
 /* ---------- Arranque ---------- */
 dibujarPantalla(pasos[0]);
