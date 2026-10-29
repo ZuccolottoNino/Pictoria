@@ -1,0 +1,36 @@
+/* base.css: tokens y estilos compartidos por todos los núcleos.
+   Los colores y tipografías se cambian acá una sola vez. */
+:root {
+  --fondo: #F7F8FC;
+  --tinta: #343A56;
+  --violeta: #BD72FF;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+/* El fondo de la página es el mismo que el del diseño: si la pantalla real tiene otra proporción,
+   las franjas sobrantes no se notan. */
+html, body { height: 100%; overflow: hidden; background: var(--fondo); cursor: none; }
+
+/* Escenario de tamaño fijo: puente.js lo escala para que entre en cualquier pantalla */
+#escenario { background: var(--fondo); color: var(--tinta); font-family: "Inter", system-ui, sans-serif; }
+
+.slide { background: var(--fondo); overflow: hidden; }
+.slide[hidden] { display: none; }
+
+/* Título de pantalla: Space Grotesk Bold 80 */
+.titulo { font-family: "Space Grotesk", system-ui, sans-serif; font-weight: 700; font-size: 80px; line-height: 100px; color: var(--tinta); }
+
+/* Texto de bloque: Inter 36, regular con palabras en negrita */
+.texto { font-family: "Inter", system-ui, sans-serif; font-weight: 400; font-size: 36px; line-height: 44px; color: var(--tinta); }
+.texto b { font-weight: 700; }
+.texto .vio { font-weight: 700; color: var(--violeta); }
+
+/* Tarjeta blanca */
+.tarjeta { position: absolute; background: #fff; border-radius: 45px; box-shadow: 0 12px 56px rgba(120, 110, 200, .10); }
+
+/* Sombra ovalada hecha con código (se posiciona y dimensiona en el CSS de cada núcleo) */
+.sombra-ovalo { position: absolute; border-radius: 50%; pointer-events: none;
+  background: radial-gradient(ellipse at center, rgba(189, 114, 255, .55) 0%, rgba(189, 114, 255, .22) 45%, rgba(189, 114, 255, 0) 72%); }
+
+img { display: block; user-select: none; -webkit-user-drag: none; }

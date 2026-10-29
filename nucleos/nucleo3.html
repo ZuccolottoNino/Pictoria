@@ -3,35 +3,381 @@
 <head>
 <meta charset="UTF-8">
 <title>Núcleo 3</title>
-<style>
-  html, body { height: 100%; margin: 0; }
-  body { font-family: "Segoe UI", system-ui, sans-serif; color: #1b2b34; cursor: none; overflow: hidden; background: #111; }
-  section { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2vmin; text-align: center; padding: 6vmin; }
-  section[hidden] { display: none; }
-  #p1 { background: #f4f1ec; } #p2 { background: #e3eef3; } #p3 { background: #efe6f3; }
-  h1 { font-size: clamp(2rem, 8vmin, 5rem); }
-  p { font-size: clamp(1rem, 2.6vmin, 1.6rem); color: #4a5b64; max-width: 46ch; }
-  .dato { font-size: clamp(3rem, 14vmin, 9rem); font-weight: 700; }
-  #p1.alt { background: #f2b134; }
-  #lienzo { width: 60vmin; height: 36vmin; border: 3px dashed #4a5b64; border-radius: 12px; display: flex; align-items: center; justify-content: center; }
-</style>
+<link rel="stylesheet" href="../libs/fuentes.css">
+<link rel="stylesheet" href="../css/base.css">
+<link rel="stylesheet" href="../css/nucleo3.css">
 </head>
 <body>
-  <section id="p1"><h1>Núcleo 3 · Pantalla 1</h1><p>Botón (toque corto): cambia el color de fondo.</p></section>
-  <section id="p2"><h1>Núcleo 3 · Pantalla 2</h1><div class="dato" id="contador">0</div><p>Botón corto: suma 1. Botón largo: vuelve a 0.</p></section>
-  <section id="p3"><h1>Núcleo 3 · Pantalla 3</h1><div id="lienzo"><span id="msg">Acá iría la tableta gráfica</span></div><p>Botón: activa o desactiva el modo dibujo. Siguiente en esta pantalla termina el núcleo.</p></section>
 
-  <script src="../libs/gsap.min.js"></script>
-  <script src="../js/puente.js"></script>
-  <script>
-    var n = 0, dibujo = false;
+<div id="escenario">
+
+  <!-- ===================== PANTALLA 1 ===================== -->
+  <section id="p1" class="slide">
+    <h1 class="titulo" id="n3-titulo">¡Felicidades por llegar a la última instancia de tu evolución!</h1>
+
+    <div class="sombra-ovalo" id="n3-sombra-personaje"></div>
+    <img id="n3-personaje" src="../assets/nucleo3/img/personaje1.png" alt="">
+
+    <div class="sombra-ovalo" id="n3-sombra-tarjeta"></div>
+    <div class="tarjeta" id="n3-tarjeta">
+      <p class="texto">
+        <span class="linea">Veamos <span class="vio">la importancia</span></span>
+        <span class="linea">que estás ganando en el</span>
+        <span class="linea"><b>mundo</b> con una encuesta</span>
+        <span class="linea">que se les hizo a</span>
+        <span class="linea">creadores que utilizan el</span>
+        <span class="linea"><span class="vio">ecosistema de Adobe.</span></span>
+      </p>
+      <img id="n3-adobe" src="../assets/nucleo3/img/adobe.png" alt="">
+    </div>
+  </section>
+
+    <!-- ===================== PANTALLA 2 ===================== -->
+  <section id="p2" class="slide">
+    <div class="tarjeta" id="n3-t2-caja">
+      <h1 class="titulo" id="n3-titulo2">Encuesta de uso en ADOBE (2025)</h1>
+    </div>
+
+    <div class="sombra-ovalo" id="n3-sombra-personaje2"></div>
+    <img id="n3-personaje2" src="../assets/nucleo3/img/personaje2.png" alt="">
+    <div class="sombra-ovalo" id="n3-sombra-tarjeta2"></div>
+    <div class="tarjeta" id="n3-tarjeta2">
+      <div id="n3-cifra">+16.000</div>
+      <p class="texto" id="n3-etiqueta">Creadores encuestados</p>
+      <div id="n3-iconos">
+        <img class="n3-icono" src="../assets/nucleo3/img/usuario1.png" alt="">
+        <img class="n3-icono" src="../assets/nucleo3/img/usuario2.png" alt="">
+        <img class="n3-icono" src="../assets/nucleo3/img/usuario3.png" alt="">
+        <img class="n3-icono" src="../assets/nucleo3/img/usuario4.png" alt="">
+        <img class="n3-icono" src="../assets/nucleo3/img/usuario5.png" alt="">
+        <img class="n3-icono" src="../assets/nucleo3/img/usuario6.png" alt="">
+      </div>
+
+      <div id="n3-divisor"></div>
+
+      <div id="n3-dona-caja">
+        <div id="n3-dona-pista"></div>
+        <div id="n3-dona"></div>
+        <div id="n3-pct">86%</div>
+      </div>
+
+      <p class="texto" id="n3-texto2">
+        <span class="linea"><span class="vio">Utiliza IA generativa</span></span>
+        <span class="linea">como herramienta en</span>
+        <span class="linea">su trabajo creativo</span>
+      </p>
+    </div>
+  </section>
+
+    <!-- ===================== PANTALLA 3 ===================== -->
+  <section id="p3" class="slide">
+    <div id="n3-copia"></div>
+
+    <div class="tarjeta" id="n3-tarjeta3">
+      <div class="n3-pregunta" id="n3-q1"><p>¿Gracias a la ia lograron hacer<br>cosas que de otra forma no<br>podrian?</p></div>
+      <div class="n3-pregunta" id="n3-q2"><p>¿La IA tuvo un buen impacto<br>economico en creadores?</p></div>
+      <div class="n3-pregunta" id="n3-q3"><p>Miedo a que la IA use su<br>contenido sin permiso para<br>entrenar.</p></div>
+
+      <div class="n3-torta" id="n3-torta1">
+        <div class="n3-disco"></div>
+        <p class="n3-no">NO<br><span class="n3-no-n">%19</span></p>
+        <p class="n3-si">SI<br><span class="n3-si-n">%81</span></p>
+      </div>
+      <div class="n3-torta" id="n3-torta2">
+        <div class="n3-disco"></div>
+        <p class="n3-no">NO<br><span class="n3-no-n">%15</span></p>
+        <p class="n3-si">SI<br><span class="n3-si-n">%85</span></p>
+      </div>
+      <div class="n3-torta" id="n3-torta3">
+        <div class="n3-disco"></div>
+        <p class="n3-no">NO<br><span class="n3-no-n">%31</span></p>
+        <p class="n3-si">SI<br><span class="n3-si-n">%69</span></p>
+      </div>
+    </div>
+  </section>
+
+    <!-- ===================== PANTALLA 4 ===================== -->
+  <section id="p4" class="slide">
+    <div class="tarjeta" id="n3-t4-caja">
+      <h1 class="titulo" id="n3-titulo4">Pero... ¿Qué sos ahora?</h1>
+    </div>
+
+    <!-- línea de tiempo -->
+    <div id="n3-linea">
+      <div id="n3-linea-barra"></div>
+      <div id="n3-linea-punta"></div>
+    </div>
+    <div id="n3-marcador">
+      <div id="n3-glow"></div>
+      <svg id="n3-flecha" viewBox="0 0 26 18"><path d="M13 2v12M7 9l6 6 6-6" fill="none" stroke="#F5C9E6" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      <div id="n3-pildora">2015</div>
+    </div>
+
+    <div class="sombra-ovalo" id="n3-sombra-personaje4"></div>
+    <img id="n3-personaje4" src="../assets/nucleo3/img/personaje3.png" alt="">
+
+    <div class="sombra-ovalo" id="n3-sombra-tarjeta4"></div>
+    <div class="tarjeta" id="n3-tarjeta4">
+      <p class="texto" id="n3-dif-titulo">Sos un <span class="n3-azul">Modelo de Difusión,</span> desglosémoslo:</p>
+
+      <img class="n3-dif-img" id="n3-d1" src="../assets/nucleo3/img/dif1.png" alt="">
+      <img class="n3-dif-img" id="n3-d2" src="../assets/nucleo3/img/dif2.png" alt="">
+      <img class="n3-dif-img" id="n3-d3" src="../assets/nucleo3/img/dif3.png" alt="">
+
+      <p class="n3-cap" id="n3-c1">Generas<br>imagenes</p>
+      <p class="n3-cap" id="n3-c2">Consta de<br>tres etapas</p>
+      <p class="n3-cap" id="n3-c3">vanguardia de la<br>IA generativa</p>
+    </div>
+  </section>
+
+</div>
+
+<script src="../libs/gsap.min.js"></script>
+<script src="../libs/SplitText.min.js"></script>
+<script src="../js/puente.js"></script>
+<script>
+  gsap.registerPlugin(SplitText);
+  Infografia.escalar("#escenario", 1920, 1080);
+
+  var bucles = [];      // animaciones en bucle de la pantalla actual
+  var entrada = null;   // timeline de entrada en curso
+  var partido = null;   // SplitText del título
+var partido2 = null;
+var cont = { n: 0, p: 0 }; 
+function miles(n) { return String(Math.round(n)).replace(/\B(?=(\d{3})+(?!\d))/g, "."); } 
+var datos3 = [ { si: 81, no: 19 }, { si: 85, no: 15 }, { si: 69, no: 31 } ];
+var cont3 = datos3.map(function () { return { p: 0 }; });
+var partido4 = null;   // SplitText del título de la P4
+function pintar3(i) {
+  var t = document.querySelectorAll(".n3-torta")[i], p = cont3[i].p, d = datos3[i];
+  t.querySelector(".n3-disco").style.setProperty("--a", d.no * 3.6 * p);
+  t.querySelector(".n3-no-n").textContent = "%" + Math.round(d.no * p);
+  t.querySelector(".n3-si-n").textContent = "%" + Math.round(d.si * p);
+}
+
+  function detener() {
+    bucles.forEach(function (t) { t.kill(); }); bucles = [];
+    if (entrada) { entrada.kill(); entrada = null; }
+  }
+
+  function iniciar() {
     Infografia.presentacion([
-      { el: "#p1", interactuar: function (t, el) { el.classList.toggle("alt"); } },
-      { el: "#p2", transicion: "cortina",
-        interactuar: function (tipo) { n = (tipo === "largo") ? 0 : n + 1; document.getElementById("contador").textContent = n; } },
-      { el: "#p3", transicion: "fundido",
-        interactuar: function () { dibujo = !dibujo; document.getElementById("msg").textContent = dibujo ? "Modo dibujo ACTIVO" : "Acá iría la tableta gráfica"; } }
+
+      /* ============ Pantalla 1: sin interactividad con el botón ============ */
+      {
+        el: "#p1",
+
+        // Estado inicial: todo oculto antes de que la pantalla aparezca
+        preparar: function () {
+          partido = SplitText.create("#n3-titulo", { type: "words" });
+          gsap.set(partido.words, { autoAlpha: 0, y: 60, rotation: 3 });
+          gsap.set("#n3-personaje", { autoAlpha: 0, scale: 0.85, y: 70, transformOrigin: "50% 100%" });
+          gsap.set("#n3-sombra-personaje", { autoAlpha: 0, scaleX: 0.4 });
+          gsap.set("#n3-tarjeta", { autoAlpha: 0, y: 70 });
+          gsap.set("#n3-tarjeta .linea", { autoAlpha: 0, y: 26 });
+          gsap.set("#n3-adobe", { autoAlpha: 0, scale: 0.5, rotation: -12 });
+          gsap.set("#n3-sombra-tarjeta", { autoAlpha: 0, scaleX: 0.5 });
+        },
+
+        // Secuencia de entrada
+        entrar: function () {
+          entrada = gsap.timeline()
+            .to(partido.words, { autoAlpha: 1, y: 0, rotation: 0, duration: 0.7, stagger: 0.08, ease: "back.out(1.5)" })
+            .to("#n3-personaje", { autoAlpha: 1, scale: 1, y: 0, duration: 0.9, ease: "back.out(1.4)" }, "-=0.45")
+            .to("#n3-sombra-personaje", { autoAlpha: 1, scaleX: 1, duration: 0.8, ease: "power2.out" }, "<0.1")
+            .to("#n3-tarjeta", { autoAlpha: 1, y: 0, duration: 0.8, ease: "power3.out" }, "-=0.5")
+            .to("#n3-sombra-tarjeta", { autoAlpha: 1, scaleX: 1, duration: 0.8, ease: "power2.out" }, "<0.1")
+            .to("#n3-tarjeta .linea", { autoAlpha: 1, y: 0, duration: 0.55, stagger: 0.1, ease: "power2.out" }, "-=0.4")
+            .to("#n3-adobe", { autoAlpha: 1, scale: 1, rotation: 0, duration: 0.8, ease: "back.out(1.8)" }, "-=0.5")
+            .add(function () {
+              // Movimiento continuo mientras la pantalla está a la vista
+              bucles.push(gsap.to("#n3-personaje", { y: -20, duration: 1.9, ease: "sine.inOut", yoyo: true, repeat: -1 }));
+              bucles.push(gsap.to("#n3-sombra-personaje", { scaleX: 0.82, opacity: 0.6, duration: 1.9, ease: "sine.inOut", yoyo: true, repeat: -1 }));
+              bucles.push(gsap.to("#n3-adobe", { y: -10, rotation: 1.5, duration: 2.4, ease: "sine.inOut", yoyo: true, repeat: -1 }));
+              bucles.push(gsap.to("#n3-sombra-tarjeta", { scaleX: 0.92, opacity: 0.7, duration: 2.4, ease: "sine.inOut", yoyo: true, repeat: -1 }));
+            });
+          return entrada;
+        },
+
+        salir: detener
+        // sin "interactuar": el botón no hace nada en esta pantalla
+      },
+
+            /* ============ Pantalla 2: encuesta ============ */
+      {
+        el: "#p2",
+
+        preparar: function () {
+          document.getElementById("n3-copia").innerHTML = "";
+          cont.n = 0; cont.p = 0;
+          document.getElementById("n3-cifra").textContent = "+0";
+          document.getElementById("n3-pct").textContent = "0%";
+
+          partido2 = SplitText.create("#n3-titulo2", { type: "words" });
+          gsap.set(partido2.words, { autoAlpha: 0, y: 60, rotation: 3 });
+          gsap.set("#n3-t2-caja", { autoAlpha: 0, y: -40 });
+          gsap.set("#n3-personaje2", { autoAlpha: 0, scale: 0.85, y: 70, transformOrigin: "50% 100%" });
+          gsap.set("#n3-sombra-personaje2", { autoAlpha: 0, scaleX: 0.4 });
+          gsap.set("#n3-tarjeta2", { autoAlpha: 0, y: 70 });
+          gsap.set("#n3-cifra", { autoAlpha: 0, y: 30 });
+          gsap.set("#n3-etiqueta", { autoAlpha: 0, y: 20 });
+          gsap.set(".n3-icono", { autoAlpha: 0, scale: 0, transformOrigin: "50% 50%" });
+          gsap.set("#n3-divisor", { autoAlpha: 0, scaleY: 0, transformOrigin: "50% 0%" });
+          gsap.set("#n3-dona-caja", { autoAlpha: 0, scale: 0.8, transformOrigin: "50% 50%" });
+          gsap.set("#n3-dona", { "--a": 0 });
+          gsap.set("#n3-texto2 .linea", { autoAlpha: 0, y: 26 });
+          gsap.set("#n3-sombra-tarjeta2", { autoAlpha: 0, scaleX: 0.5 });
+        },
+
+        entrar: function () {
+          entrada = gsap.timeline()
+            // título
+            .to("#n3-t2-caja", { autoAlpha: 1, y: 0, duration: 0.7, ease: "power3.out" }, 0)
+            .to(partido2.words, { autoAlpha: 1, y: 0, rotation: 0, duration: 0.7, stagger: 0.08, ease: "back.out(1.5)" }, 0.15)
+            // personaje
+            .to("#n3-personaje2", { autoAlpha: 1, scale: 1, y: 0, duration: 0.9, ease: "back.out(1.4)" }, "-=0.45")
+            .to("#n3-sombra-personaje2", { autoAlpha: 1, scaleX: 1, duration: 0.8, ease: "power2.out" }, "<0.1")
+            // tarjeta
+            .to("#n3-tarjeta2", { autoAlpha: 1, y: 0, duration: 0.8, ease: "power3.out" }, "-=0.5")
+            .to("#n3-sombra-tarjeta2", { autoAlpha: 1, scaleX: 1, duration: 0.8, ease: "power2.out" }, "<0.1")
+            // +16.000 con conteo
+            .to("#n3-cifra", { autoAlpha: 1, y: 0, duration: 0.6, ease: "power2.out" }, "-=0.3")
+            .to(cont, { n: 16000, duration: 1.8, ease: "power2.out", onUpdate: function () {
+              document.getElementById("n3-cifra").textContent = "+" + miles(cont.n);
+            } }, "<")
+            .to("#n3-etiqueta", { autoAlpha: 1, y: 0, duration: 0.5, ease: "power2.out" }, "-=1.2")
+            // íconos que aparecen de a uno
+            .to(".n3-icono", { autoAlpha: 1, scale: 1, duration: 0.55, stagger: 0.1, ease: "back.out(2)" }, "-=0.9")
+            // divisor
+            .to("#n3-divisor", { autoAlpha: 1, scaleY: 1, duration: 0.7, ease: "power3.out" }, "-=0.9")
+            // dona que se llena + 86%
+            .to("#n3-dona-caja", { autoAlpha: 1, scale: 1, duration: 0.6, ease: "back.out(1.4)" }, "-=0.4")
+            .to("#n3-dona", { "--a": 309.6, duration: 1.6, ease: "power2.inOut" }, "<0.2")
+            .to(cont, { p: 86, duration: 1.6, ease: "power2.inOut", onUpdate: function () {
+              document.getElementById("n3-pct").textContent = Math.round(cont.p) + "%";
+            } }, "<")
+            // texto de la derecha
+            .to("#n3-texto2 .linea", { autoAlpha: 1, y: 0, duration: 0.55, stagger: 0.12, ease: "power2.out" }, "-=1.1")
+            .add(function () {
+              bucles.push(gsap.to("#n3-personaje2", { y: -20, duration: 1.9, ease: "sine.inOut", yoyo: true, repeat: -1 }));
+              bucles.push(gsap.to("#n3-sombra-personaje2", { scaleX: 0.82, opacity: 0.6, duration: 1.9, ease: "sine.inOut", yoyo: true, repeat: -1 }));
+              // ola suave entre los íconos
+              bucles.push(gsap.to(".n3-icono", { y: -8, duration: 1.1, ease: "sine.inOut", yoyo: true, repeat: -1, stagger: 0.15 }));
+              bucles.push(gsap.to("#n3-sombra-tarjeta2", { scaleX: 0.92, opacity: 0.7, duration: 2.4, ease: "sine.inOut", yoyo: true, repeat: -1 }));
+            });
+          return entrada;
+        },
+
+          salir: function () { if (entrada) entrada.progress(1); detener(); }
+      },
+
+            /* ============ Pantalla 3: la card sube y entra la de las tortas ============ */
+      {
+        el: "#p3",
+        transicion: "ninguna",   // arranca igual que el final de la P2, no hay nada que transicionar
+
+        preparar: function () {
+          // Copia de la P2 tal como quedó (incluye títulos, personaje, sombras y la card)
+          document.getElementById("n3-copia").innerHTML = document.getElementById("p2").innerHTML;
+          gsap.set("#n3-copia #n3-tarjeta2", { transformOrigin: "50% 0%" });
+
+          gsap.set("#n3-tarjeta3", { autoAlpha: 0, y: 320 });
+          gsap.set(".n3-pregunta", { autoAlpha: 0, y: 30 });
+          gsap.set(".n3-torta", { autoAlpha: 0, scale: 0.6, rotation: -25, transformOrigin: "50% 50%" });
+          cont3.forEach(function (c, i) { c.p = 0; pintar3(i); });
+        },
+
+        entrar: function () {
+          var s = "#n3-copia ";
+          entrada = gsap.timeline()
+            // la card vieja sube y pasa a segundo plano
+            .to(s + "#n3-tarjeta2", { y: -132, x: -20, scale: 0.92, opacity: 0.55, filter: "blur(2px)", duration: 1.1, ease: "power3.inOut" }, 0)
+            .to(s + ".n3-icono", { y: 0, duration: 0.6, ease: "power2.out" }, 0)
+            // su sombra baja y pasa a ser la de la card nueva
+            .to(s + "#n3-sombra-tarjeta2", { y: 80, x: -30, scaleX: 0.82, duration: 1.1, ease: "power3.inOut" }, 0)
+            // entra la card nueva desde abajo
+            .to("#n3-tarjeta3", { autoAlpha: 1, y: 0, duration: 0.9, ease: "power3.out" }, 0.4)
+            .to(".n3-pregunta", { autoAlpha: 1, y: 0, duration: 0.55, stagger: 0.12, ease: "power2.out" }, "-=0.3")
+            .addLabel("tortas", "-=0.2")
+            .to(".n3-torta", { autoAlpha: 1, scale: 1, rotation: 0, duration: 0.8, stagger: 0.15, ease: "back.out(1.5)" }, "tortas");
+
+          // el sector "NO" crece y los porcentajes cuentan
+          cont3.forEach(function (c, i) {
+            entrada.to(c, { p: 1, duration: 1.4, ease: "power2.inOut", onUpdate: function () { pintar3(i); } }, "tortas+=" + (0.2 + i * 0.15));
+          });
+
+          entrada.add(function () {
+            bucles.push(gsap.to(s + "#n3-personaje2", { y: -20, duration: 1.9, ease: "sine.inOut", yoyo: true, repeat: -1 }));
+            bucles.push(gsap.to(s + "#n3-sombra-personaje2", { scaleX: 0.82, opacity: 0.6, duration: 1.9, ease: "sine.inOut", yoyo: true, repeat: -1 }));
+            bucles.push(gsap.to(s + "#n3-sombra-tarjeta2", { scaleX: 0.76, opacity: 0.7, duration: 2.4, ease: "sine.inOut", yoyo: true, repeat: -1 }));
+            bucles.push(gsap.to(".n3-torta", { y: -8, duration: 1.6, ease: "sine.inOut", yoyo: true, repeat: -1, stagger: 0.25 }));
+          });
+          return entrada;
+        },
+
+        salir: detener
+      },
+
+            /* ============ Pantalla 4: ¿Qué sos ahora? ============ */
+      {
+        el: "#p4",
+
+        preparar: function () {
+          partido4 = SplitText.create("#n3-titulo4", { type: "words" });
+          gsap.set(partido4.words, { autoAlpha: 0, y: 60, rotation: 3 });
+          gsap.set("#n3-t4-caja", { autoAlpha: 0, y: -40 });
+          gsap.set("#n3-linea", { clipPath: "inset(0% 100% 0% 0%)" });
+          gsap.set("#n3-glow", { autoAlpha: 0, scale: 0 });
+          gsap.set("#n3-flecha", { autoAlpha: 0, y: -14 });
+          gsap.set("#n3-pildora", { autoAlpha: 0, scale: 0.4, y: 20, transformOrigin: "50% 0%" });
+          gsap.set("#n3-personaje4", { autoAlpha: 0, scale: 0.85, y: 70, transformOrigin: "50% 100%" });
+          gsap.set("#n3-sombra-personaje4", { autoAlpha: 0, scaleX: 0.4 });
+          gsap.set("#n3-tarjeta4", { autoAlpha: 0, y: 70 });
+          gsap.set("#n3-sombra-tarjeta4", { autoAlpha: 0, scaleX: 0.5 });
+          gsap.set("#n3-dif-titulo", { autoAlpha: 0, y: 26 });
+          gsap.set(".n3-dif-img", { autoAlpha: 0, scale: 0.5, rotation: -8 });
+          gsap.set(".n3-cap", { autoAlpha: 0, y: 20 });
+        },
+
+        entrar: function () {
+          entrada = gsap.timeline()
+            // título
+            .to("#n3-t4-caja", { autoAlpha: 1, y: 0, duration: 0.7, ease: "power3.out" }, 0)
+            .to(partido4.words, { autoAlpha: 1, y: 0, rotation: 0, duration: 0.7, stagger: 0.08, ease: "back.out(1.5)" }, 0.15)
+            // la línea se dibuja y, al pasar por 2015, aparece el marcador
+            .to("#n3-linea", { clipPath: "inset(0% 0% 0% 0%)", duration: 1.4, ease: "power2.inOut" }, 0.5)
+            .to("#n3-glow", { autoAlpha: 1, scale: 1, duration: 0.6, ease: "back.out(2)" }, 1.0)
+            .to("#n3-flecha", { autoAlpha: 1, y: 0, duration: 0.4, ease: "power2.out" }, "<0.25")
+            .to("#n3-pildora", { autoAlpha: 1, scale: 1, y: 0, duration: 0.7, ease: "back.out(1.8)" }, "<0.1")
+            // personaje
+            .to("#n3-personaje4", { autoAlpha: 1, scale: 1, y: 0, duration: 0.9, ease: "back.out(1.4)" }, "-=0.5")
+            .to("#n3-sombra-personaje4", { autoAlpha: 1, scaleX: 1, duration: 0.8, ease: "power2.out" }, "<0.1")
+            // tarjeta
+            .to("#n3-tarjeta4", { autoAlpha: 1, y: 0, duration: 0.8, ease: "power3.out" }, "-=0.5")
+            .to("#n3-sombra-tarjeta4", { autoAlpha: 1, scaleX: 1, duration: 0.8, ease: "power2.out" }, "<0.1")
+            .to("#n3-dif-titulo", { autoAlpha: 1, y: 0, duration: 0.6, ease: "power2.out" }, "-=0.4")
+            // las tres imágenes con su texto
+            .to(".n3-dif-img", { autoAlpha: 1, scale: 1, rotation: 0, duration: 0.7, stagger: 0.2, ease: "back.out(1.8)" }, "-=0.2")
+            .to(".n3-cap", { autoAlpha: 1, y: 0, duration: 0.5, stagger: 0.2, ease: "power2.out" }, "<0.15")
+            .add(function () {
+              bucles.push(gsap.to("#n3-personaje4", { y: -20, duration: 1.9, ease: "sine.inOut", yoyo: true, repeat: -1 }));
+              bucles.push(gsap.to("#n3-sombra-personaje4", { scaleX: 0.82, opacity: 0.6, duration: 1.9, ease: "sine.inOut", yoyo: true, repeat: -1 }));
+              bucles.push(gsap.to("#n3-sombra-tarjeta4", { scaleX: 0.92, opacity: 0.7, duration: 2.4, ease: "sine.inOut", yoyo: true, repeat: -1 }));
+              bucles.push(gsap.to("#n3-glow", { scale: 1.3, opacity: 0.6, duration: 1.2, ease: "sine.inOut", yoyo: true, repeat: -1 }));
+              bucles.push(gsap.to("#n3-flecha", { y: 6, duration: 0.9, ease: "sine.inOut", yoyo: true, repeat: -1 }));
+              bucles.push(gsap.to(".n3-dif-img", { y: -8, duration: 1.6, ease: "sine.inOut", yoyo: true, repeat: -1, stagger: 0.25 }));
+            });
+          return entrada;
+        },
+
+        salir: detener
+      }
+
     ], { transicion: "fundido", duracion: 0.8 });
-  </script>
+  }
+
+  // Esperamos a que carguen las tipografías para que SplitText mida bien
+  (document.fonts && document.fonts.ready ? document.fonts.ready : Promise.resolve()).then(iniciar);
+</script>
 </body>
 </html>

@@ -1,0 +1,127 @@
+/* nucleo3.css: estilos propios del núcleo 3 (escenario 1920x1080) */
+
+/* ---------- Pantalla 1 ---------- */
+#n3-titulo   { position: absolute; left: 108px; top: 28px; width: 1500px; }
+
+#n3-personaje { position: absolute; left: 75px; top: 280px; width: 474px; height: 621px; }
+#n3-sombra-personaje { left: 120px; top: 925px; width: 380px; height: 62px; }
+
+#n3-tarjeta  { left: 738px; top: 393px; width: 997px; height: 408px; }
+#n3-tarjeta .texto { position: absolute; left: 89px; top: 58px; }
+#n3-tarjeta .linea { display: block; white-space: nowrap; }
+#n3-adobe    { position: absolute; left: 609px; top: 52px; width: 314px; height: 312px; }
+#n3-sombra-tarjeta { left: 850px; top: 920px; width: 800px; height: 70px; }
+
+/* ---------- Pantalla 2 ---------- */
+#n3-t2-caja { left: 78px; top: 42px; width: 1376px; height: 150px;
+  background: rgba(255, 255, 255, .55); box-shadow: 0 4px 30px rgba(120, 110, 200, .06); }
+#n3-titulo2 { position: absolute; left: 24px; top: 28px; white-space: nowrap; }
+
+#n3-personaje2 { position: absolute; left: 33px; top: 237px; width: 474px; height: 621px; }
+#n3-sombra-personaje2 { left: 60px; top: 925px; width: 370px; height: 62px; }
+
+#n3-tarjeta2 { left: 447px; top: 325px; width: 1378px; height: 430px; --azul-dato: #5F6FB7; }
+
+#n3-cifra { position: absolute; left: 41px; top: 46px; white-space: nowrap;
+  font-family: "Inter", system-ui, sans-serif; font-weight: 600; font-size: 128px; line-height: 128px; color: var(--azul-dato); }
+#n3-etiqueta { position: absolute; left: 41px; top: 165px; white-space: nowrap; }
+
+#n3-iconos { position: absolute; left: 37px; top: 234px; display: flex; gap: 6px; }
+.n3-icono { width: 82px; height: 82px; }
+
+#n3-divisor { position: absolute; left: 689px; top: 47px; width: 2px; height: 328px;
+  background: linear-gradient(to bottom, rgba(95, 111, 183, .25), rgba(95, 111, 183, .8), rgba(95, 111, 183, .25)); }
+
+/* Dona: anillo con degradé cónico, revelado por la variable --a (grados) */
+#n3-dona-caja { position: absolute; left: 718px; top: 80px; width: 263px; height: 263px; }
+#n3-dona-pista, #n3-dona { position: absolute; inset: 0; border-radius: 50%; }
+#n3-dona-pista { background: #E8E9F4;
+  -webkit-mask: radial-gradient(farthest-side, transparent calc(100% - 30px), #000 calc(100% - 29px));
+          mask: radial-gradient(farthest-side, transparent calc(100% - 30px), #000 calc(100% - 29px)); }
+#n3-dona { --a: 0;
+  background: conic-gradient(from 0deg, #A9E6FB 0deg, #F3C3E6 90deg, #FFD6C0 180deg, #F3C3E6 270deg, #A9E6FB 310deg);
+  -webkit-mask: radial-gradient(farthest-side, transparent calc(100% - 30px), #000 calc(100% - 29px)),
+                conic-gradient(#000 calc(var(--a) * 1deg), transparent 0);
+  -webkit-mask-composite: source-in;
+          mask: radial-gradient(farthest-side, transparent calc(100% - 30px), #000 calc(100% - 29px)),
+                conic-gradient(#000 calc(var(--a) * 1deg), transparent 0);
+          mask-composite: intersect; }
+#n3-pct { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
+  font-family: "Space Grotesk", system-ui, sans-serif; font-weight: 700; font-size: 68px; color: var(--azul-dato); }
+
+#n3-texto2 { position: absolute; left: 1009px; top: 155px; font-size: 32px; line-height: 39px; }
+#n3-texto2 .linea { display: block; white-space: nowrap; }
+#n3-sombra-tarjeta2 { left: 586px; top: 920px; width: 1100px; height: 70px; }
+
+/* ---------- Pantalla 3 ---------- */
+#n3-copia { position: absolute; inset: 0; }   /* acá se copia el contenido de la P2 */
+
+#n3-tarjeta3 { left: 370px; top: 488px; width: 1465px; height: 495px; }
+
+.n3-pregunta { position: absolute; top: 34px; width: 417px; height: 105px; padding-top: 27px;
+  border-radius: 40px; background: rgba(247, 248, 253, .8); box-shadow: 0 0 28px rgba(120, 110, 200, .10);
+  text-align: center; font-family: "Inter", system-ui, sans-serif; font-size: 24px; line-height: 29px; color: var(--tinta); }
+#n3-q1 { left: 38px; }
+#n3-q2 { left: 522px; }
+#n3-q3 { left: 1026px; top: 31px; }
+
+.n3-torta { position: absolute; width: 256px; height: 256px; }
+#n3-torta1 { left: 124px;  top: 154px; }
+#n3-torta2 { left: 602px;  top: 152px; }
+#n3-torta3 { left: 1107px; top: 158px; }
+
+/* Torta: el "NO" es un sector cónico (--a en grados) sobre un degradé radial */
+.n3-disco { --a: 0; position: absolute; inset: 0; border-radius: 50%;
+  background: conic-gradient(#E9CAF0 calc(var(--a) * 1deg), transparent 0),
+              radial-gradient(circle closest-side, #FFD9C4 0%, #FFD9C4 20%, #B5E7FA 100%); }
+
+.n3-no, .n3-si { position: absolute; margin: 0; transform: translate(-50%, -50%); text-align: center; white-space: nowrap;
+  font-family: "Space Grotesk", system-ui, sans-serif; font-weight: 700; color: var(--tinta); }
+.n3-si { font-size: 40px; line-height: 44px; }
+.n3-no { font-size: 24px; line-height: 29px; }
+
+#n3-torta1 .n3-no { left: 183px; top: 78px; }   #n3-torta1 .n3-si { left: 126px; top: 176px; }
+#n3-torta2 .n3-no { left: 167px; top: 60px; }   #n3-torta2 .n3-si { left: 133px; top: 179px; }
+#n3-torta3 .n3-no { left: 191px; top: 102px; }  #n3-torta3 .n3-si { left: 106px; top: 172px; }
+
+/* ---------- Pantalla 4 ---------- */
+.n3-azul { font-weight: 700; color: #5F6FB8; }
+
+#n3-t4-caja { left: 29px; top: 37px; width: 1108px; height: 150px;
+  background: rgba(255, 255, 255, .55); box-shadow: 0 4px 30px rgba(120, 110, 200, .06); }
+#n3-titulo4 { position: absolute; left: 80px; top: 29px; white-space: nowrap; }
+
+/* Línea de tiempo: barra con degradé + punta de flecha, reveladas juntas con clip-path */
+#n3-linea { position: absolute; left: 109px; top: 227px; width: 1668px; height: 38px; }
+#n3-linea-barra { position: absolute; left: 0; top: 10px; width: 1648px; height: 18px; border-radius: 9px 0 0 9px;
+  background: linear-gradient(90deg, #A8E6FB 0%, #A8E6FB 12%, #E1D0F1 40%, #F5C9E6 62%, #F5C9E6 100%); }
+#n3-linea-punta { position: absolute; left: 1640px; top: 0; width: 28px; height: 38px; background: #F5C9E6;
+  clip-path: polygon(0 0, 100% 50%, 0 100%, 22% 50%); }
+
+/* Marcador del año (centrado en x = 390) */
+#n3-marcador { position: absolute; left: 293px; top: 205px; width: 194px; height: 183px; }
+#n3-glow { position: absolute; left: 62px; top: 5px; width: 70px; height: 70px; border-radius: 50%;
+  background: radial-gradient(circle, rgba(245, 201, 230, .9) 0%, rgba(245, 201, 230, 0) 70%); }
+#n3-flecha { position: absolute; left: 84px; top: 66px; width: 26px; height: 18px; }
+#n3-pildora { position: absolute; left: 0; top: 97px; width: 194px; height: 86px; border-radius: 43px; background: #fff;
+  box-shadow: 0 8px 36px rgba(120, 110, 200, .14); text-align: center;
+  font-family: "Inter", system-ui, sans-serif; font-weight: 700; font-size: 40px; line-height: 86px; color: var(--tinta); }
+
+#n3-personaje4 { position: absolute; left: 73px; top: 415px; width: 340px; height: 475px; }
+#n3-sombra-personaje4 { left: 90px; top: 915px; width: 300px; height: 52px; }
+
+#n3-tarjeta4 { left: 449px; top: 415px; width: 1225px; height: 547px; }
+#n3-sombra-tarjeta4 { left: 590px; top: 985px; width: 1000px; height: 64px; }
+
+#n3-dif-titulo { position: absolute; left: 8px; top: 73px; width: 1225px; text-align: center; white-space: nowrap; }
+
+.n3-dif-img { position: absolute; width: 225px; height: 223px; }
+#n3-d1 { left: 102px; top: 273px; }
+#n3-d2 { left: 465px; top: 274px; }
+#n3-d3 { left: 828px; top: 275px; }
+
+.n3-cap { position: absolute; width: 400px; text-align: center; white-space: nowrap;
+  font-family: "IBM Plex Mono", ui-monospace, monospace; font-weight: 400; font-size: 32px; line-height: 42px; color: var(--tinta); }
+#n3-c1 { left: 14px;  top: 179px; }
+#n3-c2 { left: 372px; top: 179px; }
+#n3-c3 { left: 741px; top: 179px; }
