@@ -1,0 +1,61 @@
+/* difusion.css: juego de modelos de difusión (3 pantallas). Escenario 1920x1080. */
+
+.d-slide { touch-action: none; user-select: none; -webkit-user-select: none; }
+
+.d-titulo { position: absolute; left: 108px; top: 28px; width: 1700px; }
+
+/* Marco de la imagen: dos capas, la imagen nítida abajo y el ruido (pixelado) arriba */
+.d-marco { position: absolute; left: 108px; top: 170px; width: 1160px; height: 820px; border-radius: 45px; overflow: hidden;
+           background: #fff; box-shadow: 0 12px 56px rgba(120, 110, 200, .14); }
+.d-marco canvas, .d-marco video { position: absolute; left: 0; top: 0; width: 1160px; height: 820px; }
+.d-marco .d-ruido { image-rendering: pixelated; }
+
+/* Columna derecha */
+.d-card { position: absolute; left: 1330px; width: 482px; }
+.d-contador { top: 170px; height: 290px; }
+.d-especial { top: 490px; height: 370px; }
+
+.d-etq { position: absolute; left: 38px; top: 24px; font-size: 34px; font-weight: 600; line-height: 40px; color: var(--tinta); }
+.d-num { position: absolute; left: 34px; top: 58px; font-family: "Space Grotesk", sans-serif; font-weight: 700; font-size: 140px; line-height: 1;
+         color: #5F6FB8; font-variant-numeric: tabular-nums; }
+.d-de  { position: absolute; left: 40px; top: 200px; font-size: 32px; line-height: 36px; color: var(--tinta); }
+.d-barra { position: absolute; left: 38px; right: 38px; top: 248px; height: 20px; border-radius: 10px; background: #E8EAF5; overflow: hidden; }
+.d-barra-fill { height: 100%; width: 0%; border-radius: 10px; background: linear-gradient(90deg, #ACE7FE, #F9CEDF 50%, #FED7C5); }
+
+/* Tarjeta de consigna (pantalla 1) */
+.d-consigna { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; padding: 30px 38px; text-align: center; gap: 14px; }
+.d-consigna .anillo-demo { position: relative; width: 96px; height: 96px; flex: none; border-radius: 50%; border: 6px solid var(--violeta); background: rgba(189,114,255,.14); }
+.d-consigna p { font-size: 32px; line-height: 40px; font-weight: 600; }
+.d-consigna small { font-size: 28px; line-height: 34px; font-weight: 400; color: #5a6082; }
+
+/* Ruido que predice el modelo (pantalla 2) */
+.d-pred { position: absolute; left: 38px; top: 86px; width: 406px; height: 190px; border-radius: 22px; image-rendering: pixelated; background: #8a8a8a; }
+.d-pred-txt { position: absolute; left: 38px; right: 38px; top: 290px; font-size: 28px; line-height: 34px; color: #5a6082; }
+
+/* Prompt (pantalla 3) */
+.d-prompt { position: absolute; left: 38px; right: 38px; top: 86px; font-size: 38px; line-height: 50px; font-weight: 600; color: var(--tinta); }
+.d-caret { display: inline-block; width: 4px; height: 42px; margin-left: 4px; vertical-align: -6px; background: var(--violeta); animation: d-parpadeo 0.9s steps(1) infinite; }
+@keyframes d-parpadeo { 50% { opacity: 0; } }
+
+/* Mascota (placeholder) + burbuja */
+.d-fila { position: absolute; left: 1330px; top: 884px; width: 482px; height: 150px; display: flex; gap: 16px; align-items: center; }
+.d-mascota { width: 140px; height: 140px; flex: none; border-radius: 50%; border: 4px dashed #BFC4E6; display: flex; align-items: center; justify-content: center;
+             text-align: center; font-size: 22px; line-height: 26px; color: #8a90b8; }
+.d-mascota span { display: block; }
+.d-burbuja { position: relative; flex: 1; height: 150px; display: flex; align-items: center; padding: 0 24px; border-radius: 36px; font-size: 30px; line-height: 36px; font-weight: 700; color: var(--tinta); }
+
+/* Aviso de continuar */
+.d-aviso { position: absolute; left: 50%; top: 1008px; transform: translateX(-50%); padding: 12px 36px; border-radius: 999px; white-space: nowrap;
+           background: rgba(189,114,255,.14); color: #8a3fe0; font-size: 30px; font-weight: 600; opacity: 0; visibility: hidden; }
+
+/* Puntero grande (pantalla 1): aro del tamaño exacto del pincel */
+#d-cursor { position: absolute; left: 0; top: 0; width: 152px; height: 152px; margin: -76px 0 0 -76px; opacity: 0; transition: opacity .18s; pointer-events: none; z-index: 30; }
+#d-cursor.vis { opacity: 1; }
+#d-cursor .anillo { position: absolute; inset: 0; border-radius: 50%; border: 6px solid var(--violeta); background: rgba(189,114,255,.12); transition: transform .12s, background .12s; }
+#d-cursor.pres .anillo { transform: scale(.94); background: transparent; }
+#d-cursor canvas { position: absolute; left: 6px; top: 6px; width: 140px; height: 140px; border-radius: 50%; opacity: 0; transition: opacity .12s; image-rendering: pixelated; }
+#d-cursor.pres canvas { opacity: 1; }
+#d-cursor .icono { position: absolute; left: 50%; top: 50%; width: 64px; height: 64px; margin: -32px 0 0 -32px; border-radius: 50%; background: #fff;
+                   box-shadow: 0 4px 16px rgba(80, 60, 160, .25); display: flex; align-items: center; justify-content: center; }
+#d-cursor .icono svg, .d-consigna .anillo-demo svg { width: 38px; height: 38px; }
+.d-consigna .anillo-demo svg { position: absolute; left: 50%; top: 50%; margin: -19px 0 0 -19px; }
