@@ -5,21 +5,33 @@
 <title>Núcleo 3</title>
 <style>
   html, body { height: 100%; margin: 0; }
-  body { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2rem;
-         font-family: "Segoe UI", system-ui, sans-serif; background: #f4f1ec; color: #1b2b34; text-align: center; cursor: none; }
+  body { font-family: "Segoe UI", system-ui, sans-serif; color: #1b2b34; cursor: none; overflow: hidden; background: #111; }
+  section { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2vmin; text-align: center; padding: 6vmin; }
+  section[hidden] { display: none; }
+  #p1 { background: #f4f1ec; } #p2 { background: #e3eef3; } #p3 { background: #efe6f3; }
   h1 { font-size: clamp(2rem, 8vmin, 5rem); }
-  p { font-size: clamp(1rem, 2.6vmin, 1.6rem); color: #4a5b64; }
+  p { font-size: clamp(1rem, 2.6vmin, 1.6rem); color: #4a5b64; max-width: 46ch; }
+  .dato { font-size: clamp(3rem, 14vmin, 9rem); font-weight: 700; }
+  #p1.alt { background: #f2b134; }
+  #lienzo { width: 60vmin; height: 36vmin; border: 3px dashed #4a5b64; border-radius: 12px; display: flex; align-items: center; justify-content: center; }
 </style>
 </head>
 <body>
-  <h1>Contenido del núcleo 3</h1>
-  <p>Reemplazá este archivo por tu núcleo real.<br>Presioná Espacio para simular que terminó.</p>
+  <section id="p1"><h1>Núcleo 3 · Pantalla 1</h1><p>Botón (toque corto): cambia el color de fondo.</p></section>
+  <section id="p2"><h1>Núcleo 3 · Pantalla 2</h1><div class="dato" id="contador">0</div><p>Botón corto: suma 1. Botón largo: vuelve a 0.</p></section>
+  <section id="p3"><h1>Núcleo 3 · Pantalla 3</h1><div id="lienzo"><span id="msg">Acá iría la tableta gráfica</span></div><p>Botón: activa o desactiva el modo dibujo. Siguiente en esta pantalla termina el núcleo.</p></section>
 
+  <script src="../libs/gsap.min.js"></script>
   <script src="../js/puente.js"></script>
   <script>
-    window.addEventListener("keydown", function (e) {
-      if (e.code === "Space") { e.preventDefault(); Infografia.terminar(); }
-    });
+    var n = 0, dibujo = false;
+    Infografia.presentacion([
+      { el: "#p1", interactuar: function (t, el) { el.classList.toggle("alt"); } },
+      { el: "#p2", transicion: "cortina",
+        interactuar: function (tipo) { n = (tipo === "largo") ? 0 : n + 1; document.getElementById("contador").textContent = n; } },
+      { el: "#p3", transicion: "fundido",
+        interactuar: function () { dibujo = !dibujo; document.getElementById("msg").textContent = dibujo ? "Modo dibujo ACTIVO" : "Acá iría la tableta gráfica"; } }
+    ], { transicion: "fundido", duracion: 0.8 });
   </script>
 </body>
 </html>
