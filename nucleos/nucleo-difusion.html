@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Juego: modelos de difusión</title>
+<link rel="stylesheet" href="../libs/fuentes.css">
+<link rel="stylesheet" href="../css/base.css">
+<link rel="stylesheet" href="../css/difusion.css">
+</head>
+<body>
+
+<div id="escenario">
+
+  <!-- ===================== PANTALLA 1: ENSUCIAR (jugable) ===================== -->
+  <section id="d1" class="slide d-slide">
+    <h1 class="titulo d-titulo" id="d1-titulo"></h1>
+    <div class="d-marco" id="d1-marco"></div>
+    <div class="tarjeta d-card d-contador">
+      <div class="d-etq" id="d1-etq"></div>
+      <div class="d-num" id="d1-num">0</div>
+      <div class="d-de" id="d1-de"></div>
+      <div class="d-barra"><div class="d-barra-fill" id="d1-barra"></div></div>
+    </div>
+    <div class="tarjeta d-card d-especial">
+      <div class="d-consigna">
+        <div class="anillo-demo"><svg viewBox="0 0 40 40"><g fill="#BD72FF"><rect x="5" y="8" width="7" height="7" rx="2"/><rect x="18" y="4" width="7" height="7" rx="2"/><rect x="29" y="12" width="7" height="7" rx="2"/><rect x="11" y="20" width="7" height="7" rx="2"/><rect x="24" y="24" width="7" height="7" rx="2"/><rect x="6" y="31" width="5" height="5" rx="1.5"/></g></svg></div>
+        <p id="d1-consigna"></p>
+        <small id="d1-consigna-sub"></small>
+      </div>
+    </div>
+    <div class="d-fila">
+      <div class="d-mascota" id="d1-mascota" data-estado="neutral"><span>Mascota<br></span><span>neutral</span></div>
+      <div class="tarjeta d-burbuja" id="d1-msg"></div>
+    </div>
+    <div class="d-aviso" id="d1-aviso"></div>
+
+    <!-- Puntero grande: aro del tamaño del pincel, con ícono al centro -->
+    <div id="d-cursor">
+      <div class="anillo"></div>
+      <canvas width="35" height="35"></canvas>
+      <div class="icono"><svg viewBox="0 0 40 40"><g fill="#BD72FF"><rect x="5" y="8" width="7" height="7" rx="2"/><rect x="18" y="4" width="7" height="7" rx="2"/><rect x="29" y="12" width="7" height="7" rx="2"/><rect x="11" y="20" width="7" height="7" rx="2"/><rect x="24" y="24" width="7" height="7" rx="2"/><rect x="6" y="31" width="5" height="5" rx="1.5"/></g></svg></div>
+    </div>
+  </section>
+
+  <!-- ===================== PANTALLA 2: RECONSTRUIR ===================== -->
+  <section id="d2" class="slide d-slide">
+    <h1 class="titulo d-titulo" id="d2-titulo"></h1>
+    <div class="d-marco" id="d2-marco"></div>
+    <div class="tarjeta d-card d-contador">
+      <div class="d-etq" id="d2-etq"></div>
+      <div class="d-num" id="d2-num">0</div>
+      <div class="d-de" id="d2-de"></div>
+      <div class="d-barra"><div class="d-barra-fill" id="d2-barra"></div></div>
+    </div>
+    <div class="tarjeta d-card d-especial">
+      <div class="d-etq" id="d2-pred-etq">Ruido predicho</div>
+      <canvas class="d-pred" id="d2-pred" width="101" height="50"></canvas>
+      <div class="d-pred-txt" id="d2-pred-txt"></div>
+    </div>
+    <div class="d-fila">
+      <div class="d-mascota" id="d2-mascota" data-estado="neutral"><span>Mascota<br></span><span>neutral</span></div>
+      <div class="tarjeta d-burbuja" id="d2-msg"></div>
+    </div>
+    <div class="d-aviso" id="d2-aviso"></div>
+  </section>
+
+  <!-- ===================== PANTALLA 3: GENERAR ===================== -->
+  <section id="d3" class="slide d-slide">
+    <h1 class="titulo d-titulo" id="d3-titulo"></h1>
+    <div class="d-marco" id="d3-marco"></div>
+    <div class="tarjeta d-card d-contador">
+      <div class="d-etq" id="d3-etq"></div>
+      <div class="d-num" id="d3-num">0</div>
+      <div class="d-de" id="d3-de"></div>
+      <div class="d-barra"><div class="d-barra-fill" id="d3-barra"></div></div>
+    </div>
+    <div class="tarjeta d-card d-especial">
+      <div class="d-etq" id="d3-prompt-etq"></div>
+      <div class="d-prompt"><span id="d3-prompt"></span><span class="d-caret"></span></div>
+    </div>
+    <div class="d-fila">
+      <div class="d-mascota" id="d3-mascota" data-estado="neutral"><span>Mascota<br></span><span>neutral</span></div>
+      <div class="tarjeta d-burbuja" id="d3-msg"></div>
+    </div>
+    <div class="d-aviso" id="d3-aviso"></div>
+  </section>
+
+</div>
+
+<script src="../libs/gsap.min.js"></script>
+<script src="../libs/SplitText.min.js"></script>
+<script src="../js/puente.js"></script>
+<script src="../js/difusion.js"></script>
+<script>
+  Infografia.escalar("#escenario", 1920, 1080);
+
+  function iniciar() {
+    // Si lo pegás dentro de otro núcleo: Infografia.presentacion([ ...tusPantallas, ...Difusion.pantallas() ])
+    Infografia.presentacion(Difusion.pantallas(), { transicion: "fundido", duracion: 0.8 });
+  }
+  (document.fonts && document.fonts.ready ? document.fonts.ready : Promise.resolve()).then(iniciar);
+</script>
+</body>
+</html>
