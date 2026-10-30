@@ -170,11 +170,11 @@ function pintar3(i) {
         // Estado inicial: todo oculto antes de que la pantalla aparezca
         preparar: function () {
           partido = SplitText.create("#n3-titulo", { type: "words" });
-          gsap.set(partido.words, { autoAlpha: 0, y: 60, rotation: 3 });
-          gsap.set("#n3-personaje", { autoAlpha: 0, scale: 0.85, y: 70, transformOrigin: "50% 100%" });
+          gsap.set(partido.words, { autoAlpha: 0, x: 60 * Infografia.direccion, rotation: 3 });
+          gsap.set("#n3-personaje", { autoAlpha: 0, scale: 0.85, x: 70 * Infografia.direccion, transformOrigin: "50% 100%" });
           gsap.set("#n3-sombra-personaje", { autoAlpha: 0, scaleX: 0.4 });
-          gsap.set("#n3-tarjeta", { autoAlpha: 0, y: 70 });
-          gsap.set("#n3-tarjeta .linea", { autoAlpha: 0, y: 26 });
+          gsap.set("#n3-tarjeta", { autoAlpha: 0, x: 70 * Infografia.direccion });
+          gsap.set("#n3-tarjeta .linea", { autoAlpha: 0, x: 26 * Infografia.direccion });
           gsap.set("#n3-adobe", { autoAlpha: 0, scale: 0.5, rotation: -12 });
           gsap.set("#n3-sombra-tarjeta", { autoAlpha: 0, scaleX: 0.5 });
         },
@@ -182,12 +182,12 @@ function pintar3(i) {
         // Secuencia de entrada
         entrar: function () {
           entrada = gsap.timeline()
-            .to(partido.words, { autoAlpha: 1, y: 0, rotation: 0, duration: 0.7, stagger: 0.08, ease: "back.out(1.5)" })
-            .to("#n3-personaje", { autoAlpha: 1, scale: 1, y: 0, duration: 0.9, ease: "back.out(1.4)" }, "-=0.45")
+            .to(partido.words, { autoAlpha: 1, x: 0, rotation: 0, duration: 0.7, stagger: 0.08, ease: "back.out(1.5)" })
+            .to("#n3-personaje", { autoAlpha: 1, scale: 1, x: 0, duration: 0.9, ease: "back.out(1.4)" }, "-=0.45")
             .to("#n3-sombra-personaje", { autoAlpha: 1, scaleX: 1, duration: 0.8, ease: "power2.out" }, "<0.1")
-            .to("#n3-tarjeta", { autoAlpha: 1, y: 0, duration: 0.8, ease: "power3.out" }, "-=0.5")
+            .to("#n3-tarjeta", { autoAlpha: 1, x: 0, duration: 0.8, ease: "power3.out" }, "-=0.5")
             .to("#n3-sombra-tarjeta", { autoAlpha: 1, scaleX: 1, duration: 0.8, ease: "power2.out" }, "<0.1")
-            .to("#n3-tarjeta .linea", { autoAlpha: 1, y: 0, duration: 0.55, stagger: 0.1, ease: "power2.out" }, "-=0.4")
+            .to("#n3-tarjeta .linea", { autoAlpha: 1, x: 0, duration: 0.55, stagger: 0.1, ease: "power2.out" }, "-=0.4")
             .to("#n3-adobe", { autoAlpha: 1, scale: 1, rotation: 0, duration: 0.8, ease: "back.out(1.8)" }, "-=0.5")
             .add(function () {
               // Movimiento continuo mientras la pantalla está a la vista
@@ -214,38 +214,38 @@ function pintar3(i) {
           document.getElementById("n3-pct").textContent = "0%";
 
           partido2 = SplitText.create("#n3-titulo2", { type: "words" });
-          gsap.set(partido2.words, { autoAlpha: 0, y: 60, rotation: 3 });
-          gsap.set("#n3-t2-caja", { autoAlpha: 0, y: -40 });
-          gsap.set("#n3-personaje2", { autoAlpha: 0, scale: 0.85, y: 70, transformOrigin: "50% 100%" });
+          gsap.set(partido2.words, { autoAlpha: 0, x: 60 * Infografia.direccion, rotation: 3 });
+          gsap.set("#n3-t2-caja", { autoAlpha: 0, x: 40 * Infografia.direccion });
+          gsap.set("#n3-personaje2", { autoAlpha: 0, scale: 0.85, x: 70 * Infografia.direccion, transformOrigin: "50% 100%" });
           gsap.set("#n3-sombra-personaje2", { autoAlpha: 0, scaleX: 0.4 });
-          gsap.set("#n3-tarjeta2", { autoAlpha: 0, y: 70 });
-          gsap.set("#n3-cifra", { autoAlpha: 0, y: 30 });
-          gsap.set("#n3-etiqueta", { autoAlpha: 0, y: 20 });
+          gsap.set("#n3-tarjeta2", { autoAlpha: 0, x: 70 * Infografia.direccion });
+          gsap.set("#n3-cifra", { autoAlpha: 0, x: 30 * Infografia.direccion });
+          gsap.set("#n3-etiqueta", { autoAlpha: 0, x: 20 * Infografia.direccion });
           gsap.set(".n3-icono", { autoAlpha: 0, scale: 0, transformOrigin: "50% 50%" });
           gsap.set("#n3-divisor", { autoAlpha: 0, scaleY: 0, transformOrigin: "50% 0%" });
           gsap.set("#n3-dona-caja", { autoAlpha: 0, scale: 0.8, transformOrigin: "50% 50%" });
           gsap.set("#n3-dona", { "--a": 0 });
-          gsap.set("#n3-texto2 .linea", { autoAlpha: 0, y: 26 });
+          gsap.set("#n3-texto2 .linea", { autoAlpha: 0, x: 26 * Infografia.direccion });
           gsap.set("#n3-sombra-tarjeta2", { autoAlpha: 0, scaleX: 0.5 });
         },
 
         entrar: function () {
           entrada = gsap.timeline()
             // título
-            .to("#n3-t2-caja", { autoAlpha: 1, y: 0, duration: 0.7, ease: "power3.out" }, 0)
-            .to(partido2.words, { autoAlpha: 1, y: 0, rotation: 0, duration: 0.7, stagger: 0.08, ease: "back.out(1.5)" }, 0.15)
+            .to("#n3-t2-caja", { autoAlpha: 1, x: 0, duration: 0.7, ease: "power3.out" }, 0)
+            .to(partido2.words, { autoAlpha: 1, x: 0, rotation: 0, duration: 0.7, stagger: 0.08, ease: "back.out(1.5)" }, 0.15)
             // personaje
-            .to("#n3-personaje2", { autoAlpha: 1, scale: 1, y: 0, duration: 0.9, ease: "back.out(1.4)" }, "-=0.45")
+            .to("#n3-personaje2", { autoAlpha: 1, scale: 1, x: 0, duration: 0.9, ease: "back.out(1.4)" }, "-=0.45")
             .to("#n3-sombra-personaje2", { autoAlpha: 1, scaleX: 1, duration: 0.8, ease: "power2.out" }, "<0.1")
             // tarjeta
-            .to("#n3-tarjeta2", { autoAlpha: 1, y: 0, duration: 0.8, ease: "power3.out" }, "-=0.5")
+            .to("#n3-tarjeta2", { autoAlpha: 1, x: 0, duration: 0.8, ease: "power3.out" }, "-=0.5")
             .to("#n3-sombra-tarjeta2", { autoAlpha: 1, scaleX: 1, duration: 0.8, ease: "power2.out" }, "<0.1")
             // +16.000 con conteo
-            .to("#n3-cifra", { autoAlpha: 1, y: 0, duration: 0.6, ease: "power2.out" }, "-=0.3")
+            .to("#n3-cifra", { autoAlpha: 1, x: 0, duration: 0.6, ease: "power2.out" }, "-=0.3")
             .to(cont, { n: 16000, duration: 1.8, ease: "power2.out", onUpdate: function () {
               document.getElementById("n3-cifra").textContent = "+" + miles(cont.n);
             } }, "<")
-            .to("#n3-etiqueta", { autoAlpha: 1, y: 0, duration: 0.5, ease: "power2.out" }, "-=1.2")
+            .to("#n3-etiqueta", { autoAlpha: 1, x: 0, duration: 0.5, ease: "power2.out" }, "-=1.2")
             // íconos que aparecen de a uno
             .to(".n3-icono", { autoAlpha: 1, scale: 1, duration: 0.55, stagger: 0.1, ease: "back.out(2)" }, "-=0.9")
             // divisor
@@ -257,7 +257,7 @@ function pintar3(i) {
               document.getElementById("n3-pct").textContent = Math.round(cont.p) + "%";
             } }, "<")
             // texto de la derecha
-            .to("#n3-texto2 .linea", { autoAlpha: 1, y: 0, duration: 0.55, stagger: 0.12, ease: "power2.out" }, "-=1.1")
+            .to("#n3-texto2 .linea", { autoAlpha: 1, x: 0, duration: 0.55, stagger: 0.12, ease: "power2.out" }, "-=1.1")
             .add(function () {
               bucles.push(gsap.to("#n3-personaje2", { y: -20, duration: 1.9, ease: "sine.inOut", yoyo: true, repeat: -1 }));
               bucles.push(gsap.to("#n3-sombra-personaje2", { scaleX: 0.82, opacity: 0.6, duration: 1.9, ease: "sine.inOut", yoyo: true, repeat: -1 }));
@@ -281,8 +281,8 @@ function pintar3(i) {
           document.getElementById("n3-copia").innerHTML = document.getElementById("p2").innerHTML;
           gsap.set("#n3-copia #n3-tarjeta2", { transformOrigin: "50% 0%" });
 
-          gsap.set("#n3-tarjeta3", { autoAlpha: 0, y: 320 });
-          gsap.set(".n3-pregunta", { autoAlpha: 0, y: 30 });
+          gsap.set("#n3-tarjeta3", { autoAlpha: 0, x: 320 * Infografia.direccion });
+          gsap.set(".n3-pregunta", { autoAlpha: 0, x: 30 * Infografia.direccion });
           gsap.set(".n3-torta", { autoAlpha: 0, scale: 0.6, rotation: -25, transformOrigin: "50% 50%" });
           cont3.forEach(function (c, i) { c.p = 0; pintar3(i); });
         },
@@ -296,8 +296,8 @@ function pintar3(i) {
             // su sombra baja y pasa a ser la de la card nueva
             .to(s + "#n3-sombra-tarjeta2", { y: 80, x: -30, scaleX: 0.82, duration: 1.1, ease: "power3.inOut" }, 0)
             // entra la card nueva desde abajo
-            .to("#n3-tarjeta3", { autoAlpha: 1, y: 0, duration: 0.9, ease: "power3.out" }, 0.4)
-            .to(".n3-pregunta", { autoAlpha: 1, y: 0, duration: 0.55, stagger: 0.12, ease: "power2.out" }, "-=0.3")
+            .to("#n3-tarjeta3", { autoAlpha: 1, x: 0, duration: 0.9, ease: "power3.out" }, 0.4)
+            .to(".n3-pregunta", { autoAlpha: 1, x: 0, duration: 0.55, stagger: 0.12, ease: "power2.out" }, "-=0.3")
             .addLabel("tortas", "-=0.2")
             .to(".n3-torta", { autoAlpha: 1, scale: 1, rotation: 0, duration: 0.8, stagger: 0.15, ease: "back.out(1.5)" }, "tortas");
 
@@ -324,41 +324,41 @@ function pintar3(i) {
 
         preparar: function () {
           partido4 = SplitText.create("#n3-titulo4", { type: "words" });
-          gsap.set(partido4.words, { autoAlpha: 0, y: 60, rotation: 3 });
-          gsap.set("#n3-t4-caja", { autoAlpha: 0, y: -40 });
+          gsap.set(partido4.words, { autoAlpha: 0, x: 60 * Infografia.direccion, rotation: 3 });
+          gsap.set("#n3-t4-caja", { autoAlpha: 0, x: 40 * Infografia.direccion });
           gsap.set("#n3-linea", { clipPath: "inset(0% 100% 0% 0%)" });
           gsap.set("#n3-glow", { autoAlpha: 0, scale: 0 });
-          gsap.set("#n3-flecha", { autoAlpha: 0, y: -14 });
-          gsap.set("#n3-pildora", { autoAlpha: 0, scale: 0.4, y: 20, transformOrigin: "50% 0%" });
-          gsap.set("#n3-personaje4", { autoAlpha: 0, scale: 0.85, y: 70, transformOrigin: "50% 100%" });
+          gsap.set("#n3-flecha", { autoAlpha: 0, x: 14 * Infografia.direccion });
+          gsap.set("#n3-pildora", { autoAlpha: 0, scale: 0.4, x: 20 * Infografia.direccion, transformOrigin: "50% 0%" });
+          gsap.set("#n3-personaje4", { autoAlpha: 0, scale: 0.85, x: 70 * Infografia.direccion, transformOrigin: "50% 100%" });
           gsap.set("#n3-sombra-personaje4", { autoAlpha: 0, scaleX: 0.4 });
-          gsap.set("#n3-tarjeta4", { autoAlpha: 0, y: 70 });
+          gsap.set("#n3-tarjeta4", { autoAlpha: 0, x: 70 * Infografia.direccion });
           gsap.set("#n3-sombra-tarjeta4", { autoAlpha: 0, scaleX: 0.5 });
-          gsap.set("#n3-dif-titulo", { autoAlpha: 0, y: 26 });
+          gsap.set("#n3-dif-titulo", { autoAlpha: 0, x: 26 * Infografia.direccion });
           gsap.set(".n3-dif-img", { autoAlpha: 0, scale: 0.5, rotation: -8 });
-          gsap.set(".n3-cap", { autoAlpha: 0, y: 20 });
+          gsap.set(".n3-cap", { autoAlpha: 0, x: 20 * Infografia.direccion });
         },
 
         entrar: function () {
           entrada = gsap.timeline()
             // título
-            .to("#n3-t4-caja", { autoAlpha: 1, y: 0, duration: 0.7, ease: "power3.out" }, 0)
-            .to(partido4.words, { autoAlpha: 1, y: 0, rotation: 0, duration: 0.7, stagger: 0.08, ease: "back.out(1.5)" }, 0.15)
+            .to("#n3-t4-caja", { autoAlpha: 1, x: 0, duration: 0.7, ease: "power3.out" }, 0)
+            .to(partido4.words, { autoAlpha: 1, x: 0, rotation: 0, duration: 0.7, stagger: 0.08, ease: "back.out(1.5)" }, 0.15)
             // la línea se dibuja y, al pasar por 2015, aparece el marcador
             .to("#n3-linea", { clipPath: "inset(0% 0% 0% 0%)", duration: 1.4, ease: "power2.inOut" }, 0.5)
             .to("#n3-glow", { autoAlpha: 1, scale: 1, duration: 0.6, ease: "back.out(2)" }, 1.0)
-            .to("#n3-flecha", { autoAlpha: 1, y: 0, duration: 0.4, ease: "power2.out" }, "<0.25")
-            .to("#n3-pildora", { autoAlpha: 1, scale: 1, y: 0, duration: 0.7, ease: "back.out(1.8)" }, "<0.1")
+            .to("#n3-flecha", { autoAlpha: 1, x: 0, duration: 0.4, ease: "power2.out" }, "<0.25")
+            .to("#n3-pildora", { autoAlpha: 1, scale: 1, x: 0, duration: 0.7, ease: "back.out(1.8)" }, "<0.1")
             // personaje
-            .to("#n3-personaje4", { autoAlpha: 1, scale: 1, y: 0, duration: 0.9, ease: "back.out(1.4)" }, "-=0.5")
+            .to("#n3-personaje4", { autoAlpha: 1, scale: 1, x: 0, duration: 0.9, ease: "back.out(1.4)" }, "-=0.5")
             .to("#n3-sombra-personaje4", { autoAlpha: 1, scaleX: 1, duration: 0.8, ease: "power2.out" }, "<0.1")
             // tarjeta
-            .to("#n3-tarjeta4", { autoAlpha: 1, y: 0, duration: 0.8, ease: "power3.out" }, "-=0.5")
+            .to("#n3-tarjeta4", { autoAlpha: 1, x: 0, duration: 0.8, ease: "power3.out" }, "-=0.5")
             .to("#n3-sombra-tarjeta4", { autoAlpha: 1, scaleX: 1, duration: 0.8, ease: "power2.out" }, "<0.1")
-            .to("#n3-dif-titulo", { autoAlpha: 1, y: 0, duration: 0.6, ease: "power2.out" }, "-=0.4")
+            .to("#n3-dif-titulo", { autoAlpha: 1, x: 0, duration: 0.6, ease: "power2.out" }, "-=0.4")
             // las tres imágenes con su texto
             .to(".n3-dif-img", { autoAlpha: 1, scale: 1, rotation: 0, duration: 0.7, stagger: 0.2, ease: "back.out(1.8)" }, "-=0.2")
-            .to(".n3-cap", { autoAlpha: 1, y: 0, duration: 0.5, stagger: 0.2, ease: "power2.out" }, "<0.15")
+            .to(".n3-cap", { autoAlpha: 1, x: 0, duration: 0.5, stagger: 0.2, ease: "power2.out" }, "<0.15")
             .add(function () {
               bucles.push(gsap.to("#n3-personaje4", { y: -20, duration: 1.9, ease: "sine.inOut", yoyo: true, repeat: -1 }));
               bucles.push(gsap.to("#n3-sombra-personaje4", { scaleX: 0.82, opacity: 0.6, duration: 1.9, ease: "sine.inOut", yoyo: true, repeat: -1 }));
@@ -373,7 +373,7 @@ function pintar3(i) {
         salir: detener
       }
 
-    ], { transicion: "fundido", duracion: 0.8 });
+    ], { transicion: "deslizar", duracion: 0.8 });
   }
 
   // Esperamos a que carguen las tipografías para que SplitText mida bien

@@ -2,6 +2,7 @@
 
    El núcleo NUNCA escucha teclas, cámara ni sensores. Solo recibe acciones:
      SIGUIENTE     → pasar a la siguiente pantalla del núcleo
+     ANTERIOR      → volver a la pantalla anterior (desde la primera, vuelve al paso anterior del contenedor)
      INTERACTUAR   → el botón; el efecto depende de la pantalla actual (tipo: "corto" | "largo")
 
    Uso típico (con GSAP cargado antes que este archivo):
@@ -38,10 +39,10 @@
       gsap.set(entra, { autoAlpha: 0, zIndex: 2 });
       return tl.to(entra, { autoAlpha: 1, duration: d, ease: "power1.inOut" });
     },
-    deslizar: function (sale, entra, d) {
-      gsap.set(entra, { xPercent: 100, zIndex: 2 });
+    deslizar: function (sale, entra, d, dir) {
+      gsap.set(entra, { xPercent: 100 * dir, zIndex: 2 });
       return gsap.timeline({ defaults: { duration: d, ease: "power3.inOut" } })
-        .to(sale,  { xPercent: -35, autoAlpha: 0.4 }, 0)
+        .to(sale,  { xPercent: -35 * dir, autoAlpha: 0.4 }, 0)
         .to(entra, { xPercent: 0 }, 0);
     },
     deslizarVertical: function (sale, entra, d) {
@@ -56,11 +57,11 @@
         .to(sale,  { scale: 1.18, autoAlpha: 0 }, 0)
         .to(entra, { scale: 1, autoAlpha: 1 }, d * 0.2);
     },
-    cortina: function (sale, entra, d) {
-      gsap.set(entra, { clipPath: "inset(0% 100% 0% 0%)", zIndex: 2 });
+    cortina: function (sale, entra, d, dir) {
+      gsap.set(entra, { clipPath: dir > 0 ? "inset(0% 100% 0% 0%)" : "inset(0% 0% 0% 100%)", zIndex: 2 });
       return gsap.timeline()
         .to(entra, { clipPath: "inset(0% 0% 0% 0%)", duration: d, ease: "power3.inOut" }, 0)
-        .to(sale,  { xPercent: -8, duration: d, ease: "power3.inOut" }, 0);
+        .to(sale,  { xPercent: -8 * dir, duration: d, ease: "power3.inOut" }, 0);
     },
     ninguna: function () { return gsap.timeline(); }
   };
@@ -71,7 +72,11 @@
 
   var Infografia = {
     transiciones: transiciones,
+    /* 1 = avanzando, -1 = volviendo. Úsenlo en preparar() para que las cosas entren
+       desde la derecha al avanzar y desde la izquierda al volver:  x: 60 * Infografia.direccion */
+    direccion: 1,
     terminar:  function () { enviar("terminado"); },
+    volver:    function () { enviar("volver"); },
     actividad: function () { enviar("actividad"); },
     reiniciar: function () { enviar("reiniciar"); },
 
@@ -132,8 +137,9 @@
         return estado;
       }
 
-      async function mostrar(n) {
+      async function mostrar(n, dir) {
         bloqueado = true;
+        Infografia.direccion = dir || 1;
         var saliente = actual >= 0 ? els[actual] : null;
         var destino = pantallas[n];
 
@@ -149,7 +155,7 @@
           var d = destino.duracion || duracionBase;
           if (hayGsap()) {
             var todo = gsap.timeline();
-            if (transiciones[nombre]) todo.add(transiciones[nombre](saliente, els[n], d), 0);
+            if (transiciones[nombre]) todo.add(transiciones[nombre](saliente, els[n], d, Infografia.direccion), 0);
             if (estadoFlip) todo.add(Flip.from(estadoFlip, { duration: d, ease: destino.flipEase || "power3.inOut", scale: true }), 0);
             await esperarA(todo);
           }
@@ -170,6 +176,9 @@
         if (accion === "SIGUIENTE") {
           if (actual < pantallas.length - 1) mostrar(actual + 1);
           else Infografia.terminar();
+        } else if (accion === "ANTERIOR") {
+          if (actual > 0) mostrar(actual - 1, -1);
+          else Infografia.volver();
         } else if (accion === "INTERACTUAR") {
           var p = pantallas[actual];
           if (p && p.interactuar) p.interactuar((datos && datos.tipo) || "corto", els[actual]);

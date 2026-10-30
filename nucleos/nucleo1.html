@@ -3,507 +3,115 @@
 <head>
 <meta charset="UTF-8">
 <title>Núcleo 1</title>
-<link rel="stylesheet" href="../libs/fuentes.css">
-<link rel="stylesheet" href="../css/nucleo1.css">
+<style>
+  @font-face { font-family: "Press Start 2P"; font-display: block; src: url("../assets/nucleo1/fonts/PressStart2P-Regular.ttf") format("truetype"); }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { height: 100%; overflow: hidden; background: #000; cursor: none; }
+  #escenario { font-family: "Press Start 2P", monospace; background: #000; color: #fff; }
+  .slide { background: #000; }
+  .slide[hidden] { display: none; }
+  .rojo { color: #ff0000; }
+
+  /* ---------- Pantalla 1 ---------- */
+  #n1-cabecera { position: absolute; left: 0; top: 0; width: 1920px; height: 290px; }
+  #n1-titulo {
+    position: absolute; left: 45px; top: 42px;
+    font-size: 80px; line-height: 100px; letter-spacing: -14px; color: #000;
+  }
+  #n1-profe {
+    position: absolute; left: 620px; top: 175px; width: 720px;
+    image-rendering: pixelated;
+  }
+  #n1-caja {
+    position: absolute; left: 112px; top: 722px; width: 1697px; height: 198px;
+    border: 7px solid #fff; background: #000;
+    display: flex; align-items: center; justify-content: center; text-align: center;
+  }
+  #n1-caja p { font-size: 60px; line-height: 76px; }
+</style>
 </head>
 <body>
-
 <div id="escenario">
-  <!--PANTALLAS:INI-->
-<section class="slide" id="p01" style="background:#000000;">
-<div class="txt" style="left:202px;top:751px;width:1523px;height:139px;font-family:Press Start 2P;font-size:60px;line-height:72px;text-align:center;color:#ffffff;">Inserte la memoria <span style="color:#ff0004">UNO</span> color <span style="color:#ff0004">ROJO </span>en la ranura</div>
-<div class="caja" style="left:110px;top:719px;width:1700px;height:204px;border:10px solid #ffffff;"></div>
-<img class="img " src="../assets/nucleo1/img/profesor-puntero.png" alt="" style="left:607px;top:172px;width:713px;height:547px;">
-<img class="img flecha" src="../assets/nucleo1/img/flecha-abajo.svg" alt="" style="left:904px;top:960px;width:112px;height:74px;">
-<div class="txt" style="left:36px;top:37px;width:1664px;height:200px;font-family:Press Start 2P;font-size:80px;line-height:100px;letter-spacing:-14.4px;color:#ffffff;">LA EVOLUCION DE LA GENERACION DE IMAGENES</div>
-</section>
-<section class="slide" id="p02" style="background:#000000;">
-<img class="img " src="../assets/nucleo1/img/ico-adn.svg" alt="" style="left:1692px;top:78px;width:100px;height:150px;">
-<img class="img " src="../assets/nucleo1/img/ico-birrete.svg" alt="" style="left:514px;top:780px;width:60px;height:60px;">
-<div class="caja carga-fondo" style="left:341px;top:632px;width:1358px;height:80px;background:#1a1a22;"></div>
-<div class="caja carga-fill" style="left:374px;top:640px;width:292px;height:64px;background:#abbf15;"></div>
-<div class="caja carga-fill2" style="left:366px;top:644px;width:306px;height:56px;background:#abbf15;"></div>
-<div class="txt" style="left:481px;top:647px;width:1046px;height:50px;font-family:Press Start 2P;font-size:50px;line-height:50px;letter-spacing:-9px;text-align:center;color:#ffffff;">Iniciando</div>
-<div class="txt" style="left:612px;top:785px;width:788px;height:50px;font-family:Press Start 2P;font-size:50px;line-height:50px;letter-spacing:-9px;color:#ffffff;">1.Sistemas expertos</div>
-<div class="txt" style="left:606px;top:279px;width:720px;height:90px;font-family:Press Start 2P;font-size:90px;line-height:90px;color:#8a38f5;">PICTORIA</div>
-</section>
-<section class="slide" id="p03" style="background:#000000;">
-<img class="img mano-gesto" src="../assets/nucleo1/img/mano-tutorial.png" alt="" style="left:120px;top:300px;width:1453px;height:721px;">
-<div class="caja" style="left:80px;top:70px;width:1744px;height:267px;border:10px solid #ffffff;"></div>
-<div class="txt" style="left:80px;top:108px;width:1760px;height:192px;font-family:Press Start 2P;font-size:64px;line-height:64px;text-align:center;color:#ffffff;">Para pasar la informacion haga este gesto con <span style="color:#c6ff34">una mano</span> </div>
-</section>
-<section class="slide" id="p04" style="background:#000000;">
-<div class="txt" style="left:427px;top:108px;width:1102.8px;height:89.07px;font-family:Press Start 2P;font-size:44px;line-height:72px;color:#ffffff;">¡Bienvenida pequeña IA! </div>
-<div class="txt" style="left:433px;top:197px;width:1362px;height:208px;font-family:Press Start 2P;font-size:32px;line-height:64px;color:#ffffff;"><span style="color:#c6ff34">Soy tu profe </span>y voy a guiarte en tu evolución para ser una <span style="color:#8a38f5">IA generativa de imágenes</span> impecable</div>
-<div class="caja" style="left:64px;top:73px;width:1792px;height:377px;border:10px solid #ffffff;"></div>
-<img class="img " src="../assets/nucleo1/img/ico-birrete.svg" alt="" style="left:64px;top:739px;width:146px;height:146px;">
-<div class="caja prog-track" style="left:478px;top:577px;width:965px;height:18px;background:#ffffff;border:3px solid #c6ff34;border-radius:5px;"></div>
-<div class="caja prog-cara2" style="left:475px;top:573px;width:25px;height:25px;background:#8a38f5;"></div>
-<div class="caja prog-cara2" style="left:478px;top:578px;width:5px;height:5px;background:#000000;"></div>
-<div class="caja prog-cara2" style="left:492px;top:578px;width:5px;height:5px;background:#000000;"></div>
-<div class="caja prog-cara2" style="left:479px;top:589px;width:17px;height:3px;background:#000000;"></div>
-<div class="caja tick" style="left:485px;top:555px;width:5px;height:14px;background:#c6ff34;"></div>
-<div class="caja tick2" style="left:958px;top:559px;width:5px;height:14px;background:#c6ff34;"></div>
-<div class="caja tick3" style="left:1436px;top:559px;width:5px;height:14px;background:#c6ff34;"></div>
-<div class="caja" style="left:76px;top:377px;width:254px;height:61px;background:#ffffff;"></div>
-<img class="img " src="../assets/nucleo1/img/ico-loading-0.svg" alt="" style="left:461px;top:493px;width:54px;height:54px;">
-<img class="img " src="../assets/nucleo1/img/profe-cara.png" alt="" style="left:78px;top:150px;width:253px;height:227px;">
-<img class="img boca" src="../assets/nucleo1/img/profe-boca.png" alt="" style="left:78px;top:150px;width:253px;height:227px;">
-<div class="txt" style="left:179px;top:835px;width:472px;height:217px;font-family:Press Start 2P;font-size:350px;line-height:64px;color:#c6ff34;">1</div>
-<div class="txt" style="left:496px;top:746px;width:1424px;height:234px;font-family:Press Start 2P;font-size:62px;line-height:80px;color:#ffffff;">SOS UN <span style="color:#8a38f5">SISTEMA EXPERTO<br></span>UNA <span style="color:#8a38f5">IA RECIEN NACIDA</span></div>
-</section>
-<section class="slide" id="p05" style="background:#000;">
-<div class="caja" style="left:10px;top:266px;width:1900px;height:8px;background:#ffffff;"></div>
-<div class="caja" style="left:236px;top:256px;width:26px;height:26px;background:#8a38f5;"></div>
-<div class="caja" style="left:246.5px;top:270px;width:5px;height:72px;background:#8a38f5;"></div>
-<div class="caja" style="left:1712.5px;top:282px;width:5px;height:72px;background:#8a38f5;"></div>
-<div class="caja" style="left:146px;top:342px;width:209px;height:69px;background:#8a38f5;"></div>
-<div class="caja" style="left:1597px;top:342px;width:235px;height:38px;background:#8a38f5;"></div>
-<div class="caja" style="left:122px;top:516px;width:599px;height:440px;border:10px solid #ffffff;"></div>
-<div class="txt" style="left:78px;top:548px;width:682px;height:69px;font-family:Press Start 2P;font-size:44px;line-height:72px;text-align:center;color:#c6ff34;">DEFINICIÓN</div>
-<img class="img " src="../assets/nucleo1/img/falt-05-1024-4520.png" alt="" style="left:199px;top:828px;width:98px;height:84.01px;">
-<img class="img " src="../assets/nucleo1/img/falt-05-1024-4661.png" alt="" style="left:568px;top:827px;width:80px;height:80px;">
-<img class="img " src="../assets/nucleo1/img/falt-05-1024-4680.png" alt="" style="left:395px;top:833px;width:80px;height:80px;">
-<div class="txt vt323" style="left:180px;top:653px;width:496px;height:150px;font-family:VT323;font-size:52px;line-height:40px;color:#ffffff;"><span style="color:#8a38f5">Programa</span> que imita la lógica y <span style="color:#8a38f5">decisiones de un experto</span> humano.</div>
-<div class="caja" style="left:1166px;top:508px;width:594px;height:440px;border:10px solid #ffffff;"></div>
-<div class="txt" style="left:1121px;top:540px;width:682px;height:69px;font-family:Press Start 2P;font-size:44px;line-height:72px;text-align:center;color:#c6ff34;">FUNCIÓN</div>
-<img class="img " src="../assets/nucleo1/img/falt-05-1024-4594.png" alt="" style="left:1232px;top:835px;width:82.48px;height:82.48px;">
-<img class="img " src="../assets/nucleo1/img/falt-05-1024-4788.png" alt="" style="left:1422px;top:830px;width:80.31px;height:76.47px;">
-<img class="img " src="../assets/nucleo1/img/ico-birrete.svg" alt="" style="left:1628px;top:830px;width:81px;height:81px;">
-<div class="txt" style="left:1213px;top:645px;width:509px;height:150px;font-family:Press Start 2P;font-size:52px;line-height:40px;color:#ffffff;"><span style="font-family:VT323">Esta </span><span style="color:#8a38f5;font-family:VT323">especializado</span><span style="font-family:VT323"> en una sola tarea compleja</span></div>
-<img class="img " src="../assets/nucleo1/img/ico-reloj.svg" alt="" style="left:903px;top:183px;width:62px;height:62px;">
-<div class="caja" style="left:1229px;top:791px;width:496px;height:2px;background:#ffffff;"></div>
-<div class="caja" style="left:1009px;top:213px;width:711px;height:2px;background:#ffffff;"></div>
-<div class="caja" style="left:149px;top:213px;width:711px;height:2px;background:#ffffff;"></div>
-<div class="caja" style="left:172px;top:802px;width:496px;height:2px;background:#ffffff;"></div>
-<img class="img " src="../assets/nucleo1/img/profe-cuerpo.png" alt="" style="left:791px;top:531px;width:362px;height:458px;">
-<div class="caja" style="left:903px;top:737px;width:46px;height:16px;background:#ffffff;"></div>
-<div class="txt" style="left:189px;top:63px;width:1646px;height:72px;font-family:Press Start 2P;font-size:55px;line-height:72px;color:#ffffff;"><span style="color:#c6ff34">¿Qué es un</span> <span style="color:#8a38f5">Sistema Experto?</span></div>
-<div class="txt" style="left:1607px;top:325px;width:225px;height:43px;font-family:Press Start 2P;font-size:22px;line-height:72px;color:#0a0a0a;">Actualidad</div>
-<div class="txt" style="left:149px;top:349px;width:206px;height:99px;font-family:Press Start 2P;font-size:22px;line-height:30px;color:#000000;">Surgen en<br>1960/1970</div>
-</section>
-<section class="slide" id="p06" style="background:#000;">
-<div class="caja" style="left:192px;top:271px;width:834px;height:341px;border:10px solid #ffffff;"></div>
-<div class="txt" style="left:413px;top:490px;width:533px;height:69px;font-family:Press Start 2P;font-size:35px;line-height:40px;color:#8a38f5;">Base de conococimientos</div>
-<div class="txt vt323" style="left:232px;top:302px;width:759px;height:150px;font-family:VT323;font-size:52px;line-height:40px;color:#ffffff;">Imagina un <span style="color:#c6ff34">libro de cocina gigante<br></span>En un sistema experto eso seria tu:</div>
-<div class="caja" style="left:1095px;top:271px;width:675px;height:341px;border:10px solid #ffffff;"></div>
-<div class="txt" style="left:1149px;top:486px;width:545.65px;height:69px;font-family:Press Start 2P;font-size:50px;line-height:40px;color:#8a38f5;"><span style="font-family:VT323">SI</span><span style="color:#ffffff;font-family:VT323"> la mezcla está seca, </span><span style="font-family:VT323">ENTONCES</span><span style="color:#ffffff;font-family:VT323"> agrega dos huevos</span></div>
-<div class="txt vt323" style="left:1128px;top:301px;width:642.3px;height:150px;font-family:VT323;font-size:52px;line-height:40px;color:#ffffff;">Sus páginas están llenas de <span style="color:#c6ff34">reglas</span> del tipo <span style="color:#c6ff34">“si pasa esto, hacé esto”</span></div>
-<div class="caja" style="left:192px;top:644px;width:834px;height:373px;border:10px solid #ffffff;"></div>
-<div class="txt vt323" style="left:258px;top:682.43px;width:746px;height:164.69px;font-family:VT323;font-size:52px;line-height:40px;color:#ffffff;">Alguien <span style="color:#c6ff34">tiene que leer</span> el libro y aplicarlo,ese<span style="color:#c6ff34"> SOS VOS</span></div>
-<div class="txt" style="left:413px;top:898px;width:613px;height:76px;font-family:Press Start 2P;font-size:35px;line-height:40px;color:#8a38f5;">Motor de inferencia</div>
-<img class="img " src="../assets/nucleo1/img/cerebro-libro.png" alt="" style="left:1149px;top:590px;width:621px;height:470px;">
-<img class="img " src="../assets/nucleo1/img/ico-base-conoc.svg" alt="" style="left:240px;top:425px;width:130px;height:108.9px;">
-<img class="img " src="../assets/nucleo1/img/ico-motor-inf.svg" alt="" style="left:240px;top:840px;width:130px;height:143.7px;">
-<div class="caja" style="left:1149px;top:409px;width:546px;height:2px;background:#ffffff;"></div>
-<div class="caja" style="left:253px;top:389px;width:710px;height:2px;background:#ffffff;"></div>
-<div class="caja" style="left:257px;top:801px;width:710px;height:2px;background:#ffffff;"></div>
-<div class="txt" style="left:211px;top:68px;width:1459px;height:72px;font-family:Press Start 2P;font-size:55px;line-height:72px;color:#c6ff34;">Por ejemplo:<span style="color:#ffffff">Un libro de recetas</span></div>
-</section>
-<section class="slide" id="p07" style="background:#0a0a0a;">
-<div class="caja" style="left:92px;top:633px;width:1026px;height:364px;background:#161616;border:10px solid #ffffff;border-radius:5px;"></div>
-<div class="txt vt323" style="left:138px;top:847px;width:443px;height:108px;font-family:VT323;font-size:36px;line-height:36px;color:#ffffff;">No puedes aprender de la experiencia ni mejorar de forma autónoma</div>
-<div class="txt vt323" style="left:237px;top:775px;width:334px;height:40px;font-family:VT323;font-size:52px;line-height:40px;color:#a9d062;">No aprendes sola</div>
-<img class="img " src="../assets/nucleo1/img/ico-database.svg" alt="" style="left:151px;top:769px;width:48px;height:48px;">
-<div class="txt vt323" style="left:648px;top:847px;width:406px;height:72px;font-family:VT323;font-size:36px;line-height:36px;color:#ffffff;">Preguntas no previstas = No saber que responder</div>
-<img class="img " src="../assets/nucleo1/img/ico-database.svg" alt="" style="left:683px;top:775px;width:48px;height:48px;">
-<div class="txt vt323" style="left:781px;top:769px;width:146px;height:40px;font-family:VT323;font-size:52px;line-height:40px;color:#a9d062;">Rigidez</div>
-<img class="img " src="../assets/nucleo1/img/falt-07-1122-4042.png" alt="" style="left:656px;top:768px;width:45.72px;height:43.44px;">
-<div class="caja" style="left:95px;top:734px;width:1020px;height:2px;background:#ffffff;"></div>
-<div class="caja" style="left:604px;top:744px;width:2px;height:250px;background:#ffffff;"></div>
-<div class="txt" style="left:419px;top:664px;width:420px;height:40px;font-family:Press Start 2P;font-size:35px;line-height:40px;color:#8a38f5;">Debilidades</div>
-<div class="caja" style="left:731px;top:198px;width:1026px;height:364px;background:#161616;border:10px solid #ffffff;border-radius:5px;"></div>
-<img class="img " src="../assets/nucleo1/img/ico-database.svg" alt="" style="left:813px;top:326px;width:48px;height:48px;">
-<div class="txt vt323" style="left:897px;top:332px;width:271px;height:40px;font-family:VT323;font-size:52px;line-height:40px;color:#ffffff;">Transparencia</div>
-<div class="txt vt323" style="left:777px;top:412px;width:443px;height:72px;font-family:VT323;font-size:36px;line-height:36px;color:#ffffff;">Reglas claras = Entender fácil el razonamiento</div>
-<div class="txt vt323" style="left:1287px;top:412px;width:406px;height:72px;font-family:VT323;font-size:36px;line-height:36px;color:#ffffff;">Mismos datos e instrucciones = Mismas respuestas</div>
-<img class="img " src="../assets/nucleo1/img/ico-database.svg" alt="" style="left:1299px;top:329px;width:48px;height:48px;">
-<div class="txt vt323" style="left:1383px;top:335px;width:250px;height:40px;font-family:VT323;font-size:52px;line-height:40px;color:#ffffff;">Consistencia</div>
-<div class="caja" style="left:734px;top:299px;width:1020px;height:2px;background:#ffffff;"></div>
-<div class="caja" style="left:1243px;top:309px;width:2px;height:250px;background:#ffffff;"></div>
-<div class="txt" style="left:1065px;top:231px;width:357px;height:40px;font-family:Press Start 2P;font-size:35px;line-height:40px;color:#8a38f5;">Fortalezas</div>
-<img class="img " src="../assets/nucleo1/img/ico-thumbs-up.svg" alt="" style="left:95px;top:210px;width:247px;height:262px;">
-<img class="img " src="../assets/nucleo1/img/ico-thumbs-down.svg" alt="" style="left:1508px;top:685px;width:249px;height:275.24px;">
-<div class="txt" style="left:88px;top:67px;width:1512px;height:60px;font-family:Press Start 2P;font-size:60px;line-height:60px;color:#ffffff;">Fortalezas vs Debilidades</div>
-</section>
-<section class="slide" id="p08" style="background:#0a0a0a;">
-<img class="img " src="../assets/nucleo1/img/brazo-dibujo.png" alt="" style="left:1013.5px;top:715.01px;width:264.26px;height:181.38px;">
-<div class="txt vt323" style="left:1009.29px;top:920px;width:273.12px;height:80.39px;font-family:VT323;font-size:40px;line-height:40px;color:#ffffff;">Dibujaba las reglas</div>
-<img class="img " src="../assets/nucleo1/img/monitor-reglas.png" alt="" style="left:1017.5px;top:270.01px;width:264.26px;height:181.38px;">
-<div class="txt vt323" style="left:1013.29px;top:475px;width:273.06px;height:40.39px;font-family:VT323;font-size:40px;line-height:40px;color:#ffffff;">Seguía las reglas</div>
-<img class="img " src="../assets/nucleo1/img/cuaderno-reglas.png" alt="" style="left:110px;top:250px;width:635px;height:780px;">
-<div class="txt vt323" style="left:212px;top:738px;width:432px;height:160px;font-family:VT323;font-size:40px;line-height:40px;color:#000000;">Regla3: <span style="color:#8a38f5">SI</span> <span style="color:#8a38f5">terminó una figura</span>, <span style="color:#8a38f5">ENTONCES</span> levantar la pluma y empezar en otro punto.</div>
-<img class="img " src="../assets/nucleo1/img/dibujo-caos.png" alt="" style="left:1510px;top:515px;width:272.28px;height:197.39px;">
-<div class="txt vt323" style="left:1121px;top:550px;width:50.08px;height:128.07px;font-family:VT323;font-size:128px;line-height:128px;color:#ffffff;">+</div>
-<div class="txt" style="left:94px;top:71px;width:1688px;height:120px;font-family:Press Start 2P;font-size:60px;line-height:60px;color:#ffffff;">¿Y si el libro de recetas fuera de dibujo?</div>
-<div class="txt vt323" style="left:211px;top:345px;width:432px;height:120px;font-family:VT323;font-size:40px;line-height:40px;color:#000000;">Regla1: <span style="color:#8a38f5">SI</span> la línea <span style="color:#8a38f5">llega al borde</span>, <span style="color:#8a38f5">ENTONCES</span> girar 90°</div>
-<div class="txt vt323" style="left:211px;top:542px;width:432px;height:120px;font-family:VT323;font-size:40px;line-height:40px;color:#000000;">Regla2: <span style="color:#8a38f5">SI</span> la <span style="color:#8a38f5">forma quedó abierta</span>, <span style="color:#8a38f5">ENTONCES</span> cerrarla uniendo sus extremos.</div>
-</section>
-<section class="slide" id="p09" style="background:#0a0a0a;">
-<div class="caja" style="left:232px;top:333px;width:1456px;height:683px;background:#ffffff;border:12px solid #d7f205;"></div>
-<img class="img mano-tableta-anim" src="../assets/nucleo1/img/mano-tableta.svg" alt="" style="left:621px;top:419px;width:678.14px;height:511.09px;">
-<div class="txt" style="left:502px;top:122px;width:1216.64px;height:149.7px;font-family:Press Start 2P;font-size:30px;line-height:72px;color:#ffffff;">Toma <span style="color:#8a38f5">el lapiz </span>y dibuja sobre <span style="color:#8a38f5">la tableta</span>, lo que hagas se vera <span style="color:#8a38f5">en esta pantalla</span></div>
-<div class="txt vt323" style="left:501.75px;top:57.2px;width:1383.58px;height:56.17px;font-family:VT323;font-size:52px;line-height:40px;color:#c6ff34;">Te voy a demostrar porque ser especificos.</div>
-<div class="caja" style="left:183px;top:33px;width:1612.68px;height:280px;border:10px solid #ffffff;"></div>
-<div class="caja" style="left:210px;top:240px;width:230.27px;height:45.31px;background:#ffffff;"></div>
-<img class="img " src="../assets/nucleo1/img/profe-cara.png" alt="" style="left:223px;top:57px;width:204px;height:183px;">
-<img class="img boca" src="../assets/nucleo1/img/profe-boca.png" alt="" style="left:223px;top:57px;width:204px;height:183.05px;">
-</section>
-<section class="slide" id="p10" style="background:#0a0a0a;">
-<div class="txt" style="left:502px;top:122px;width:1216.64px;height:149.7px;font-family:Press Start 2P;font-size:30px;line-height:72px;color:#ffffff;">Toma <span style="color:#8a38f5">el lapiz </span>y dibuja sobre <span style="color:#8a38f5">la tableta</span>, lo que hagas se vera <span style="color:#8a38f5">en esta pantalla</span></div>
-<div class="txt vt323" style="left:501.75px;top:57.2px;width:1383.58px;height:56.17px;font-family:VT323;font-size:52px;line-height:40px;color:#c6ff34;">Te voy a demostrar porque ser especificos.</div>
-<div class="caja" style="left:183px;top:33px;width:1612.68px;height:280px;border:10px solid #ffffff;"></div>
-<div class="caja" style="left:210px;top:240px;width:230.27px;height:45.31px;background:#ffffff;"></div>
-<div class="caja" style="left:232px;top:341px;width:1456px;height:683px;background:#ffffff;border:12px solid #d7f205;"></div>
-<div class="caja" style="left:369px;top:651px;width:62px;height:64px;background:#8a38f5;border-radius:99px;"></div>
-<div class="caja" style="left:1460px;top:651px;width:62px;height:64px;background:#8a38f5;border-radius:99px;"></div>
-<img class="img " src="../assets/nucleo1/img/profe-cara.png" alt="" style="left:223px;top:57px;width:204px;height:183px;">
-<img class="img boca" src="../assets/nucleo1/img/profe-boca.png" alt="" style="left:223px;top:57px;width:204px;height:183.05px;">
-</section>
-<section class="slide" id="p11" style="background:#0a0a0a;">
-<div class="txt" style="left:502px;top:98px;width:1240px;height:205px;font-family:Press Start 2P;font-size:30px;line-height:72px;color:#ffffff;">Hace una <span style="color:#8a38f5">línea zigzagueante </span>entre estos <span style="color:#8a38f5">dos puntos</span> y cuando termines te mostraré lo que <span style="color:#8a38f5">realmente quería</span> que hicieras<br></div>
-<div class="txt vt323" style="left:501.75px;top:57.2px;width:1383.58px;height:56.17px;font-family:VT323;font-size:52px;line-height:40px;color:#c6ff34;">Te voy a demostrar porque ser especificos.</div>
-<div class="caja" style="left:183px;top:33px;width:1612.68px;height:280px;border:10px solid #ffffff;"></div>
-<div class="caja" style="left:210px;top:240px;width:230.27px;height:45.31px;background:#ffffff;"></div>
-<div class="caja" style="left:232px;top:341px;width:1456px;height:683px;background:#ffffff;border:12px solid #d7f205;"></div>
-<div class="caja" style="left:369px;top:651px;width:62px;height:64px;background:#8a38f5;border-radius:99px;"></div>
-<div class="caja" style="left:1460px;top:651px;width:62px;height:64px;background:#8a38f5;border-radius:99px;"></div>
-<div class="caja" style="left:398px;top:462.24px;width:225.6px;height:402.76px;background:#000000;"></div>
-<div class="caja" style="left:623.6px;top:426.6px;width:163.2px;height:438.4px;background:#000000;"></div>
-<div class="caja" style="left:786.8px;top:426.6px;width:100.8px;height:521.6px;background:#000000;"></div>
-<div class="caja" style="left:887.6px;top:386.6px;width:321.6px;height:561.6px;background:#000000;"></div>
-<div class="caja" style="left:1209.2px;top:386.6px;width:59.2px;height:556.8px;background:#000000;"></div>
-<div class="caja" style="left:1271.6px;top:677.8px;width:211.2px;height:260.8px;background:#000000;"></div>
-<img class="img " src="../assets/nucleo1/img/profe-cara.png" alt="" style="left:223px;top:57px;width:204px;height:183px;">
-<img class="img boca" src="../assets/nucleo1/img/profe-boca.png" alt="" style="left:223px;top:57px;width:204px;height:183.05px;">
-</section>
-<section class="slide" id="p12" style="background:#0a0a0a;">
-<div class="caja" style="left:801px;top:48px;width:1044px;height:467px;background:#ffffff;border:12px solid #d7f205;"></div>
-<div class="caja" style="left:898px;top:260px;width:43px;height:44px;background:#8a38f5;border-radius:99px;"></div>
-<div class="caja" style="left:1694px;top:260px;width:43px;height:44px;background:#8a38f5;border-radius:99px;"></div>
-<div class="caja" style="left:2029px;top:358px;width:62px;height:64px;background:#8a38f5;border-radius:99px;"></div>
-<div class="caja" style="left:1840.6px;top:384.8px;width:211.2px;height:260.8px;background:#000000;"></div>
-<div class="caja" style="left:940px;top:139px;width:156px;height:280px;background:#000000;"></div>
-<div class="caja" style="left:1096px;top:115px;width:115px;height:304px;background:#000000;"></div>
-<div class="caja" style="left:1211px;top:115px;width:69px;height:362px;background:#000000;"></div>
-<div class="caja" style="left:1280px;top:87px;width:223px;height:390px;background:#000000;"></div>
-<div class="caja" style="left:1503px;top:87px;width:42px;height:387px;background:#000000;"></div>
-<div class="caja" style="left:1548px;top:290px;width:146px;height:181px;background:#000000;"></div>
-<div class="caja" style="left:84px;top:564px;width:1044px;height:467px;background:#ffffff;border:12px solid #d7f205;"></div>
-<img class="img " src="../assets/nucleo1/img/falt-12-1153-831.png" alt="" style="left:181px;top:776px;width:43px;height:44px;">
-<div class="caja" style="left:977px;top:776px;width:43px;height:44px;background:#8a38f5;border-radius:99px;"></div>
-<div class="caja" style="left:1312px;top:874px;width:62px;height:64px;background:#8a38f5;border-radius:99px;"></div>
-<div class="caja" style="left:1123.6px;top:900.8px;width:211.2px;height:260.8px;background:#000000;"></div>
-<div class="caja" style="left:198px;top:564px;width:800.73px;height:412.02px;background:#000000;"></div>
-<div class="caja" style="left:84px;top:48px;width:625px;height:261px;border:10px solid #ffffff;"></div>
-<div class="caja" style="left:101px;top:247px;width:178px;height:45px;background:#ffffff;"></div>
-<div class="txt vt323" style="left:346px;top:115px;width:346px;height:56px;font-family:VT323;font-size:52px;line-height:40px;color:#c6ff34;">No se parecen, pero puede ser mejor.</div>
-<img class="img " src="../assets/nucleo1/img/profe-cara.png" alt="" style="left:101px;top:64px;width:204px;height:183px;">
-<img class="img boca" src="../assets/nucleo1/img/profe-boca.png" alt="" style="left:101px;top:64px;width:204px;height:183.05px;">
-<div class="txt" style="left:108px;top:382px;width:812px;height:60px;font-family:Press Start 2P;font-size:60px;line-height:60px;color:#ffffff;">El tuyo</div>
-<div class="txt" style="left:1312px;top:739px;width:549px;height:120px;font-family:Press Start 2P;font-size:60px;line-height:60px;color:#ffffff;">Lo que yo esperaba</div>
-</section>
-<section class="slide" id="p13" style="background:#0a0a0a;">
-<div class="txt" style="left:502px;top:101px;width:1270px;height:288px;font-family:Press Start 2P;font-size:30px;line-height:72px;color:#ffffff;">Dibuja una <span style="color:#8a38f5">línea recta</span> entre el <span style="color:#ff0000">punto</span> <span style="color:#ff0004">A</span> y <span style="color:#2672f2">B</span>, otra línea recta del <span style="color:#2672f2">punto B</span> a <span style="color:#a9d062">C </span>y otra linea recta final entre <span style="color:#a9d062">C</span> y <span style="color:#fed003">D<br></span></div>
-<div class="txt vt323" style="left:502px;top:58px;width:496px;height:56px;font-family:VT323;font-size:52px;line-height:40px;color:#c6ff34;">Toma el lápiz de nuevo.</div>
-<div class="caja" style="left:183px;top:33px;width:1612.68px;height:280px;border:10px solid #ffffff;"></div>
-<div class="caja" style="left:210px;top:240px;width:230.27px;height:45.31px;background:#ffffff;"></div>
-<div class="caja" style="left:232px;top:341px;width:1456px;height:683px;background:#ffffff;border:12px solid #d7f205;"></div>
-<div class="caja punto" style="left:369px;top:651px;width:62px;height:64px;background:#ff0004;border-radius:99px;"></div>
-<div class="txt" style="left:388px;top:651px;width:43px;height:52px;font-family:Press Start 2P;font-size:30px;line-height:72px;color:#ffffff;">A<br></div>
-<div class="caja punto" style="left:1085px;top:427px;width:62px;height:64px;background:#a9d062;border-radius:99px;"></div>
-<div class="txt" style="left:1104px;top:427px;width:43px;height:52px;font-family:Press Start 2P;font-size:30px;line-height:72px;color:#ffffff;">C</div>
-<div class="caja" style="left:549px;top:480px;width:540px;height:424px;background:#000000;"></div>
-<div class="caja punto" style="left:493px;top:893px;width:62px;height:64px;background:#2672f2;border-radius:99px;"></div>
-<div class="txt" style="left:512px;top:893px;width:43px;height:52px;font-family:Press Start 2P;font-size:30px;line-height:72px;color:#ffffff;">B</div>
-<div class="caja punto" style="left:493px;top:1177px;width:62px;height:64px;background:#8a38f5;border-radius:99px;"></div>
-<div class="caja punto" style="left:493px;top:1177px;width:62px;height:64px;background:#8a38f5;border-radius:99px;"></div>
-<div class="caja punto" style="left:1460px;top:651px;width:62px;height:64px;background:#fed003;border-radius:99px;"></div>
-<div class="txt" style="left:1479px;top:651px;width:43px;height:52px;font-family:Press Start 2P;font-size:30px;line-height:72px;color:#ffffff;">D</div>
-<div class="caja" style="left:549px;top:478.5px;width:542.5px;height:428px;background:#000000;"></div>
-<div class="caja" style="left:1142px;top:475px;width:322.5px;height:192px;background:#000000;"></div>
-<div class="caja" style="left:416px;top:715px;width:95.5px;height:186px;background:#000000;"></div>
-<img class="img " src="../assets/nucleo1/img/profe-cara.png" alt="" style="left:227px;top:58px;width:204px;height:183px;">
-<img class="img boca" src="../assets/nucleo1/img/profe-boca.png" alt="" style="left:227px;top:58px;width:204px;height:183.05px;">
-</section>
-<section class="slide" id="p14" style="background:#0a0a0a;">
-<div class="txt" style="left:502px;top:101px;width:1270px;height:288px;font-family:Press Start 2P;font-size:30px;line-height:72px;color:#ffffff;">Dibuja una <span style="color:#8a38f5">línea recta</span> entre el <span style="color:#ff0000">punto</span> <span style="color:#ff0004">A</span> y <span style="color:#2672f2">B</span>, otra línea recta del <span style="color:#2672f2">punto B</span> a <span style="color:#a9d062">C </span>y otra linea recta final entre <span style="color:#a9d062">C</span> y <span style="color:#fed003">D<br></span></div>
-<div class="txt vt323" style="left:502px;top:58px;width:496px;height:56px;font-family:VT323;font-size:52px;line-height:40px;color:#c6ff34;">Toma el lápiz de nuevo.</div>
-<div class="caja" style="left:183px;top:33px;width:1612.68px;height:280px;border:10px solid #ffffff;"></div>
-<div class="caja" style="left:210px;top:240px;width:230.27px;height:45.31px;background:#ffffff;"></div>
-<div class="caja" style="left:232px;top:341px;width:1456px;height:683px;background:#ffffff;border:12px solid #d7f205;"></div>
-<div class="caja" style="left:493px;top:1177px;width:62px;height:64px;background:#8a38f5;border-radius:99px;"></div>
-<div class="caja" style="left:493px;top:1177px;width:62px;height:64px;background:#8a38f5;border-radius:99px;"></div>
-<div class="caja" style="left:296px;top:627px;width:71px;height:68px;background:#ff0004;border-radius:99px;"></div>
-<div class="txt" style="left:320px;top:629px;width:43px;height:52px;font-family:Press Start 2P;font-size:30px;line-height:72px;color:#ffffff;">A<br></div>
-<div class="caja" style="left:1121px;top:385px;width:71px;height:68px;background:#a9d062;border-radius:99px;"></div>
-<div class="txt" style="left:1145px;top:387px;width:43px;height:52px;font-family:Press Start 2P;font-size:30px;line-height:72px;color:#ffffff;">C</div>
-<div class="caja" style="left:438px;top:888px;width:71px;height:68px;background:#2672f2;border-radius:99px;"></div>
-<div class="txt" style="left:462px;top:890px;width:43px;height:52px;font-family:Press Start 2P;font-size:30px;line-height:72px;color:#ffffff;">B</div>
-<div class="caja" style="left:1552px;top:627px;width:72px;height:68px;background:#fed003;border-radius:99px;"></div>
-<div class="txt" style="left:1576px;top:629px;width:43px;height:52px;font-family:Press Start 2P;font-size:30px;line-height:72px;color:#ffffff;">D</div>
-<div class="caja" style="left:354px;top:669px;width:129px;height:228px;background:#000000;"></div>
-<div class="caja" style="left:512px;top:426px;width:623px;height:479px;background:#000000;"></div>
-<div class="caja" style="left:1187px;top:439px;width:372px;height:207px;background:#000000;"></div>
-<img class="img " src="../assets/nucleo1/img/profe-cara.png" alt="" style="left:223px;top:57px;width:204px;height:183px;">
-<img class="img boca" src="../assets/nucleo1/img/profe-boca.png" alt="" style="left:223px;top:57px;width:204px;height:183.05px;">
-</section>
-<section class="slide" id="p15" style="background:#0a0a0a;">
-<div class="caja" style="left:801px;top:48px;width:1044px;height:467px;background:#ffffff;border:12px solid #d7f205;"></div>
-<div class="caja" style="left:2029px;top:358px;width:62px;height:64px;background:#8a38f5;border-radius:99px;"></div>
-<div class="caja" style="left:1840.6px;top:384.8px;width:211.2px;height:260.8px;background:#000000;"></div>
-<div class="caja" style="left:84px;top:564px;width:1044px;height:467px;background:#ffffff;border:12px solid #d7f205;"></div>
-<div class="caja" style="left:1312px;top:874px;width:62px;height:64px;background:#8a38f5;border-radius:99px;"></div>
-<div class="caja" style="left:1123.6px;top:900.8px;width:211.2px;height:260.8px;background:#000000;"></div>
-<img class="img " src="../assets/nucleo1/img/grupo-79.svg" alt="" style="left:294px;top:592px;width:732.15px;height:363px;">
-<div class="caja" style="left:851px;top:248px;width:51px;height:49px;background:#ff0004;border-radius:99px;"></div>
-<div class="txt" style="left:865px;top:241px;width:43px;height:52px;font-family:Press Start 2P;font-size:30px;line-height:72px;color:#ffffff;">A<br></div>
-<div class="caja" style="left:1442px;top:75px;width:51px;height:49px;background:#a9d062;border-radius:99px;"></div>
-<div class="txt" style="left:1456px;top:68px;width:43px;height:52px;font-family:Press Start 2P;font-size:30px;line-height:72px;color:#ffffff;">C</div>
-<div class="caja" style="left:953px;top:435px;width:51px;height:49px;background:#2672f2;border-radius:99px;"></div>
-<div class="txt" style="left:967px;top:428px;width:43px;height:52px;font-family:Press Start 2P;font-size:30px;line-height:72px;color:#ffffff;">B</div>
-<div class="caja" style="left:1751px;top:248px;width:51px;height:49px;background:#fed003;border-radius:99px;"></div>
-<div class="txt" style="left:1765px;top:241px;width:43px;height:52px;font-family:Press Start 2P;font-size:30px;line-height:72px;color:#ffffff;">D</div>
-<div class="caja" style="left:893px;top:279px;width:92px;height:163px;background:#000000;"></div>
-<div class="caja" style="left:1006px;top:104px;width:446px;height:343px;background:#000000;"></div>
-<div class="caja" style="left:1489px;top:114px;width:267px;height:148px;background:#000000;"></div>
-<div class="caja" style="left:67px;top:48px;width:625px;height:261px;border:10px solid #ffffff;"></div>
-<div class="caja" style="left:84px;top:247px;width:178px;height:45px;background:#ffffff;"></div>
-<div class="txt vt323" style="left:320px;top:132px;width:346px;height:56px;font-family:VT323;font-size:52px;line-height:40px;color:#c6ff34;">Mejoro muchisimo<br>o no?</div>
-<div class="caja" style="left:155px;top:760px;width:48px;height:48px;background:#ff0004;border-radius:99px;"></div>
-<div class="txt" style="left:167px;top:752px;width:43px;height:52px;font-family:Press Start 2P;font-size:30px;line-height:72px;color:#ffffff;">A<br></div>
-<div class="caja" style="left:194px;top:801px;width:84px;height:156px;background:#000000;"></div>
-<div class="caja" style="left:715px;top:592px;width:48px;height:48px;background:#a9d062;border-radius:99px;"></div>
-<div class="txt" style="left:727px;top:584px;width:43px;height:52px;font-family:Press Start 2P;font-size:30px;line-height:72px;color:#ffffff;">C</div>
-<div class="caja" style="left:252px;top:941px;width:48px;height:48px;background:#2672f2;border-radius:99px;"></div>
-<div class="txt" style="left:264px;top:933px;width:43px;height:52px;font-family:Press Start 2P;font-size:30px;line-height:72px;color:#ffffff;">B</div>
-<div class="caja" style="left:1008px;top:760px;width:48px;height:48px;background:#fed003;border-radius:99px;"></div>
-<div class="txt" style="left:1020px;top:752px;width:43px;height:52px;font-family:Press Start 2P;font-size:30px;line-height:72px;color:#ffffff;">D</div>
-<img class="img " src="../assets/nucleo1/img/profe-cara.png" alt="" style="left:84px;top:64px;width:204px;height:183px;">
-<img class="img boca" src="../assets/nucleo1/img/profe-boca.png" alt="" style="left:84px;top:64px;width:204px;height:183.05px;">
-<div class="txt" style="left:108px;top:367px;width:812px;height:60px;font-family:Press Start 2P;font-size:60px;line-height:60px;color:#ffffff;">El tuyo</div>
-<div class="txt" style="left:1312px;top:739px;width:549px;height:120px;font-family:Press Start 2P;font-size:60px;line-height:60px;color:#ffffff;">Lo que yo esperaba</div>
-</section>
-<section class="slide" id="p16" style="background:#0a0a0a;">
-<div class="caja" style="left:758px;top:271px;width:1009px;height:683px;background:#0a0a0a;border:10px solid #ffffff;border-radius:5px;"></div>
-<img class="img " src="../assets/nucleo1/img/harold-cohen.png" alt="" style="left:807px;top:307px;width:373px;height:611px;">
-<div class="txt" style="left:1221.99px;top:331px;width:514.02px;height:40px;font-family:Press Start 2P;font-size:40px;line-height:40px;text-align:center;color:#c6ff34;">Harold Cohen</div>
-<div class="caja" style="left:1221.99px;top:405.5px;width:514.02px;height:3px;background:#ffffff;"></div>
-<img class="img " src="../assets/nucleo1/img/ico-paleta.svg" alt="" style="left:1234.5px;top:443px;width:48px;height:48px;">
-<div class="txt vt323" style="left:1290.5px;top:449px;width:274px;height:36px;font-family:VT323;font-size:36px;line-height:36px;color:#ffffff;">Comenzó como <span style="color:#8a38f5">pintor</span></div>
-<img class="img " src="../assets/nucleo1/img/ico-computadora.svg" alt="" style="left:1234.5px;top:507px;width:48px;height:48px;">
-<div class="txt vt323" style="left:1290.5px;top:513px;width:433px;height:36px;font-family:VT323;font-size:36px;line-height:36px;color:#ffffff;">Se interesó por la <span style="color:#8a38f5">computación</span></div>
-<img class="img " src="../assets/nucleo1/img/ico-tortuga.svg" alt="" style="left:1234.5px;top:571px;width:48px;height:48px;">
-<div class="txt vt323" style="left:1290.5px;top:577px;width:173px;height:36px;font-family:VT323;font-size:36px;line-height:36px;color:#ffffff;">Creó a <span style="color:#8a38f5">AARON</span></div>
-<div class="caja" style="left:1221.99px;top:653.5px;width:514.02px;height:3px;background:#ffffff;"></div>
-<div class="txt vt323" style="left:1222px;top:691px;width:514px;height:72px;font-family:VT323;font-size:36px;line-height:36px;color:#ffffff;">“AARON No copia mi estilo, sino que sigue las reglas que le enseñe”</div>
-<div class="caja" style="left:1221.99px;top:797.5px;width:514.02px;height:3px;background:#ffffff;"></div>
-<div class="caja" style="left:1308px;top:835px;width:342px;height:60px;border:2px solid #ffffff;border-radius:5px;"></div>
-<div class="txt vt323" style="left:1320px;top:847px;width:318px;height:36px;font-family:VT323;font-size:36px;line-height:36px;color:#c6ff34;">+40 Años de desarrollo</div>
-<img class="img " src="../assets/nucleo1/img/profe-cuerpo.png" alt="" style="left:198px;top:337px;width:496px;height:606px;">
-<div class="caja" style="left:353px;top:609px;width:62px;height:18px;background:#ffffff;"></div>
-<div class="txt" style="left:128px;top:79px;width:1792px;height:192px;font-family:Press Start 2P;font-size:64px;line-height:64px;color:#ffffff;">La primer persona en usar <span style="color:#8a38f5">sistemas expertos para  imagenes</span></div>
-</section>
-<section class="slide" id="p17" style="background:#0a0a0a;">
-<img class="img " src="../assets/nucleo1/img/obras-1.png" alt="" style="left:471px;top:802px;width:262px;height:189px;">
-<img class="img " src="../assets/nucleo1/img/obras-2.png" alt="" style="left:1339px;top:744px;width:335px;height:229px;">
-<img class="img " src="../assets/nucleo1/img/obras-3.png" alt="" style="left:847px;top:744px;width:351px;height:247px;">
-<img class="img " src="../assets/nucleo1/img/obras-4.png" alt="" style="left:172px;top:807px;width:279px;height:162.17px;">
-<div class="caja" style="left:10px;top:266px;width:1900px;height:8px;background:#ffffff;"></div>
-<div class="caja" style="left:73px;top:261px;width:26px;height:26px;background:#8a38f5;"></div>
-<div class="caja" style="left:83.5px;top:277px;width:5px;height:72px;background:#8a38f5;"></div>
-<div class="caja" style="left:934px;top:257px;width:26px;height:26px;background:#8a38f5;"></div>
-<div class="caja" style="left:944.5px;top:273px;width:5px;height:72px;background:#8a38f5;"></div>
-<div class="caja" style="left:83.5px;top:409px;width:5px;height:169px;background:#8a38f5;"></div>
-<div class="caja" style="left:947.5px;top:372px;width:5px;height:125px;background:#8a38f5;"></div>
-<div class="caja" style="left:1429.51px;top:378px;width:5px;height:125px;background:#8a38f5;"></div>
-<div class="caja" style="left:86px;top:575.5px;width:52px;height:5px;background:#8a38f5;"></div>
-<div class="caja" style="left:1835.5px;top:282px;width:5px;height:72px;background:#8a38f5;"></div>
-<div class="caja" style="left:22px;top:337px;width:209px;height:69px;background:#8a38f5;"></div>
-<div class="caja" style="left:847px;top:326px;width:209px;height:46px;background:#8a38f5;"></div>
-<div class="caja" style="left:1327px;top:333px;width:209px;height:45px;background:#8a38f5;"></div>
-<div class="caja" style="left:1669px;top:340px;width:235px;height:38px;background:#8a38f5;"></div>
-<img class="img " src="../assets/nucleo1/img/ico-reloj.svg" alt="" style="left:970px;top:183px;width:62px;height:62px;">
-<div class="caja" style="left:1076px;top:213px;width:711px;height:2px;background:#ffffff;"></div>
-<div class="caja" style="left:149px;top:213px;width:711px;height:2px;background:#ffffff;"></div>
-<div class="caja" style="left:172px;top:692px;width:561px;height:2px;background:#ffffff;"></div>
-<div class="caja" style="left:840px;top:692px;width:366px;height:2px;background:#ffffff;"></div>
-<div class="caja" style="left:1324px;top:688px;width:366px;height:2px;background:#ffffff;"></div>
-<div class="txt vt323" style="left:198px;top:517px;width:491px;height:64px;font-family:VT323;font-size:64px;line-height:64px;text-align:center;color:#ffffff;">AARON</div>
-<div class="txt vt323" style="left:198px;top:595px;width:491px;height:72px;font-family:VT323;font-size:36px;line-height:36px;text-align:center;color:#ffffff;">Programa que <span style="color:#8a38f5">dibujaba siguiendo reglas escritas</span> por su creador</div>
-<div class="caja" style="left:138px;top:497px;width:626px;height:532px;border:10px solid #ffffff;"></div>
-<div class="caja" style="left:798px;top:497px;width:450px;height:532px;border:10px solid #ffffff;"></div>
-<div class="caja" style="left:1282px;top:497px;width:450px;height:532px;border:10px solid #ffffff;"></div>
-<div class="caja" style="left:1419px;top:261px;width:26px;height:26px;background:#8a38f5;"></div>
-<div class="caja" style="left:1429.5px;top:277px;width:5px;height:72px;background:#8a38f5;"></div>
-<div class="txt" style="left:64px;top:80px;width:1792px;height:64px;font-family:Press Start 2P;font-size:64px;line-height:64px;color:#ffffff;">Arte con Sistemas expertos</div>
-<div class="txt vt323" style="left:198px;top:730px;width:518px;height:36px;font-family:VT323;font-size:36px;line-height:36px;color:#ffffff;">Dibujos abstractos - blanco y negro</div>
-<div class="txt vt323" style="left:875px;top:570px;width:309px;height:72px;font-family:VT323;font-size:36px;line-height:36px;color:#ffffff;">Figuras y plantas esquemáticas a color</div>
-<div class="txt vt323" style="left:1355px;top:566px;width:319px;height:72px;font-family:VT323;font-size:36px;line-height:36px;color:#ffffff;">Pinturas coloridas con plantas y personas</div>
-<div class="txt" style="left:1679px;top:325px;width:225px;height:43px;font-family:Press Start 2P;font-size:22px;line-height:72px;color:#0a0a0a;">Actualidad</div>
-<div class="txt" style="left:1384px;top:323px;width:225px;height:43px;font-family:Press Start 2P;font-size:22px;line-height:72px;color:#0a0a0a;">1990<br></div>
-<div class="txt" style="left:910px;top:315px;width:225px;height:43px;font-family:Press Start 2P;font-size:22px;line-height:72px;color:#0a0a0a;">1980<br></div>
-<div class="txt" style="left:25px;top:346px;width:206px;height:60px;font-family:Press Start 2P;font-size:22px;line-height:30px;color:#000000;">Surgen en<br>1960/1970</div>
-</section>
-<section class="slide" id="p18" style="background:#0a0a0a;">
-<div class="caja" style="left:310.5px;top:733px;width:127px;height:139px;background:#8a38f5;"></div>
-<div class="txt vt323" style="left:331px;top:785px;width:87px;height:36px;font-family:VT323;font-size:36px;line-height:36px;color:#0a0a0a;">1.5 mb</div>
-<div class="txt vt323" style="left:280px;top:933px;width:188px;height:36px;font-family:VT323;font-size:36px;line-height:36px;color:#ffffff;">AARON (~2000)</div>
-<div class="caja" style="left:688.5px;top:675px;width:127px;height:204px;background:#c6ff34;"></div>
-<div class="txt vt323" style="left:709px;top:741px;width:87px;height:72px;font-family:VT323;font-size:36px;line-height:36px;color:#0a0a0a;">2000mb<br>(2gb)</div>
-<div class="txt vt323" style="left:586px;top:933px;width:332px;height:36px;font-family:VT323;font-size:36px;line-height:36px;color:#ffffff;">Stable Difussion (2022)</div>
-<div class="caja" style="left:1066.5px;top:327px;width:127px;height:563px;background:#aaaaaa;"></div>
-<div class="txt vt323" style="left:1095px;top:605px;width:87px;height:72px;font-family:VT323;font-size:36px;line-height:36px;color:#0a0a0a;">24.000<br>(24gb)</div>
-<div class="txt vt323" style="left:1036px;top:933px;width:188px;height:36px;font-family:VT323;font-size:36px;line-height:36px;color:#ffffff;">DALL-E (2021)</div>
-<div class="caja" style="left:230px;top:349px;width:10px;height:573.06px;background:#ffffff;"></div>
-<div class="txt vt323" style="left:126px;top:912px;width:44px;height:36px;font-family:VT323;font-size:36px;line-height:36px;color:#ffffff;">0mb</div>
-<div class="txt vt323" style="left:97px;top:349px;width:101px;height:36px;font-family:VT323;font-size:36px;line-height:36px;color:#ffffff;">24000mb</div>
-<div class="txt vt323" style="left:1381px;top:476px;width:390px;height:216px;font-family:VT323;font-size:36px;line-height:36px;color:#ffffff;"><br>AARON son <span style="color:#8a38f5">reglas escritas</span> por el hombre, mientras que los otros dos son modelos avanzados con <span style="color:#8a38f5">conocimiento que aprendieron solos.</span></div>
-<div class="caja" style="left:1346px;top:408px;width:450px;height:333px;border:10px solid #ffffff;"></div>
-<div class="txt" style="left:1319px;top:436px;width:514.02px;height:40px;font-family:Press Start 2P;font-size:40px;line-height:40px;text-align:center;color:#c6ff34;">Importante</div>
-<div class="txt" style="left:64px;top:83px;width:1792px;height:128px;font-family:Press Start 2P;font-size:64px;line-height:64px;color:#ffffff;">Cuanta memoria ocupan estos modelos</div>
-</section>
-<section class="slide" id="p19" style="background:#0a0a0a;">
-<div class="txt" style="left:520.47px;top:330.1px;width:1142.05px;height:186.48px;font-family:Press Start 2P;font-size:40px;line-height:64px;color:#ffffff;">En la <span style="color:#8a38f5">siguiente etapa</span> de tu evolución, aprenderás como las IAs comenzaron a <span style="color:#8a38f5">aprender por si mismas.</span></div>
-<div class="caja" style="left:153px;top:279px;width:1614px;height:338px;border:10px solid #ffffff;"></div>
-<div class="caja" style="left:163.81px;top:551.55px;width:228.77px;height:54.69px;background:#ffffff;"></div>
-<div class="caja" style="left:161px;top:701px;width:1606px;height:240px;border:10px solid #ffffff;"></div>
-<img class="img flecha" src="../assets/nucleo1/img/flecha-abajo.svg" alt="" style="left:908px;top:968px;width:112px;height:74px;">
-<img class="img " src="../assets/nucleo1/img/profe-cara.png" alt="" style="left:177px;top:368px;width:204px;height:183px;">
-<img class="img boca" src="../assets/nucleo1/img/profe-boca.png" alt="" style="left:177px;top:368px;width:204px;height:183.05px;">
-<div class="txt" style="left:161px;top:90px;width:1792px;height:128px;font-family:Press Start 2P;font-size:64px;line-height:64px;color:#ffffff;">Felicidades, <span style="color:#c6ff34">termino la<br>etapa uno</span></div>
-<div class="txt" style="left:177px;top:751px;width:1522px;height:139px;font-family:Press Start 2P;font-size:60px;line-height:72px;text-align:center;color:#ffffff;">Inserte la memoria <span style="color:#00c100">DOS</span> color <span style="color:#00c100">VERDE</span><span style="color:#ff0004"> </span>en la ranura</div>
-</section>
-  <!--PANTALLAS:FIN-->
+
+  <!-- ============ Pantalla 1: insertar memoria ============ -->
+  <section id="p1" class="slide">
+    <!-- Cabecera verde con borde pixelado -->
+    <svg id="n1-cabecera" viewBox="0 0 1920 290" shape-rendering="crispEdges">
+      <g fill="#c6ff3a">
+        <rect x="0" y="0" width="1745" height="245"/>
+        <rect x="0" y="245" width="1040" height="27"/>
+        <rect x="1395" y="245" width="190" height="27"/>
+        <rect x="1820" y="0" width="100" height="240"/>
+      </g>
+      <g fill="#000">
+        <rect x="1615" y="38" width="130" height="95"/>
+        <rect x="1505" y="165" width="80" height="80"/>
+        <rect x="1690" y="150" width="55" height="70"/>
+        <rect x="1850" y="0" width="70" height="38"/>
+        <rect x="1820" y="190" width="40" height="50"/>
+      </g>
+    </svg>
+    <h1 id="n1-titulo">LA EVOLUCION DE LA<br>GENERACION DE IMAGENES</h1>
+
+    <img id="n1-profe" src="../assets/nucleo1/img/profesor-puntero.png" alt="">
+
+    <div id="n1-caja">
+      <p class="n1-linea">Inserte la memoria <span class="rojo">UNO</span><br>color <span class="rojo">ROJO</span> en la ranura</p>
+    </div>
+  </section>
+
+  <section id="p2" class="slide"></section>
+  <section id="p3" class="slide"></section>
 </div>
 
 <script src="../libs/gsap.min.js"></script>
-<script src="../libs/SplitText.min.js"></script>
+<script src="../libs/Flip.min.js"></script>
 <script src="../js/puente.js"></script>
 <script>
-/* =========================================================================
-   Núcleo 1 — presentación de las 19 pantallas del Figma (frame "introv2").
+  Infografia.escalar("#escenario", 1920, 1080);
 
-   Las teclas NO se manejan acá: puente.js las reenvía al contenedor, que
-   mapea Espacio → acción SIGUIENTE y nos la devuelve por postMessage.
-   Acá solo reaccionamos a esa acción (Infografia.presentacion lo hace solo).
+  var bucles = [];
+  function pararBucles() { bucles.forEach(function (b) { b.kill(); }); bucles = []; }
 
-   Cada elemento de las pantallas ya trae su posición en línea (sale del
-   Figma). Acá va el movimiento: entrada escalonada + bucles con GSAP.
-   ========================================================================= */
-gsap.registerPlugin(SplitText);
+  function iniciar() {
+    Infografia.presentacion([
 
-Infografia.escalar("#escenario", 1920, 1080);
+      /* ============ Pantalla 1 ============ */
+      {
+        el: "#p1",
+        preparar: function () {
+          var d = Infografia.direccion;
+          gsap.set("#n1-cabecera", { autoAlpha: 0, x: -120 * d });
+          gsap.set("#n1-titulo",   { autoAlpha: 0, x: 80 * d });
+          gsap.set("#n1-profe",    { autoAlpha: 0, x: 90 * d, scale: 0.9, transformOrigin: "50% 100%" });
+          gsap.set("#n1-caja",     { autoAlpha: 0, x: 120 * d });
+        },
+        entrar: function () {
+          var tl = gsap.timeline()
+            .to("#n1-cabecera", { autoAlpha: 1, x: 0, duration: 0.6, ease: "steps(6)" })
+            .to("#n1-titulo",   { autoAlpha: 1, x: 0, duration: 0.6, ease: "power3.out" }, "-=0.3")
+            .to("#n1-profe",    { autoAlpha: 1, x: 0, scale: 1, duration: 0.8, ease: "back.out(1.4)" }, "-=0.3")
+            .to("#n1-caja",     { autoAlpha: 1, x: 0, duration: 0.6, ease: "power3.out" }, "-=0.4")
+            .add(function () {
+              bucles.push(gsap.to("#n1-profe", { y: -14, duration: 1.8, ease: "sine.inOut", yoyo: true, repeat: -1 }));
+              // parpadeo tipo cartel retro sobre las palabras en rojo
+              bucles.push(gsap.to("#n1-caja .rojo", { opacity: 0.25, duration: 0.5, ease: "steps(1)", yoyo: true, repeat: -1, repeatDelay: 0.4 }));
+            });
+          return tl;
+        },
+        salir: pararBucles
+      },
 
-var bucles = [];
-var entrada = null;
+      /* ============ Pantalla 2 (por hacer) ============ */
+      { el: "#p2", salir: pararBucles },
 
-function q(ambito, sel) { return ambito.querySelectorAll(sel); }
+      /* ============ Pantalla 3 (por hacer) ============ */
+      { el: "#p3", salir: pararBucles }
 
-function limpiar() {
-  bucles.forEach(function (t) { t.kill(); });
-  bucles = [];
-  if (entrada) { entrada.kill(); entrada = null; }
-}
-
-/* ------------------------------------------------------------------
-   Bucles que corren mientras la pantalla queda a la vista.
-   Se buscan por clase, así una pantalla nueva los prende sola.
-   ------------------------------------------------------------------ */
-function animarBucles(slide) {
-  function push(t) { bucles.push(t); }
-
-  // flechas que titilan (pantallas 01 y 19)
-  if (q(slide, ".flecha").length) {
-    push(gsap.fromTo(q(slide, ".flecha"), { opacity: 1 },
-      { opacity: .12, duration: .45, repeat: -1, yoyo: true, ease: "steps(1)" }));
+    ], { transicion: "deslizar", duracion: 0.8 });
   }
-
-  // barra de carga "Iniciando" (pantalla 02)
-  if (q(slide, ".carga-fill").length) {
-    push(gsap.fromTo(q(slide, ".carga-fill"), { scaleX: 0 },
-      { scaleX: 1, transformOrigin: "left center", duration: 3.4,
-        repeat: -1, repeatDelay: .7, ease: "power1.inOut" }));
-  }
-
-  // carita recorriendo la barra de progreso (pantalla 04)
-  if (q(slide, ".prog-cara").length) {
-    push(gsap.fromTo(q(slide, ".prog-cara, .prog-cara2"), { x: 0 },
-      { x: 935, duration: 5, repeat: -1, yoyo: true, ease: "none" }));
-  }
-
-  // marcas de la barra (pantalla 04)
-  if (q(slide, ".tick").length) {
-    push(gsap.fromTo(q(slide, ".tick, .tick2, .tick3"), { opacity: 1 },
-      { opacity: .2, duration: .4, repeat: -1, yoyo: true,
-        ease: "steps(1)", stagger: .27 }));
-  }
-
-  // profesor hablando: alterna la cara cerrada con la de boca abierta
-  if (q(slide, ".boca").length) {
-    push(gsap.fromTo(q(slide, ".boca"), { opacity: 0 },
-      { opacity: 1, duration: .17, repeat: -1, yoyo: true, ease: "steps(1)" }));
-  }
-
-  // mano que enseña el gesto (pantalla 03)
-  if (q(slide, ".mano-gesto").length) {
-    push(gsap.fromTo(q(slide, ".mano-gesto"), { x: -38, rotation: -3 },
-      { x: 38, rotation: 3, transformOrigin: "50% 100%", duration: 1.2,
-        repeat: -1, yoyo: true, ease: "sine.inOut" }));
-  }
-
-  // mano dibujando sobre la tableta (pantallas 09 a 15)
-  if (q(slide, ".mano-tableta-anim").length) {
-    push(gsap.fromTo(q(slide, ".mano-tableta-anim"), { x: 0, y: 0 },
-      { x: 26, y: -18, duration: 1.4, repeat: -1, yoyo: true, ease: "sine.inOut" }));
-  }
-
-  // puntos A B C D (pantallas 13 a 15)
-  if (q(slide, ".punto").length) {
-    push(gsap.fromTo(q(slide, ".punto"), { scale: 1 },
-      { scale: 1.16, duration: .7, repeat: -1, yoyo: true, ease: "sine.inOut" }));
-  }
-}
-
-/* ------------------------------------------------------------------
-   Ciclo de vida de cada pantalla (contrato de puente.js)
-   ------------------------------------------------------------------ */
-function preparar(slide) {
-  limpiar();
-  gsap.set(q(slide, ".caja"), { autoAlpha: 0, y: 26 });
-  gsap.set(q(slide, ".img"),  { autoAlpha: 0, y: 30 });
-  gsap.set(q(slide, ".txt"),  { autoAlpha: 0, y: 18 });
-}
-
-function entrar(slide) {
-  var tl = gsap.timeline();
-  var cajas = q(slide, ".caja");
-  var imgs  = q(slide, ".img");
-  var txts  = q(slide, ".txt");
-
-  if (cajas.length) tl.to(cajas, { autoAlpha: 1, y: 0, duration: .45, stagger: .04, ease: "power2.out" }, 0);
-  if (imgs.length)  tl.to(imgs,  { autoAlpha: 1, y: 0, duration: .5,  stagger: .05, ease: "power3.out" }, .08);
-  if (txts.length)  tl.to(txts,  { autoAlpha: 1, y: 0, duration: .4,  stagger: .03, ease: "power2.out" }, .18);
-
-  tl.add(function () { animarBucles(slide); });
-  entrada = tl;
-  return tl;
-}
-
-function salir() { limpiar(); }
-
-/* ------------------------------------------------------------------
-   Armo la lista de pantallas a partir del HTML: si mañana se agrega una
-   sección, entra sola en la presentación.
-   ------------------------------------------------------------------ */
-var secciones = document.querySelectorAll("#escenario .slide");
-
-Infografia.presentacion(
-  Array.prototype.map.call(secciones, function (sec) {
-    return { el: "#" + sec.id, preparar: preparar, entrar: entrar, salir: salir };
-  }),
-  { transicion: "deslizar", duracion: 0.6 }
-);
+  (document.fonts && document.fonts.ready ? document.fonts.ready : Promise.resolve()).then(iniciar);
 </script>
 </body>
 </html>

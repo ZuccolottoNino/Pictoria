@@ -69,10 +69,13 @@
 <div id="panel" hidden>
   <div class="etq">Teclado → elegir núcleo</div>
   <div class="fila" id="fila-nucleos"></div>
-  <div class="etq">Gesto de mano → siguiente pantalla</div>
-  <div class="fila"><button type="button" tabindex="-1" data-accion="SIGUIENTE">Siguiente ▶</button></div>
-  <div class="etq">Botón → interactuar (mantener = pulsación larga)</div>
-  <div class="fila"><button type="button" tabindex="-1" id="btn-interactuar">Interactuar</button></div>
+  <div class="etq">Gesto de mano → pantalla anterior / siguiente</div>
+  <div class="fila">
+    <button type="button" tabindex="-1" data-accion="ANTERIOR">◀ Anterior</button>
+    <button type="button" tabindex="-1" data-accion="SIGUIENTE">Siguiente ▶</button>
+  </div>
+  <div class="etq">Orden de núcleos (el 2 solo después del 1, etc.)</div>
+  <div class="fila"><button type="button" tabindex="-1" id="btn-orden"></button></div>
   <div class="fila"><button type="button" tabindex="-1" data-accion="REINICIAR">Reiniciar</button></div>
   <div id="estado"></div>
   <div class="etq">Tecla D: ocultar/mostrar este panel</div>
@@ -99,17 +102,17 @@ const CONFIG = {
 
   /* Qué tecla dispara qué acción. En la instalación real:
      - el teclado elige el núcleo,
-     - el gesto (MediaPipe) llamará a Acciones.emitir("SIGUIENTE"),
-     - el botón llamará a Acciones.emitir("INTERACTUAR", { tipo: "corto" | "largo" }). */
+     - el gesto (MediaPipe) llamará a Acciones.emitir("SIGUIENTE") / Acciones.emitir("ANTERIOR"). */
   teclas: {
     SIGUIENTE:   ["Space", "ArrowRight"],   // placeholder del gesto
-    INTERACTUAR: ["KeyI", "Enter"],         // placeholder del botón
-    NUCLEO:      { Digit1: 0, Digit2: 1, Digit3: 2,Digit4: 3, Numpad1: 0, Numpad2: 1, Numpad3: 2, Numpad4: 3 },
+    ANTERIOR:    ["KeyA", "ArrowLeft"],
+    NUCLEO:      { KeyQ: 0, KeyW: 1, KeyE: 2,
+                   Digit1: 0, Digit2: 1, Digit3: 2, Digit4: 3, Numpad1: 0, Numpad2: 1, Numpad3: 2, Numpad4: 3 },
     REINICIAR:   "KeyR",
     PANEL:       "KeyD"
   },
 
-  pulsacionLargaMs: 600,   // a partir de acá, el botón cuenta como pulsación larga
+  ordenObligatorio: true,  // un núcleo solo se abre si ya se abrió el anterior (se cambia desde el panel)
   panelPruebas: true,      // mostrar el panel de botones (poné false en la instalación)
   inactividadMs: 120000,   // sin actividad → vuelve al inicio (0 = desactivado)
   pantallaCompleta: true,
@@ -141,6 +144,7 @@ let pasoActual = 0;
 let ocupado = false;
 let nucleoListo = false;   // el núcleo avisa cuando ya puede recibir acciones
 let temporizadorInactividad = null;
+const visitados = new Set();   // núcleos que ya se abrieron en esta visita
 
 const esperar = ms => new Promise(r => setTimeout(r, ms));
 const avisar = txt => { estado.textContent = txt; };
@@ -166,8 +170,10 @@ async function irA(indice) {
 
   pasoActual = indice;
   const paso = pasos[indice];
+  if (indice === 0) visitados.clear();   // visitante nuevo
 
   if (paso.tipo === "nucleo") {
+    visitados.add(paso.nucleo);
     pantalla.hidden = true;
     iframe.hidden = false;
     iframe.onload = () => { try { iframe.contentWindow.focus(); } catch (e) {} };
@@ -191,10 +197,19 @@ function avanzarPaso() {
   irA(siguiente < pasos.length ? siguiente : 0);
 }
 
+function retrocederPaso() {
+  if (ocupado || pasoActual === 0) return;
+  irA(pasoActual - 1);
+}
+
 function irANucleo(n) {
   if (ocupado) return;
   const indice = pasos.findIndex(p => p.tipo === "nucleo" && p.nucleo === n);
   if (indice === -1 || indice === pasoActual) return;
+  if (CONFIG.ordenObligatorio && n > 0 && !visitados.has(n - 1)) {
+    avisar("Bloqueado: primero abrí el núcleo " + n);
+    return;
+  }
   irA(indice);
 }
 
@@ -217,6 +232,7 @@ function emitir(accion, datos = {}) {
 
   // Fuera de un núcleo (inicio, standby, fin), SIGUIENTE avanza en el contenedor
   if (accion === "SIGUIENTE" && tipoPaso !== "nucleo") { avanzarPaso(); return; }
+  if (accion === "ANTERIOR"  && tipoPaso !== "nucleo") { retrocederPaso(); return; }
 
   // Dentro de un núcleo, el núcleo decide qué hacer con la acción
   if (tipoPaso === "nucleo" && nucleoListo && !ocupado) {
@@ -224,27 +240,6 @@ function emitir(accion, datos = {}) {
   }
 }
 window.Acciones = { emitir };   // <- acá se enchufa MediaPipe más adelante
-
-/* ---------- Botón de interacción: distingue pulsación corta y larga ---------- */
-function crearDetectorPulsacion() {
-  let activo = false, temporizador = null;
-  return {
-    abajo() {
-      if (activo) return;
-      activo = true;
-      temporizador = setTimeout(() => {
-        if (activo) { activo = false; emitir("INTERACTUAR", { tipo: "largo" }); }
-      }, CONFIG.pulsacionLargaMs);
-    },
-    arriba() {
-      if (!activo) return;
-      activo = false;
-      clearTimeout(temporizador);
-      emitir("INTERACTUAR", { tipo: "corto" });
-    }
-  };
-}
-const botonInteractuar = crearDetectorPulsacion();
 
 /* ---------- Inactividad ---------- */
 function reiniciarInactividad() {
@@ -258,13 +253,10 @@ function reiniciarInactividad() {
 function procesarTecla(code, abajo) {
   const T = CONFIG.teclas;
 
-  if (T.INTERACTUAR.includes(code)) {
-    abajo ? botonInteractuar.abajo() : botonInteractuar.arriba();
-    return true;
-  }
   if (!abajo) return false;
 
   if (T.SIGUIENTE.includes(code))        { emitir("SIGUIENTE"); return true; }
+  if (T.ANTERIOR.includes(code))         { emitir("ANTERIOR"); return true; }
   if (code in T.NUCLEO)                  { emitir("IR_A_NUCLEO", { nucleo: T.NUCLEO[code] }); return true; }
   if (code === T.REINICIAR)              { emitir("REINICIAR"); return true; }
   if (code === T.PANEL)                  { alternarPanel(); return true; }
@@ -295,6 +287,7 @@ window.addEventListener("message", (e) => {
   switch (msg.tipo) {
     case "listo":      nucleoListo = true; break;
     case "terminado":  nucleoListo = false; avanzarPaso(); break;
+    case "volver":     nucleoListo = false; retrocederPaso(); break;
     case "actividad":  reiniciarInactividad(); break;
     case "reiniciar":  reiniciar(); break;
     case "tecla":      procesarTecla(msg.code, msg.abajo); break;   // teclas con el foco dentro del núcleo
@@ -318,10 +311,10 @@ function alternarPanel() {
   panel.querySelectorAll("[data-accion]").forEach(b =>
     b.addEventListener("click", () => emitir(b.dataset.accion)));
 
-  const bi = document.getElementById("btn-interactuar");
-  bi.addEventListener("pointerdown", () => botonInteractuar.abajo());
-  bi.addEventListener("pointerup",   () => botonInteractuar.arriba());
-  bi.addEventListener("pointerleave",() => botonInteractuar.arriba());
+  const bo = document.getElementById("btn-orden");
+  const pintarOrden = () => { bo.textContent = CONFIG.ordenObligatorio ? "🔒 Orden activado" : "🔓 Orden desactivado"; };
+  bo.addEventListener("click", () => { CONFIG.ordenObligatorio = !CONFIG.ordenObligatorio; pintarOrden(); });
+  pintarOrden();
 
   // Evita que los botones del panel roben el foco y reaccionen a Espacio/Enter
   panel.addEventListener("mousedown", e => e.preventDefault());
