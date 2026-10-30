@@ -1,0 +1,25 @@
+@font-face { font-family: "Press Start 2P"; font-display: block; src: url("../assets/nucleo1/fonts/PressStart2P-Regular.ttf") format("truetype"); }
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { height: 100%; overflow: hidden; background: #000; cursor: none; }
+#escenario { font-family: "Press Start 2P", monospace; background: #000; color: #fff; }
+.slide { background: #000; }
+.slide[hidden] { display: none; }
+.rojo { color: #ff0000; }
+
+/* ---------- Pantalla 1 ---------- */
+#n1-cabecera { position: absolute; left: 0; top: 0; width: 1920px; height: 290px; }
+#n1-titulo {
+  position: absolute; left: 45px; top: 42px;
+  font-size: 80px; line-height: 100px; letter-spacing: -14px; color: #000;
+}
+#n1-profe {
+  position: absolute; left: 620px; top: 175px; width: 720px;
+  image-rendering: pixelated;
+}
+#n1-caja {
+  position: absolute; left: 112px; top: 722px; width: 1697px; height: 198px;
+  border: 7px solid #fff; background: #000;
+  display: flex; align-items: center; justify-content: center; text-align: center;
+}
+#n1-caja p { font-size: 60px; line-height: 76px; }

@@ -3,33 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <title>Núcleo 1</title>
-<style>
-  @font-face { font-family: "Press Start 2P"; font-display: block; src: url("../assets/nucleo1/fonts/PressStart2P-Regular.ttf") format("truetype"); }
-
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  html, body { height: 100%; overflow: hidden; background: #000; cursor: none; }
-  #escenario { font-family: "Press Start 2P", monospace; background: #000; color: #fff; }
-  .slide { background: #000; }
-  .slide[hidden] { display: none; }
-  .rojo { color: #ff0000; }
-
-  /* ---------- Pantalla 1 ---------- */
-  #n1-cabecera { position: absolute; left: 0; top: 0; width: 1920px; height: 290px; }
-  #n1-titulo {
-    position: absolute; left: 45px; top: 42px;
-    font-size: 80px; line-height: 100px; letter-spacing: -14px; color: #000;
-  }
-  #n1-profe {
-    position: absolute; left: 620px; top: 175px; width: 720px;
-    image-rendering: pixelated;
-  }
-  #n1-caja {
-    position: absolute; left: 112px; top: 722px; width: 1697px; height: 198px;
-    border: 7px solid #fff; background: #000;
-    display: flex; align-items: center; justify-content: center; text-align: center;
-  }
-  #n1-caja p { font-size: 60px; line-height: 76px; }
-</style>
+<link rel="stylesheet" href="../css/nucleo1.css">
 </head>
 <body>
 <div id="escenario">
@@ -68,50 +42,6 @@
 <script src="../libs/gsap.min.js"></script>
 <script src="../libs/Flip.min.js"></script>
 <script src="../js/puente.js"></script>
-<script>
-  Infografia.escalar("#escenario", 1920, 1080);
-
-  var bucles = [];
-  function pararBucles() { bucles.forEach(function (b) { b.kill(); }); bucles = []; }
-
-  function iniciar() {
-    Infografia.presentacion([
-
-      /* ============ Pantalla 1 ============ */
-      {
-        el: "#p1",
-        preparar: function () {
-          var d = Infografia.direccion;
-          gsap.set("#n1-cabecera", { autoAlpha: 0, x: -120 * d });
-          gsap.set("#n1-titulo",   { autoAlpha: 0, x: 80 * d });
-          gsap.set("#n1-profe",    { autoAlpha: 0, x: 90 * d, scale: 0.9, transformOrigin: "50% 100%" });
-          gsap.set("#n1-caja",     { autoAlpha: 0, x: 120 * d });
-        },
-        entrar: function () {
-          var tl = gsap.timeline()
-            .to("#n1-cabecera", { autoAlpha: 1, x: 0, duration: 0.6, ease: "steps(6)" })
-            .to("#n1-titulo",   { autoAlpha: 1, x: 0, duration: 0.6, ease: "power3.out" }, "-=0.3")
-            .to("#n1-profe",    { autoAlpha: 1, x: 0, scale: 1, duration: 0.8, ease: "back.out(1.4)" }, "-=0.3")
-            .to("#n1-caja",     { autoAlpha: 1, x: 0, duration: 0.6, ease: "power3.out" }, "-=0.4")
-            .add(function () {
-              bucles.push(gsap.to("#n1-profe", { y: -14, duration: 1.8, ease: "sine.inOut", yoyo: true, repeat: -1 }));
-              // parpadeo tipo cartel retro sobre las palabras en rojo
-              bucles.push(gsap.to("#n1-caja .rojo", { opacity: 0.25, duration: 0.5, ease: "steps(1)", yoyo: true, repeat: -1, repeatDelay: 0.4 }));
-            });
-          return tl;
-        },
-        salir: pararBucles
-      },
-
-      /* ============ Pantalla 2 (por hacer) ============ */
-      { el: "#p2", salir: pararBucles },
-
-      /* ============ Pantalla 3 (por hacer) ============ */
-      { el: "#p3", salir: pararBucles }
-
-    ], { transicion: "deslizar", duracion: 0.8 });
-  }
-  (document.fonts && document.fonts.ready ? document.fonts.ready : Promise.resolve()).then(iniciar);
-</script>
+<script src="../js/nucleo1.js"></script>
 </body>
 </html>

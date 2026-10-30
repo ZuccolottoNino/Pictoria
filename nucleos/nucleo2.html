@@ -3,25 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <title>Núcleo 2 (demo de Flip)</title>
-<style>
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  html, body { height: 100%; overflow: hidden; background: #0b0d1a; cursor: none; }
-  #escenario { font-family: "Segoe UI", system-ui, sans-serif; background: #111; }
-  .slide { display: flex; flex-direction: column; justify-content: center; padding: 0 140px; gap: 24px; }
-  .slide[hidden] { display: none; }
-  #p1 { background: #f4f1ec; align-items: flex-end; text-align: right; }
-  #p2 { background: #e3eef3; align-items: flex-start; }
-  #p3 { background: #efe6f3; align-items: flex-start; padding-left: 1100px; }
-  h1 { font-size: 84px; color: #1b2b34; max-width: 900px; }
-  p  { font-size: 38px; color: #4a5b64; max-width: 900px; }
-
-  /* Elemento compartido: UN solo elemento que viaja entre pantallas (Flip) */
-  #bola { position: absolute; z-index: 5; border-radius: 50%;
-          background: radial-gradient(circle at 35% 30%, #f6f1ff, #a99ce8 70%); box-shadow: 0 30px 60px rgba(90,80,170,.35); }
-  #bola[data-pose="p1"] { left: 180px;  top: 540px; width: 380px; height: 380px; }
-  #bola[data-pose="p2"] { left: 1380px; top: 100px; width: 220px; height: 220px; }
-  #bola[data-pose="p3"] { left: 300px;  top: 300px; width: 560px; height: 560px; }
-</style>
+<link rel="stylesheet" href="../css/nucleo2.css">
 </head>
 <body>
 <div id="escenario">
@@ -35,13 +17,6 @@
 <script src="../libs/gsap.min.js"></script>
 <script src="../libs/Flip.min.js"></script>
 <script src="../js/puente.js"></script>
-<script>
-  Infografia.escalar("#escenario", 1920, 1080);
-  Infografia.presentacion([
-    { el: "#p1", flip: { "#bola": "p1" } },
-    { el: "#p2", flip: { "#bola": "p2" }, transicion: "deslizar" },
-    { el: "#p3", flip: { "#bola": "p3" }, transicion: "cortina" }
-  ], { transicion: "fundido", duracion: 1 });
-</script>
+<script src="../js/nucleo2.js"></script>
 </body>
 </html>
