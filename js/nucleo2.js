@@ -1,6 +1,8 @@
 Infografia.escalar("#escenario", 1920, 1080);
+FondoAero.iniciar("#fondo-aero");
+
 Infografia.presentacion([
-  { el: "#p1", flip: { "#bola": "p1" } },
-  { el: "#p2", flip: { "#bola": "p2" }, transicion: "deslizar" },
-  { el: "#p3", flip: { "#bola": "p3" }, transicion: "cortina" }
-], { transicion: "fundido", duracion: 1 });
+  { el: "#p1" },
+  { el: "#p2" },
+  { el: "#p3" }
+], { transicion: "deslizar", duracion: 0.8 });
