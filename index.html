@@ -34,8 +34,30 @@
   #nucleo { position: fixed; inset: 0; width: 100%; height: 100%; border: 0; background: #fff; }
   #nucleo[hidden] { display: none; }
 
-  #velo { position: fixed; inset: 0; background: var(--fondo); opacity: 0; pointer-events: none; transition: opacity var(--fade) ease; z-index: 10; }
+  #velo { position: fixed; inset: 0; background: #0a0a0a; opacity: 0; pointer-events: none; transition: opacity var(--fade) ease; z-index: 10; }
   #velo.activo { opacity: 1; }
+
+  /* Pantalla de carga (dentro del velo): solo se ve si la página tarda en estar lista */
+  @font-face { font-family: "Press Start 2P"; font-display: block; src: url("assets/nucleo1/fonts/PressStart2P-Regular.ttf") format("truetype"); }
+  #carga {
+    position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center;
+    gap: 4vmin; font-family: "Press Start 2P", monospace; color: #fff;
+    opacity: 0; transition: opacity 200ms steps(2);
+  }
+  #velo.cargando #carga { opacity: 1; }
+  #carga p { font-size: clamp(14px, 2.6vmin, 30px); letter-spacing: .1em; }
+  #carga p::after { content: ""; animation: puntos 1.2s steps(4) infinite; }
+  @keyframes puntos { 0% { content: ""; } 25% { content: "."; } 50% { content: ".."; } 75% { content: "..."; } }
+  /* Barra con "bloques" que se llenan de a saltos, como la del núcleo 1 */
+  #carga .barra {
+    width: min(60vw, 900px); height: clamp(18px, 4vmin, 44px); padding: 0.6vmin;
+    background: #1e1e28; border: 0.5vmin solid #c6ff34;
+  }
+  #carga .relleno {
+    height: 100%; width: 0; background: repeating-linear-gradient(90deg, #c6ff34 0 22px, #a9d062 22px 26px);
+  }
+  #velo.cargando .relleno { animation: llenar 2.4s steps(16) infinite; }
+  @keyframes llenar { 0% { width: 0; } 85%, 100% { width: 100%; } }
 
   /* Panel de pruebas: reemplaza a los sensores mientras desarrollás */
   #panel {
@@ -65,7 +87,9 @@
 
 <div id="pantalla" role="status" aria-live="polite" tabindex="-1"></div>
 <iframe id="nucleo" title="Contenido" hidden></iframe>
-<div id="velo"></div>
+<div id="velo">
+  <div id="carga"><p>CARGANDO</p><div class="barra"><div class="relleno"></div></div></div>
+</div>
 
 <div id="panel" hidden>
   <div class="etq">Teclado → elegir núcleo</div>
@@ -151,6 +175,7 @@ document.documentElement.style.setProperty("--fade", CONFIG.fadeMs + "ms");
 let pasoActual = 0;
 let ocupado = false;
 let nucleoListo = false;   // el núcleo avisa cuando ya puede recibir acciones
+let alEstarListo = null;   // irA espera este aviso antes de sacar el velo
 let temporizadorInactividad = null;
 const visitados = new Set();   // núcleos que ya se abrieron en esta visita
 
@@ -198,6 +223,17 @@ async function irA(indice) {
     pantalla.hidden = false;
     pantalla.focus({ preventScroll: true });
     dibujarPantalla(paso);
+  }
+
+  // Si se cargó una página, el velo sigue puesto hasta que avise que está lista
+  // (así no se ve el núcleo anterior ni el nuevo a medio armar). Máximo 4 s por las dudas.
+  // Si tarda más de medio segundo, aparece la pantalla de carga (en local casi nunca se ve).
+  if (!iframe.hidden) {
+    const mostrarCarga = setTimeout(() => velo.classList.add("cargando"), 500);
+    await Promise.race([new Promise(r => { alEstarListo = r; }), esperar(4000)]);
+    alEstarListo = null;
+    clearTimeout(mostrarCarga);
+    velo.classList.remove("cargando");
   }
 
   velo.classList.remove("activo");
@@ -302,7 +338,7 @@ window.addEventListener("message", (e) => {
   if (!msg || msg.origen !== "infografia") return;
 
   switch (msg.tipo) {
-    case "listo":      nucleoListo = true; break;
+    case "listo":      nucleoListo = true; if (alEstarListo) alEstarListo(); break;
     case "terminado":  nucleoListo = false; avanzarPaso(); break;
     case "volver":     nucleoListo = false; retrocederPaso(); break;
     case "actividad":  reiniciarInactividad(); break;

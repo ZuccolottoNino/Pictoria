@@ -622,7 +622,7 @@ function iniciar() {
         gsap.set("#p7-cartel", { autoAlpha: 0, xPercent: -50, y: 40 });
       },
       entrar: function () {
-        var SEGUNDOS_PARA_CARTEL = 8;   // tiempo de prueba antes de pedir el gesto
+        var SEGUNDOS_PARA_CARTEL = 3;   // tiempo de prueba antes de pedir el gesto (cuenta desde que terminó la entrada)
         var tiempoCumplido = false;
         p7Probado = false;
 
