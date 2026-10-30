@@ -307,7 +307,13 @@
         return entrada;
       },
       salir: parar,
-      interactuar: reiniciarJuego   // el botón borra el ruido y deja la imagen lista para el siguiente visitante
+      // Ya no hay botón de interactuar: el gesto de volver hace de "reintentar".
+      // Si ya hay ruido pintado, lo borra y se queda en la pantalla; si está limpia, vuelve atrás normal.
+      alAnterior: function () {
+        if (cobertura() === 0 && estado.g === 0) return false;
+        reiniciarJuego();
+        return true;
+      }
     };
   }
 

@@ -23,6 +23,7 @@
     text-align: center; padding: 6vmin; gap: 2.2vmin;
   }
   #pantalla[hidden] { display: none; }
+  #pantalla:focus { outline: none; }
   #pantalla h1 { font-size: clamp(2.4rem, 8vmin, 6rem); font-weight: 700; letter-spacing: -0.02em; line-height: 1.05; }
   #pantalla p.sub { font-size: clamp(1.1rem, 3vmin, 2rem); color: var(--texto-suave); max-width: 40ch; }
   #pantalla .aviso { margin-top: 4vmin; font-size: clamp(1rem, 2.4vmin, 1.5rem); color: var(--acento); animation: respirar 2.4s ease-in-out infinite; }
@@ -62,7 +63,7 @@
 </head>
 <body>
 
-<div id="pantalla" role="status" aria-live="polite"></div>
+<div id="pantalla" role="status" aria-live="polite" tabindex="-1"></div>
 <iframe id="nucleo" title="Contenido" hidden></iframe>
 <div id="velo"></div>
 
@@ -86,16 +87,21 @@
    CONFIGURACIÓN
    ============================================================ */
 const CONFIG = {
-  titulo: "Título de tu infografía",
-  subtitulo: "Subtítulo o bajada",
-  textoInicio: "Elegí un núcleo para empezar",
   textoStandby: "Hacé el gesto para continuar",
   textoFin: "Gracias por participar",
   textoReinicio: "Hacé el gesto para volver al inicio",
 
+  /* Tutorial de navegación: lo primero que se ve. Funciona como un núcleo más
+     (sus pantallas reciben Siguiente/Anterior) y al terminarlo pasa al núcleo 1. */
+  tutorial: "nucleos/tutorial.html",
+
+  /* standby (opcional): una página propia que se muestra ANTES del núcleo, en lugar de la pantalla
+     genérica. sinStandby: true → se pasa directo al núcleo, sin pantalla previa. Siguiente/Anterior en esa página los maneja el contenedor. */
   nucleos: [
-    { archivo: "nucleos/nucleo1.html", titulo: "Núcleo 1", subtitulo: "Descripción corta del núcleo 1" },
-    { archivo: "nucleos/nucleo2.html", titulo: "Núcleo 2", subtitulo: "Descripción corta del núcleo 2" },
+    { archivo: "nucleos/nucleo1.html", titulo: "Núcleo 1", subtitulo: "Descripción corta del núcleo 1",
+      standby: "nucleos/nucleo1-memoria.html" },
+    { archivo: "nucleos/nucleo2.html", titulo: "Núcleo 2", subtitulo: "Descripción corta del núcleo 2",
+      sinStandby: true },   // el "Inserte la memoria DOS" ya está al final del núcleo 1
     { archivo: "nucleos/nucleo3.html", titulo: "Núcleo 3", subtitulo: "Descripción corta del núcleo 3" },
     { archivo: "nucleos/nucleo-difusion.html", titulo: "Difusión", subtitulo: "Probá cómo funciona" }
   ],
@@ -120,11 +126,13 @@ const CONFIG = {
 };
 
 /* ============================================================
-   SECUENCIA: inicio → núcleo 1 → standby → núcleo 2 → standby → núcleo 3 → fin
+   SECUENCIA: tutorial → [standby 1] → núcleo 1 → standby → núcleo 2 → standby → núcleo 3 → fin
+   (el primer núcleo solo lleva standby si tiene uno propio; el paso 0 es el "inicio")
    ============================================================ */
-const pasos = [{ tipo: "inicio" }];
-CONFIG.nucleos.forEach((_, i) => {
-  if (i > 0) pasos.push({ tipo: "standby", nucleo: i });
+const pasos = CONFIG.tutorial ? [{ tipo: "tutorial" }] : [];
+const conPantallas = tipo => tipo === "nucleo" || tipo === "tutorial";   // reciben Siguiente/Anterior
+CONFIG.nucleos.forEach((n, i) => {
+  if ((i > 0 && !n.sinStandby) || n.standby) pasos.push({ tipo: "standby", nucleo: i });
   pasos.push({ tipo: "nucleo", nucleo: i });
 });
 pasos.push({ tipo: "fin" });
@@ -151,9 +159,7 @@ const avisar = txt => { estado.textContent = txt; };
 
 function dibujarPantalla(paso) {
   let html = "";
-  if (paso.tipo === "inicio") {
-    html = `<h1>${CONFIG.titulo}</h1><p class="sub">${CONFIG.subtitulo}</p><p class="aviso">${CONFIG.textoInicio}</p>`;
-  } else if (paso.tipo === "standby") {
+  if (paso.tipo === "standby") {
     const n = CONFIG.nucleos[paso.nucleo];
     html = `<div class="aro"></div><h1>${n.titulo}</h1><p class="sub">${n.subtitulo}</p><p class="aviso">${CONFIG.textoStandby}</p>`;
   } else if (paso.tipo === "fin") {
@@ -172,16 +178,25 @@ async function irA(indice) {
   const paso = pasos[indice];
   if (indice === 0) visitados.clear();   // visitante nuevo
 
-  if (paso.tipo === "nucleo") {
-    visitados.add(paso.nucleo);
+  const standbyPropio = paso.tipo === "standby" && CONFIG.nucleos[paso.nucleo].standby;
+  if (conPantallas(paso.tipo) || standbyPropio) {
+    if (paso.tipo === "nucleo") visitados.add(paso.nucleo);
     pantalla.hidden = true;
     iframe.hidden = false;
     iframe.onload = () => { try { iframe.contentWindow.focus(); } catch (e) {} };
-    iframe.src = CONFIG.nucleos[paso.nucleo].archivo;
+    iframe.src = paso.tipo === "tutorial" ? CONFIG.tutorial : (standbyPropio || CONFIG.nucleos[paso.nucleo].archivo);
   } else {
+    // El foco estaba dentro del iframe: al ocultarlo hay que devolvérselo al contenedor,
+    // si no las teclas no le llegan a nadie hasta que se hace clic.
+    // Ojo: sin esto, la carga de "about:blank" dispara el onload anterior y el iframe oculto
+    // vuelve a robarse el foco.
+    iframe.onload = null;
+    iframe.blur();
     iframe.hidden = true;
     iframe.src = "about:blank";
+    window.focus();
     pantalla.hidden = false;
+    pantalla.focus({ preventScroll: true });
     dibujarPantalla(paso);
   }
 
@@ -204,7 +219,9 @@ function retrocederPaso() {
 
 function irANucleo(n) {
   if (ocupado) return;
-  const indice = pasos.findIndex(p => p.tipo === "nucleo" && p.nucleo === n);
+  // Si el núcleo tiene pantalla previa propia, se entra por ahí
+  const tipo = CONFIG.nucleos[n] && CONFIG.nucleos[n].standby ? "standby" : "nucleo";
+  const indice = pasos.findIndex(p => p.tipo === tipo && p.nucleo === n);
   if (indice === -1 || indice === pasoActual) return;
   if (CONFIG.ordenObligatorio && n > 0 && !visitados.has(n - 1)) {
     avisar("Bloqueado: primero abrí el núcleo " + n);
@@ -230,12 +247,12 @@ function emitir(accion, datos = {}) {
   if (accion === "IR_A_NUCLEO") { irANucleo(datos.nucleo); return; }
   if (accion === "REINICIAR")   { reiniciar(); return; }
 
-  // Fuera de un núcleo (inicio, standby, fin), SIGUIENTE avanza en el contenedor
-  if (accion === "SIGUIENTE" && tipoPaso !== "nucleo") { avanzarPaso(); return; }
-  if (accion === "ANTERIOR"  && tipoPaso !== "nucleo") { retrocederPaso(); return; }
+  // Fuera de un núcleo (standby, fin), SIGUIENTE avanza en el contenedor
+  if (accion === "SIGUIENTE" && !conPantallas(tipoPaso)) { avanzarPaso(); return; }
+  if (accion === "ANTERIOR"  && !conPantallas(tipoPaso)) { retrocederPaso(); return; }
 
   // Dentro de un núcleo, el núcleo decide qué hacer con la acción
-  if (tipoPaso === "nucleo" && nucleoListo && !ocupado) {
+  if (conPantallas(tipoPaso) && nucleoListo && !ocupado) {
     iframe.contentWindow.postMessage({ origen: "contenedor", tipo: "accion", accion, datos }, "*");
   }
 }
@@ -323,7 +340,7 @@ function alternarPanel() {
 })();
 
 /* ---------- Arranque ---------- */
-dibujarPantalla(pasos[0]);
+irA(0);
 window.focus();
 </script>
 </body>

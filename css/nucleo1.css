@@ -1,4 +1,5 @@
 @font-face { font-family: "Press Start 2P"; font-display: block; src: url("../assets/nucleo1/fonts/PressStart2P-Regular.ttf") format("truetype"); }
+@font-face { font-family: "VT323"; font-display: block; src: url("../assets/nucleo1/fonts/VT323-Regular.ttf") format("truetype"); }
 
 * { box-sizing: border-box; margin: 0; padding: 0; }
 html, body { height: 100%; overflow: hidden; background: #000; cursor: none; }
@@ -23,3 +24,514 @@ html, body { height: 100%; overflow: hidden; background: #000; cursor: none; }
   display: flex; align-items: center; justify-content: center; text-align: center;
 }
 #n1-caja p { font-size: 60px; line-height: 76px; }
+
+/* ============ Núcleo 1 · Pantalla 1: Pictoria cargando ============ */
+#p1-adn { position: absolute; left: 1703px; top: 78px; width: 100px; height: 150px; }
+
+#p1-titulo {
+  position: absolute; left: 0; top: 278px; width: 1920px; text-align: center;
+  font-size: 88px; line-height: 88px; color: #8a38f5; font-weight: normal;
+}
+#p1-titulo span { display: inline-block; }
+
+/* Barra con esquinas pixeladas: cuerpo + dos "orejas" a los costados */
+#p1-barra {
+  position: absolute; left: 281px; top: 632px; width: 1358px; height: 80px;
+  background: #1e1e28;
+  clip-path: polygon(0 8px, 31px 8px, 31px 0, 1327px 0, 1327px 8px, 100% 8px,
+                     100% 72px, 1327px 72px, 1327px 100%, 31px 100%, 31px 72px, 0 72px);
+}
+#p1-relleno {
+  position: absolute; left: 26px; top: 8px; height: 64px; width: 0;
+  background: #b0c418;
+}
+#p1-estado {
+  position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
+  font-size: 40px; color: #fff; white-space: nowrap;
+}
+
+#p1-tema {
+  position: absolute; left: 0; top: 780px; width: 1920px;
+  display: flex; align-items: center; justify-content: center; gap: 40px;
+}
+#p1-birrete { width: 60px; height: 60px; }
+#p1-subtitulo { position: relative; font-size: 40px; line-height: 60px; color: #fff; }
+#p1-subtitulo::after {
+  content: ""; position: absolute; left: 0; right: 0; bottom: -8px; height: 5px; background: #fff;
+  transform-origin: 0 50%; transform: scaleX(var(--subrayado, 1));
+}
+
+#p1-aviso {
+  position: absolute; left: 0; top: 960px; width: 1920px; text-align: center;
+  font-size: 28px; color: #c6ff34;
+}
+
+/* ============ Núcleo 1 · Pantalla 2: bienvenida del profe ============ */
+.verde   { color: #c6ff34; }
+.violeta { color: #8a38f5; }
+
+#p2-caja {
+  position: absolute; left: 67px; top: 74px; width: 1786px; height: 376px;
+  border: 10px solid #fff; background: #000;
+}
+#p2-profe { position: absolute; left: 6px; top: 100px; width: 250px; image-rendering: pixelated; }
+#p2-placa { position: absolute; left: 0; bottom: 0; width: 256px; height: 62px; background: #fff; }
+#p2-dialogo { position: absolute; left: 358px; top: 40px; right: 120px; }
+#p2-dialogo h2 { font-size: 40px; line-height: 56px; font-weight: normal; margin-bottom: 28px; }
+#p2-dialogo p  { font-size: 32px; line-height: 64px; }
+
+/* Barra de progreso de la evolución */
+#p2-progreso { position: absolute; left: 470px; top: 494px; width: 980px; height: 110px; }
+#p2-porcentaje {
+  position: absolute; left: -10px; top: 0; width: 52px; height: 52px;
+  border: 3px solid #fff; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center; font-size: 14px;
+}
+.p2-marca { position: absolute; top: 64px; width: 4px; height: 14px; background: #c6ff34; }
+#p2-barra {
+  position: absolute; left: 14px; top: 82px; width: 956px; height: 18px;
+  border: 4px solid #c6ff34; border-radius: 4px; background: #000; overflow: hidden;
+}
+#p2-relleno { width: 100%; height: 100%; background: #fff; transform-origin: 0 50%; }
+/* El robot violeta: cuadrado con dos ojos */
+#p2-robot {
+  position: absolute; left: 0; top: 78px; width: 28px; height: 26px; background: #8a38f5;
+}
+#p2-robot i { position: absolute; top: 8px; width: 6px; height: 6px; background: #000; }
+#p2-robot i:first-child { left: 6px; }
+#p2-robot i:last-child  { right: 6px; }
+
+/* Nivel: birrete + "1" + texto */
+#p2-nivel {
+  position: absolute; left: 0; top: 690px; width: 1920px; height: 310px;
+  display: grid; grid-template-columns: auto auto auto; grid-template-rows: auto auto;
+  justify-content: center; align-content: center; column-gap: 40px;
+}
+#p2-birrete {
+  grid-row: 1 / 3; align-self: center; width: 145px; height: 145px;
+  filter: brightness(0) invert(1);   /* el ícono es verde; en este diseño va blanco */
+}
+#p2-uno { grid-row: 1 / 3; width: 262px; height: 305px; }
+.p2-linea { grid-column: 3; font-size: 60px; line-height: 80px; white-space: nowrap; }
+.p2-linea:first-of-type { align-self: end; }
+
+/* ============ Núcleo 1 · Pantalla 3: ¿Qué es un sistema experto? ============ */
+#p3 { background: #0a0a0a; }
+#p3-titulo {
+  position: absolute; left: 0; top: 66px; width: 1920px; text-align: center;
+  font-size: 56px; line-height: 64px; font-weight: normal;
+}
+
+/* Línea de tiempo */
+.p3-guiones {
+  position: absolute; top: 211px; width: 720px; height: 3px;
+  background: repeating-linear-gradient(90deg, #fff 0 22px, transparent 22px 50px);
+}
+#p3-guiones-izq { left: 150px; transform-origin: 100% 50%; }
+#p3-guiones-der { left: 1050px; transform-origin: 0 50%; }
+#p3-reloj { position: absolute; left: 929px; top: 182px; width: 62px; height: 62px; }
+#p3-linea {
+  position: absolute; left: 10px; top: 267px; width: 1900px; height: 6px; background: #fff;
+  transform-origin: 0 50%;
+}
+
+.p3-hito { position: absolute; top: 256px; display: flex; flex-direction: column; align-items: center; }
+#p3-hito-inicio { left: 165px; }
+#p3-hito-fin    { left: 1615px; }
+.p3-punto  { width: 26px; height: 26px; background: #8a38f5; }
+.p3-flecha { width: 26px; height: 26px; border: solid #8a38f5; border-width: 7px 7px 0 0; transform: rotate(45deg) translate(-4px, 4px); }
+.p3-palo   { width: 4px; height: 58px; background: #8a38f5; }
+.p3-etiqueta {
+  background: #8a38f5; color: #000; padding: 6px 4px;
+  font-size: 22px; line-height: 30px; text-align: center; white-space: nowrap;
+}
+#p3-hito-fin .p3-palo { height: 34px; }
+
+/* Tarjetas */
+.p3-tarjeta {
+  position: absolute; top: 512px; width: 598px; height: 440px;
+  border: 10px solid #fff; background: #0a0a0a; padding: 26px 40px 0;
+}
+#p3-definicion { left: 140px; }
+#p3-funcion    { left: 1182px; }
+.p3-tarjeta h2 { text-align: center; font-size: 46px; line-height: 64px; font-weight: normal; color: #c6ff34; }
+.p3-tarjeta p  {
+  font-family: "VT323", monospace; font-size: 44px; line-height: 40px; color: #fff;
+  margin-top: 30px; height: 120px;
+}
+.p3-sep { /* mismo punteado que .guiones-n1 */
+  height: 3px; margin-top: 26px; transform-origin: 0 50%;
+  background: repeating-linear-gradient(90deg, #fff 0 28px, transparent 28px 50px);
+}
+.p3-iconos { display: flex; justify-content: space-around; align-items: center; margin-top: 26px; }
+.p3-icono  { width: 96px; height: 96px; object-fit: contain; }
+
+#p3-profe { position: absolute; left: 785px; top: 578px; width: 360px; image-rendering: pixelated; }
+
+/* Línea punteada común de las tarjetas del núcleo 1 (guion 28px, espacio 22px) */
+.guiones-n1 {
+  height: 3px; transform-origin: 0 50%;
+  background: repeating-linear-gradient(90deg, #fff 0 28px, transparent 28px 50px);
+}
+
+/* ============ Núcleo 1 · Pantalla 4: ejemplo del libro de recetas ============ */
+#p4 { background: #0a0a0a; }
+#p4-titulo {
+  position: absolute; left: 188px; top: 70px;
+  font-size: 56px; line-height: 72px; font-weight: normal; color: #fff;
+}
+
+.p4-card {
+  position: absolute; border: 10px solid #fff; background: #0a0a0a;
+  padding: 26px 40px 0;
+}
+#p4-base   { left: 173px;  top: 271px; width: 832px; height: 340px; }
+#p4-motor  { left: 173px;  top: 645px; width: 832px; height: 372px; }
+#p4-reglas { left: 1075px; top: 271px; width: 674px; height: 340px; }
+
+.p4-texto { font-family: "VT323", monospace; font-size: 44px; line-height: 40px; color: #fff; }
+.p4-card .guiones-n1 { margin-top: 18px; }
+#p4-motor .guiones-n1 { margin-top: 38px; }
+
+.p4-concepto { display: flex; align-items: flex-end; gap: 40px; margin-top: 26px; }
+.p4-icono { width: 130px; height: 130px; object-fit: contain; filter: brightness(0) invert(1); }
+.p4-nombre { font-size: 40px; line-height: 40px; color: #8a38f5; padding-bottom: 6px; }
+
+.p4-regla {
+  font-family: "VT323", monospace; font-size: 44px; line-height: 50px; color: #fff;
+  margin: 28px 0 0 20px;
+}
+
+#p4-ilustracion { position: absolute; left: 1100px; top: 590px; width: 621px; }
+
+/* Versión vertical del punteado común */
+.guiones-n1-v {
+  width: 3px; transform-origin: 50% 0;
+  background: repeating-linear-gradient(180deg, #fff 0 28px, transparent 28px 50px);
+}
+
+/* ============ Núcleo 1 · Pantalla 5: fortalezas vs debilidades ============ */
+#p5 { background: #0a0a0a; }
+.verde-claro { color: #a9d062; }
+#p5-titulo {
+  position: absolute; left: 0; top: 62px; width: 1920px; text-align: center;
+  font-size: 60px; line-height: 64px; font-weight: normal; color: #fff;
+}
+
+#p5-pulgar-arriba { position: absolute; left: 134px;  top: 210px; width: 247px; }
+#p5-pulgar-abajo  { position: absolute; left: 1547px; top: 685px; width: 249px; }
+.p5-flecha { position: absolute; width: 80px; height: 120px; }
+#p5-flecha-der { left: 532px;  top: 308px; }
+#p5-flecha-izq { left: 1334px; top: 734px; }
+
+.p5-card {
+  position: absolute; width: 1025px; height: 364px;
+  border: 10px solid #fff; background: #161616;
+  display: flex; flex-direction: column;
+}
+#p5-fortalezas  { left: 771px; top: 198px; }
+#p5-debilidades { left: 131px; top: 633px; }
+.p5-card h2 {
+  text-align: center; font-size: 40px; line-height: 50px; font-weight: normal; color: #8a38f5;
+  padding: 22px 0 22px;
+}
+.p5-columnas { flex: 1; display: grid; grid-template-columns: 1fr 3px 1fr; }
+.p5-columnas .guiones-n1-v { height: 100%; }
+.p5-item { padding: 26px 30px 0 34px; }
+.p5-item h3 {
+  display: flex; align-items: center; gap: 36px;
+  font-family: "VT323", monospace; font-size: 46px; line-height: 50px; font-weight: normal; color: #fff;
+}
+.p5-item h3 img { width: 48px; height: 48px; }
+.p5-item p {
+  font-family: "VT323", monospace; font-size: 34px; line-height: 36px; color: #fff;
+  margin-top: 26px;
+}
+
+/* ============ Núcleo 1 · Pantalla 6: ¿y si el libro fuera de dibujo? ============ */
+#p6 { background: #0a0a0a; }
+#p6-titulo {
+  position: absolute; left: 112px; top: 68px;
+  font-size: 60px; line-height: 62px; font-weight: normal; color: #fff;
+}
+
+#p6-cuaderno {
+  position: absolute; left: 122px; top: 245px; width: 647px; height: 790px;
+  border: 12px solid #fff; border-radius: 44px; overflow: hidden; background: #6b2a1c;
+}
+#p6-cuaderno img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: fill; }
+#p6-reglas {
+  position: absolute; left: 95px; top: 95px; right: 90px;
+  display: flex; flex-direction: column; gap: 76px;
+}
+.p6-regla { font-family: "VT323", monospace; font-size: 40px; line-height: 40px; color: #111; }
+
+.p6-flecha { position: absolute; width: 72px; height: 108px; }
+#p6-flecha-1 { left: 915px;  top: 561px; }
+#p6-flecha-2 { left: 1355px; top: 561px; }
+
+.p6-foto { position: absolute; margin: 0; }
+.p6-foto img { display: block; width: 264px; height: 180px; object-fit: cover; }
+.p6-foto figcaption {
+  font-family: "VT323", monospace; font-size: 38px; line-height: 40px; color: #fff; margin-top: 26px;
+}
+#p6-compu   { left: 1036px; top: 270px; }
+#p6-plotter { left: 1032px; top: 715px; }
+
+/* signo + pixelado */
+#p6-mas { position: absolute; left: 1145px; top: 590px; width: 38px; height: 50px; }
+#p6-mas::before, #p6-mas::after { content: ""; position: absolute; background: #fff; }
+#p6-mas::before { left: 14px; top: 0;    width: 10px; height: 50px; }
+#p6-mas::after  { left: 0;    top: 20px; width: 38px; height: 10px; }
+
+#p6-dibujo { position: absolute; left: 1528px; top: 515px; width: 272px; height: 197px; object-fit: cover; }
+
+/* ============ Núcleo 1 · Pantalla 7: probar la tableta ============ */
+#p7 { background: #0a0a0a; }
+#p7-caja, .caja-profe {
+  position: absolute; left: 156px; top: 35px; width: 1608px; height: 277px;
+  border: 10px solid #fff; background: #000;
+}
+#p7-profe, .caja-profe-img { position: absolute; left: 22px; top: 40px; width: 210px; image-rendering: pixelated; }
+#p7-placa, .caja-profe-placa { position: absolute; left: 16px; top: 195px; width: 230px; height: 46px; background: #fff; }
+#p7-dialogo, .caja-profe-dialogo { position: absolute; left: 300px; top: 18px; right: 30px; }
+#p7-dialogo .p7-intro {
+  font-family: "VT323", monospace; font-size: 44px; line-height: 50px; color: #c6ff34; margin-bottom: 18px;
+}
+#p7-dialogo p, .caja-profe-dialogo p { font-size: 30px; line-height: 72px; color: #fff; white-space: nowrap; }
+
+#p7-lienzo, .lienzo {
+  position: absolute; left: 234px; top: 335px; width: 1452px; height: 680px;
+  border: 12px solid #d4f000; background: #fff; overflow: hidden;
+  cursor: none;
+}
+#p7-guia { position: absolute; left: 375px; top: 72px; width: 679px; opacity: 0.12; pointer-events: none; }
+#p7-canvas, .lienzo canvas { position: absolute; inset: 0; width: 100%; height: 100%; touch-action: none; }
+
+/* Cursor grande y llamativo para quien nunca usó una tableta */
+#p7-cursor, .lienzo-cursor {
+  position: absolute; left: 0; top: 0; width: 72px; height: 72px; pointer-events: none;
+  transform: translate(-6px, -66px);   /* la punta del lápiz queda en el lugar exacto */
+}
+#p7-cursor svg, .lienzo-cursor svg { width: 100%; height: 100%; display: block; }
+#p7-cursor::before, .lienzo-cursor::before {   /* halo que marca la punta */
+  content: ""; position: absolute; left: -12px; top: 54px; width: 24px; height: 24px;
+  border: 4px solid #8a38f5; border-radius: 50%;
+}
+
+#p7-cartel {
+  position: absolute; left: 50%; bottom: 36px;   /* el centrado (xPercent -50) lo pone GSAP */
+  background: #000; color: #c6ff34; border: 6px solid #c6ff34;
+  font-size: 30px; line-height: 40px; padding: 18px 30px; white-space: nowrap;
+  pointer-events: none;
+}
+
+/* ============ Núcleo 1 · Pantalla 8: juego de los dos puntos ============ */
+#p8, #p10 { background: #0a0a0a; }
+.p8-punto, .p10-punto {
+  position: absolute; width: 62px; height: 62px; margin: -31px 0 0 -31px;
+  border-radius: 50%; background: #8a38f5; pointer-events: none;
+}
+#p8-opciones, .opciones-juego {
+  position: absolute; left: 0; right: 0; bottom: 34px;
+  display: flex; justify-content: center; gap: 60px; pointer-events: none;
+}
+.p8-opcion {
+  display: flex; align-items: center; gap: 20px;
+  background: #000; color: #c6ff34; border: 6px solid #c6ff34;
+  font-size: 30px; line-height: 40px; padding: 16px 28px;
+}
+.p8-opcion svg { width: 24px; height: 36px; }
+
+/* Cuenta regresiva del juego */
+#p8-tiempo, .tiempo-juego {
+  position: absolute; right: 26px; top: 22px; min-width: 110px; text-align: center;
+  background: #000; color: #c6ff34; border: 6px solid #c6ff34;
+  font-size: 40px; line-height: 40px; padding: 14px 16px; pointer-events: none;
+}
+#p8-tiempo.apurado, .tiempo-juego.apurado { color: #ff3b3b; border-color: #ff3b3b; }
+
+/* ============ Núcleo 1 · Pantalla 9: el tuyo vs lo que esperaba ============ */
+#p9, #p11{ background: #0a0a0a; }
+#p9-caja, #p11-caja {
+  position: absolute; left: 80px; top: 48px; width: 623px; height: 260px;
+  border: 10px solid #fff; background: #000;
+}
+#p9-profe, #p11-profe { position: absolute; left: 12px; top: 36px; width: 196px; image-rendering: pixelated; }
+#p9-placa, #p11-placa { position: absolute; left: 6px; top: 188px; width: 178px; height: 46px; background: #fff; }
+#p9-texto, #p11-texto {
+  position: absolute; left: 252px; top: 60px;
+  font-family: "VT323", monospace; font-size: 40px; line-height: 40px; color: #c6ff34;
+}
+
+.p9-etiqueta { position: absolute; font-size: 60px; line-height: 60px; color: #fff; }
+#p9-etiqueta-tuyo, #p11-etiqueta-tuyo     { left: 100px;  top: 380px; }
+#p9-etiqueta-esperado, #p11-etiqueta-esperado { left: 1308px; top: 738px; }
+.p9-flecha { position: absolute; width: 80px; height: 120px; }
+#p9-flecha-tuyo, #p11-flecha-tuyo     { left: 608px;  top: 352px; }
+#p9-flecha-esperado, #p11-flecha-esperado { left: 1176px; top: 730px; }
+
+.p9-marco { position: absolute; border: 12px solid #d4f000; background: #fff; }
+.p9-marco canvas { display: block; width: 100%; height: 100%; }
+#p9-tuyo, #p11-tuyo     { left: 796px; top: 48px;  width: 1044px; height: 467px; }
+#p9-esperado, #p11-esperado { left: 80px;  top: 565px; width: 1042px; height: 465px; }
+
+/* ============ Núcleo 1 · Pantalla 10: líneas rectas 1 → 4 ============ */
+#p10-dialogo .p7-intro {
+  font-family: "VT323", monospace; font-size: 44px; line-height: 46px; color: #c6ff34; margin-bottom: 4px;
+}
+#p10-dialogo p { font-size: 28px; line-height: 58px; }
+.n-rojo { color: #ff1a1a; }  .n-azul { color: #2f74f0; }  .n-verde { color: #a9d062; }  .n-amarillo { color: #ffcc00; }
+.fondo-rojo { background: #ff1a1a; }  .fondo-azul { background: #2f74f0; }
+.fondo-verde { background: #a9d062; } .fondo-amarillo { background: #ffcc00; }
+.punto-num {
+  display: flex; align-items: center; justify-content: center;
+  color: #fff; font-size: 28px; line-height: 1;
+}
+
+/* ============ Núcleo 1 · Pantalla 12: Harold Cohen ============ */
+#p12 { background: #0a0a0a; }
+#p12-titulo {
+  position: absolute; left: 120px; top: 74px;
+  font-size: 64px; line-height: 66px; font-weight: normal; color: #fff;
+}
+.p12-linea { display: inline-block; }
+#p12-profe { position: absolute; left: 195px; top: 400px; width: 480px; image-rendering: pixelated; }
+
+#p12-card {
+  position: absolute; left: 748px; top: 272px; width: 1009px; height: 681px;
+  border: 10px solid #fff; background: #0a0a0a;
+}
+#p12-foto {
+  position: absolute; left: 39px; top: 25px; width: 373px; height: 610px;
+  border: 3px solid #c6ff34; object-fit: cover;
+}
+#p12-info { position: absolute; left: 452px; top: 50px; width: 520px; }
+#p12-info h2 { text-align: center; font-size: 40px; line-height: 50px; font-weight: normal; color: #c6ff34; }
+#p12-info .guiones-n1 { margin: 28px 0; }
+#p12-datos { list-style: none; display: flex; flex-direction: column; gap: 16px; }
+#p12-datos li {
+  display: flex; align-items: center; gap: 10px;
+  font-family: "VT323", monospace; font-size: 34px; line-height: 48px; color: #fff;
+}
+#p12-datos li img { width: 48px; height: 48px; }
+#p12-datos li .violeta { margin-left: 0.5ch; }
+#p12-cita { font-family: "VT323", monospace; font-size: 33px; line-height: 36px; color: #fff; }
+#p12-sello {
+  width: fit-content; margin: 0 auto; border: 2px solid #fff; border-radius: 4px;
+  font-family: "VT323", monospace; font-size: 34px; line-height: 40px; color: #c6ff34; padding: 8px 12px;
+}
+
+/* ============ Núcleo 1 · Pantalla 13: arte con sistemas expertos ============ */
+#p13 { background: #0a0a0a; }
+#p13-titulo {
+  position: absolute; left: 0; top: 74px; width: 1920px; text-align: center;
+  font-size: 64px; line-height: 70px; font-weight: normal; color: #fff;
+}
+#p13-guiones-izq { left: 150px; transform-origin: 100% 50%; }
+#p13-guiones-der { left: 1050px; transform-origin: 0 50%; }
+#p13-reloj { position: absolute; left: 929px; top: 182px; width: 62px; height: 62px; }
+#p13-linea {
+  position: absolute; left: 7px; top: 267px; width: 1903px; height: 6px; background: #fff;
+}
+/* columna de ancho 0: todo queda centrado en su "left" */
+.p13-hito { position: absolute; top: 256px; width: 0; display: flex; flex-direction: column; align-items: center; }
+.p13-anio { width: 208px; font-size: 28px; line-height: 34px; }
+/* línea que baja del primer hito y dobla hacia la tarjeta de AARON */
+#p13-codo {
+  position: absolute; left: 109px; top: 404px; width: 57px; height: 175px;
+  border-left: 4px solid #8a38f5; border-bottom: 4px solid #8a38f5;
+}
+
+.p13-card {
+  position: absolute; top: 497px; height: 531px;
+  border: 10px solid #fff; background: #0a0a0a; padding: 22px 24px 0;
+  display: flex; flex-direction: column; align-items: center; text-align: center;
+}
+#p13-aaron { left: 164px;  width: 624px; }
+#p13-1980  { left: 824px;  width: 448px; }
+#p13-1990  { left: 1308px; width: 448px; }
+.p13-card h2 { font-family: "VT323", monospace; font-size: 56px; line-height: 56px; font-weight: normal; color: #fff; }
+.p13-card p  { font-family: "VT323", monospace; font-size: 34px; line-height: 36px; color: #fff; margin-top: 14px; }
+#p13-1980 p, #p13-1990 p { margin-top: 50px; text-align: left; }
+.p13-card .guiones-n1 { width: 100%; margin: 28px 0; }
+#p13-aaron .guiones-n1 { margin: 22px 0 18px; }
+.p13-obras { display: flex; gap: 20px; align-items: center; margin-top: 18px; }
+#p13-aaron .p13-obras img { width: 270px; height: 180px; object-fit: cover; }
+#p13-1980 .p13-obras img,
+#p13-1990 .p13-obras img  { width: 350px; height: 247px; object-fit: cover; }
+
+/* ============ Núcleo 1 · Pantalla 14: gráfico de memoria ============ */
+#p14 { background: #0a0a0a; }
+#p14-titulo {
+  position: absolute; left: 120px; top: 70px;
+  font-size: 56px; line-height: 66px; font-weight: normal; color: #fff;
+}
+.violeta-fondo { background: #8a38f5; }
+.verde-fondo   { background: #c6ff34; }
+.gris-fondo    { background: #a8a8a8; }
+
+/* El área de dibujo: 0 abajo, el máximo de la escala arriba */
+#p14-grafico { position: absolute; left: 300px; top: 330px; width: 860px; height: 560px; border-left: 6px solid #fff; }
+#p14-escala {
+  position: absolute; left: 0; top: -70px;
+  font-family: "VT323", monospace; font-size: 38px; color: #9fb4bd;
+}
+#p14-escala-max { color: #c6ff34; }
+.p14-guia { position: absolute; left: 0; right: 0; height: 2px; background: rgba(255,255,255,.14); }
+.p14-cero { background: #fff; height: 6px; }
+.p14-guia span {
+  position: absolute; right: calc(100% + 18px); top: -18px; white-space: nowrap;
+  font-family: "VT323", monospace; font-size: 34px; color: #fff;
+}
+
+.p14-col { position: absolute; bottom: 0; width: 180px; height: 100%; }
+.p14-barra { position: absolute; left: 15px; bottom: 6px;   /* apoyada sobre la línea del 0, no encima */ width: 150px; height: 0; }
+.p14-valor {
+  position: absolute; left: 0; right: 0; text-align: center;
+  font-family: "VT323", monospace; font-size: 36px; line-height: 34px; color: #fff;
+}
+.p14-valor small, .p14-nombre small { font-size: 28px; color: #9fb4bd; }
+.p14-nombre {
+  position: absolute; left: -40px; right: -40px; top: calc(100% + 18px); text-align: center;
+  font-family: "VT323", monospace; font-size: 36px; line-height: 34px; color: #fff;
+}
+
+
+#p14-importante {
+  position: absolute; left: 1300px; top: 400px; width: 500px;
+  border: 10px solid #fff; background: #0a0a0a; padding: 26px 30px 34px;
+}
+#p14-importante h2 { font-size: 46px; line-height: 56px; font-weight: normal; color: #c6ff34; }
+#p14-importante p {
+  font-family: "VT323", monospace; font-size: 36px; line-height: 36px; color: #fff; margin-top: 26px;
+}
+
+/* ============ Núcleo 1 · Pantalla 15: fin de la etapa uno ============ */
+#p15 { background: #0a0a0a; }
+.verde-memoria { color: #00c80f; }
+#p15-titulo {
+  position: absolute; left: 160px; top: 88px;
+  font-size: 64px; line-height: 66px; font-weight: normal; color: #fff;
+}
+.p15-linea { display: inline-block; }
+
+#p15-caja {
+  position: absolute; left: 154px; top: 280px; width: 1612px; height: 336px;
+  border: 10px solid #fff; background: #0a0a0a;
+}
+#p15-profe { position: absolute; left: 18px; top: 108px; width: 210px; image-rendering: pixelated; }
+#p15-placa { position: absolute; left: 0; bottom: 0; width: 230px; height: 56px; background: #fff; }
+#p15-dialogo {
+  position: absolute; left: 356px; top: 46px;
+  font-size: 40px; line-height: 64px; color: #fff;
+}
+
+#p15-memoria {
+  position: absolute; left: 160px; top: 702px; width: 1606px; height: 238px;
+  border: 10px solid #fff; background: #0a0a0a;
+  display: flex; align-items: center; justify-content: center; text-align: center;
+}
+#p15-memoria p { font-size: 60px; line-height: 74px; color: #fff; }
+
+#p15-flecha { position: absolute; left: 904px; top: 968px; width: 112px; }

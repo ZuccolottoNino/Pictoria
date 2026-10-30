@@ -1,0 +1,9 @@
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { height: 100%; overflow: hidden; background: #0b0d1a; cursor: none; }
+#escenario { font-family: "Segoe UI", system-ui, sans-serif; background: #111; }
+.slide { display: flex; flex-direction: column; justify-content: center; padding: 0 140px; gap: 24px; }
+.slide[hidden] { display: none; }
+#p1 { background: #f4f1ec; }
+#p2 { background: #e3eef3; }
+h1 { font-size: 84px; color: #1b2b34; max-width: 1200px; }
+p  { font-size: 38px; color: #4a5b64; max-width: 1200px; }

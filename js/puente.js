@@ -9,6 +9,7 @@
      Infografia.escalar("#escenario", 1920, 1080);
      Infografia.presentacion([
        { el: "#p1", preparar(el){}, entrar(el){}, salir(el){}, interactuar(tipo, el){}, transicion: "deslizar" },
+       Opcionales: alSiguiente(el) / alAnterior(el) → devolver true para "quedarse" con la acción.
        { el: "#p2", ... }
      ], { transicion: "fundido", duracion: 0.8 });
 
@@ -173,6 +174,11 @@
 
       Infografia.alAccion(function (accion, datos) {
         if (bloqueado) return;
+        // Una pantalla puede quedarse con Siguiente/Anterior (ej. un juego):
+        // si alSiguiente / alAnterior devuelve true, la acción ya se usó y no se cambia de pantalla.
+        var pa = pantallas[actual];
+        if (accion === "SIGUIENTE" && pa.alSiguiente && pa.alSiguiente(els[actual]) === true) return;
+        if (accion === "ANTERIOR"  && pa.alAnterior  && pa.alAnterior(els[actual]) === true) return;
         if (accion === "SIGUIENTE") {
           if (actual < pantallas.length - 1) mostrar(actual + 1);
           else Infografia.terminar();

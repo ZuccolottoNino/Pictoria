@@ -6,37 +6,490 @@
 <link rel="stylesheet" href="../css/nucleo1.css">
 </head>
 <body>
+<!-- La pantalla "Inserte la memoria" está en nucleo1-memoria.html (se muestra antes de este núcleo) -->
 <div id="escenario">
-
-  <!-- ============ Pantalla 1: insertar memoria ============ -->
+  <!-- ============ Pantalla 1: Pictoria cargando ============ -->
   <section id="p1" class="slide">
-    <!-- Cabecera verde con borde pixelado -->
-    <svg id="n1-cabecera" viewBox="0 0 1920 290" shape-rendering="crispEdges">
-      <g fill="#c6ff3a">
-        <rect x="0" y="0" width="1745" height="245"/>
-        <rect x="0" y="245" width="1040" height="27"/>
-        <rect x="1395" y="245" width="190" height="27"/>
-        <rect x="1820" y="0" width="100" height="240"/>
-      </g>
-      <g fill="#000">
-        <rect x="1615" y="38" width="130" height="95"/>
-        <rect x="1505" y="165" width="80" height="80"/>
-        <rect x="1690" y="150" width="55" height="70"/>
-        <rect x="1850" y="0" width="70" height="38"/>
-        <rect x="1820" y="190" width="40" height="50"/>
-      </g>
-    </svg>
-    <h1 id="n1-titulo">LA EVOLUCION DE LA<br>GENERACION DE IMAGENES</h1>
+    <img id="p1-adn" src="../assets/nucleo1/img/ico-adn.svg" alt="">
 
-    <img id="n1-profe" src="../assets/nucleo1/img/profesor-puntero.png" alt="">
+    <h1 id="p1-titulo"><span>P</span><span>I</span><span>C</span><span>T</span><span>O</span><span>R</span><span>I</span><span>A</span></h1>
 
-    <div id="n1-caja">
-      <p class="n1-linea">Inserte la memoria <span class="rojo">UNO</span><br>color <span class="rojo">ROJO</span> en la ranura</p>
+    <div id="p1-barra">
+      <div id="p1-relleno"></div>
+      <p id="p1-estado">Generando ejemplos</p>
+    </div>
+
+    <div id="p1-tema">
+      <img id="p1-birrete" src="../assets/nucleo1/img/ico-birrete.svg" alt="">
+      <p id="p1-subtitulo">1. Sistemas expertos</p>
+    </div>
+
+    <p id="p1-aviso">Desliza para comenzar</p>
+  </section>
+  <!-- ============ Pantalla 2: bienvenida del profe ============ -->
+  <section id="p2" class="slide">
+    <div id="p2-caja">
+      <img id="p2-profe" src="../assets/nucleo1/img/profe-cara.png" alt="">
+      <div id="p2-placa"></div>
+      <div id="p2-dialogo">
+        <h2>¡Bienvenida, pequeña IA!</h2>
+        <p><span class="verde">Soy tu profe</span> y voy a guiarte en tu evolución para ser una <span class="violeta">IA generativa de imágenes</span> impecable</p>
+      </div>
+    </div>
+
+    <!-- Progreso de la evolución: 0% -->
+    <div id="p2-progreso">
+      <div id="p2-porcentaje">0%</div>
+      <div class="p2-marca" style="left: 8px"></div>
+      <div class="p2-marca" style="left: 482px"></div>
+      <div class="p2-marca" style="left: 960px"></div>
+      <div id="p2-barra"><div id="p2-relleno"></div></div>
+      <div id="p2-robot"><i></i><i></i></div>
+    </div>
+
+    <div id="p2-nivel">
+      <img id="p2-birrete" src="../assets/nucleo1/img/ico-birrete.svg" alt="">
+      <svg id="p2-uno" viewBox="0 0 262 305" shape-rendering="crispEdges">
+        <path fill="#c6ff34" d="M87 0H175V263H262V305H0V263H87V86H43V45H87Z"/>
+      </svg>
+      <p class="p2-linea">SOS UN <span class="violeta">SISTEMA EXPERTO</span></p>
+      <p class="p2-linea">UNA <span class="violeta">IA RECIÉN NACIDA</span></p>
     </div>
   </section>
 
-  <section id="p2" class="slide"></section>
-  <section id="p3" class="slide"></section>
+  <!-- ============ Pantalla 3: ¿Qué es un sistema experto? ============ -->
+  <section id="p3" class="slide">
+    <h1 id="p3-titulo"><span class="verde">¿Qué es un</span> <span class="violeta">Sistema Experto?</span></h1>
+
+    <!-- Línea de tiempo -->
+    <div id="p3-guiones-izq" class="p3-guiones"></div>
+    <img id="p3-reloj" src="../assets/nucleo1/img/ico-reloj.svg" alt="">
+    <div id="p3-guiones-der" class="p3-guiones"></div>
+    <div id="p3-linea"></div>
+
+    <div id="p3-hito-inicio" class="p3-hito">
+      <div class="p3-punto"></div><div class="p3-palo"></div>
+      <div class="p3-etiqueta">Surgen en<br>1960/1970</div>
+    </div>
+    <div id="p3-hito-fin" class="p3-hito">
+      <div class="p3-flecha"></div><div class="p3-palo"></div>
+      <div class="p3-etiqueta">Actualidad</div>
+    </div>
+
+    <!-- Tarjetas -->
+    <div id="p3-definicion" class="p3-tarjeta">
+      <h2>DEFINICIÓN</h2>
+      <p><span class="violeta">Programa</span> que imita la lógica y <span class="violeta">decisiones de un experto</span> humano.</p>
+      <div class="p3-sep"></div>
+      <div class="p3-iconos">
+        <img class="p3-icono" src="../assets/nucleo1/img/arbol.svg" alt="">
+        <img class="p3-icono" src="../assets/nucleo1/img/flujo.svg" alt="">
+        <img class="p3-icono" src="../assets/nucleo1/img/personas.svg" alt="">
+      </div>
+    </div>
+
+    <img id="p3-profe" src="../assets/nucleo1/img/profe-cuerpo.png" alt="">
+
+    <div id="p3-funcion" class="p3-tarjeta">
+      <h2>FUNCIÓN</h2>
+      <p>Está <span class="violeta">especializado</span> en una sola tarea compleja</p>
+      <div class="p3-sep"></div>
+      <div class="p3-iconos">
+        <img class="p3-icono" src="../assets/nucleo1/img/ico-motor-inf.svg" alt="">
+        <img class="p3-icono" src="../assets/nucleo1/img/ico-base-conoc.svg" alt="">
+        <img class="p3-icono" src="../assets/nucleo1/img/ico-birrete.svg" alt="">
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ Pantalla 4: ejemplo del libro de recetas ============ -->
+  <section id="p4" class="slide">
+    <h1 id="p4-titulo"><span class="verde">Por ejemplo:</span> un libro de<br>recetas</h1>
+
+    <div id="p4-base" class="p4-card">
+      <p class="p4-texto">Imagina un <span class="verde">libro de cocina gigante</span><br>En un sistema experto eso sería tu:</p>
+      <div class="guiones-n1"></div>
+      <div class="p4-concepto">
+        <img class="p4-icono" src="../assets/nucleo1/img/ico-database.svg" alt="">
+        <p class="p4-nombre">Base de<br>conocimientos</p>
+      </div>
+    </div>
+
+    <div id="p4-motor" class="p4-card">
+      <p class="p4-texto">Alguien <span class="verde">tiene que leer</span> el libro y<br>aplicarlo, ese <span class="verde">SOS VOS</span></p>
+      <div class="guiones-n1"></div>
+      <div class="p4-concepto">
+        <img class="p4-icono" src="../assets/nucleo1/img/ico-computadora.svg" alt="">
+        <p class="p4-nombre">Motor de<br>inferencia</p>
+      </div>
+    </div>
+
+    <div id="p4-reglas" class="p4-card">
+      <p class="p4-texto">Sus páginas están llenas de <span class="verde">reglas</span> del tipo <span class="verde">“si pasa esto, hacé esto”</span></p>
+      <div class="guiones-n1"></div>
+      <p class="p4-regla"><span class="violeta">SI</span> la mezcla está seca,<br><span class="violeta">ENTONCES</span> agrega dos huevos</p>
+    </div>
+
+    <img id="p4-ilustracion" src="../assets/nucleo1/img/cerebro-libro.png" alt="">
+  </section>
+
+  <!-- ============ Pantalla 5: fortalezas vs debilidades ============ -->
+  <section id="p5" class="slide">
+    <h1 id="p5-titulo">Fortalezas vs Debilidades</h1>
+
+    <img id="p5-pulgar-arriba" src="../assets/nucleo1/img/ico-thumbs-up.svg" alt="">
+    <svg id="p5-flecha-der" class="p5-flecha" viewBox="0 0 8 12" shape-rendering="crispEdges">
+      <path fill="#a9d062" d="M0 0H3V1H4V2H5V3H6V4H7V5H8V7H7V8H6V9H5V10H4V11H3V12H0V11H1V10H2V9H3V8H4V7H5V5H4V4H3V3H2V2H1V1H0Z"/>
+    </svg>
+
+    <div id="p5-fortalezas" class="p5-card">
+      <h2>Fortalezas</h2>
+      <div class="guiones-n1"></div>
+      <div class="p5-columnas">
+        <div class="p5-item">
+          <h3><img src="../assets/nucleo1/img/ico-database.svg" alt="">Transparencia</h3>
+          <p>Reglas claras = Entender fácil el razonamiento</p>
+        </div>
+        <div class="guiones-n1-v"></div>
+        <div class="p5-item">
+          <h3><img src="../assets/nucleo1/img/ico-database.svg" alt="">Consistencia</h3>
+          <p>Mismos datos e instrucciones = Mismas respuestas</p>
+        </div>
+      </div>
+    </div>
+
+    <div id="p5-debilidades" class="p5-card">
+      <h2>Debilidades</h2>
+      <div class="guiones-n1"></div>
+      <div class="p5-columnas">
+        <div class="p5-item">
+          <h3 class="verde-claro"><img src="../assets/nucleo1/img/ico-database.svg" alt="">No aprendes sola</h3>
+          <p>No puedes aprender de la experiencia ni mejorar de forma autónoma</p>
+        </div>
+        <div class="guiones-n1-v"></div>
+        <div class="p5-item">
+          <h3 class="verde-claro"><img src="../assets/nucleo1/img/ico-database.svg" alt="">Rigidez</h3>
+          <p>Preguntas no previstas = No saber qué responder</p>
+        </div>
+      </div>
+    </div>
+
+    <svg id="p5-flecha-izq" class="p5-flecha" viewBox="0 0 8 12" shape-rendering="crispEdges">
+      <path fill="#a9d062" transform="matrix(-1 0 0 1 8 0)" d="M0 0H3V1H4V2H5V3H6V4H7V5H8V7H7V8H6V9H5V10H4V11H3V12H0V11H1V10H2V9H3V8H4V7H5V5H4V4H3V3H2V2H1V1H0Z"/>
+    </svg>
+    <img id="p5-pulgar-abajo" src="../assets/nucleo1/img/ico-thumbs-down.svg" alt="">
+  </section>
+
+  <!-- ============ Pantalla 6: ¿y si el libro fuera de dibujo? ============ -->
+  <section id="p6" class="slide">
+    <h1 id="p6-titulo">¿Y si el libro de recetas<br>fuera de dibujo?</h1>
+
+    <div id="p6-cuaderno">
+      <img src="../assets/nucleo1/img/cuaderno-reglas.png" alt="">
+      <div id="p6-reglas">
+        <p class="p6-regla">Regla 1: <span class="violeta">SI</span> la línea <span class="violeta">llega al borde</span>, <span class="violeta">ENTONCES</span> girar 90°</p>
+        <p class="p6-regla">Regla 2: <span class="violeta">SI</span> la <span class="violeta">forma quedó abierta</span>, <span class="violeta">ENTONCES</span> cerrarla uniendo sus extremos.</p>
+        <p class="p6-regla">Regla 3: <span class="violeta">SI terminó una figura</span>, <span class="violeta">ENTONCES</span> levantar la pluma y empezar en otro punto.</p>
+      </div>
+    </div>
+
+    <svg id="p6-flecha-1" class="p6-flecha" viewBox="0 0 8 12" shape-rendering="crispEdges">
+      <path fill="#a9d062" d="M0 0H3V1H4V2H5V3H6V4H7V5H8V7H7V8H6V9H5V10H4V11H3V12H0V11H1V10H2V9H3V8H4V7H5V5H4V4H3V3H2V2H1V1H0Z"/>
+    </svg>
+
+    <figure id="p6-compu" class="p6-foto">
+      <img src="../assets/nucleo1/img/monitor-reglas.png" alt="">
+      <figcaption>Seguía las reglas</figcaption>
+    </figure>
+    <div id="p6-mas"></div>
+    <figure id="p6-plotter" class="p6-foto">
+      <img src="../assets/nucleo1/img/brazo-dibujo.png" alt="">
+      <figcaption>Dibujaba las<br>reglas</figcaption>
+    </figure>
+
+    <svg id="p6-flecha-2" class="p6-flecha" viewBox="0 0 8 12" shape-rendering="crispEdges">
+      <path fill="#a9d062" d="M0 0H3V1H4V2H5V3H6V4H7V5H8V7H7V8H6V9H5V10H4V11H3V12H0V11H1V10H2V9H3V8H4V7H5V5H4V4H3V3H2V2H1V1H0Z"/>
+    </svg>
+
+    <img id="p6-dibujo" src="../assets/nucleo1/img/dibujo-caos.png" alt="">
+  </section>
+
+  <!-- ============ Pantalla 7: probar la tableta (intro al juego) ============ -->
+  <section id="p7" class="slide">
+    <div id="p7-caja">
+      <img id="p7-profe" src="../assets/nucleo1/img/profe-cara.png" alt="">
+      <div id="p7-placa"></div>
+      <div id="p7-dialogo">
+        <p class="p7-intro">Te voy a demostrar por qué ser específicos.</p>
+        <p>Toma <span class="violeta">el lápiz</span> y dibuja sobre <span class="violeta">la tableta</span>,<br>lo que hagas se verá <span class="violeta">en esta pantalla</span></p>
+      </div>
+    </div>
+
+    <div id="p7-lienzo">
+      <img id="p7-guia" src="../assets/nucleo1/img/mano-tableta.svg" alt="">
+      <canvas id="p7-canvas" width="1428" height="656"></canvas>
+      <!-- Cursor grande: muestra dónde está el lápiz de la tableta -->
+      <div id="p7-cursor">
+        <svg viewBox="0 0 16 16" shape-rendering="crispEdges">
+          <path fill="#000" d="M11 0H13V1H14V2H15V3H16V5H15V6H14V7H13V8H12V9H11V10H10V11H9V12H8V13H7V14H5V15H3V16H0V13H1V11H2V9H3V8H4V7H5V6H6V5H7V4H8V3H9V2H10V1H11Z"/>
+          <path fill="#c6ff34" d="M11 1H13V2H14V3H15V5H14V6H13V7H12V8H11V9H10V10H9V11H8V12H7V13H6V12H5V11H4V10H3V9H4V8H5V7H6V6H7V5H8V4H9V3H10V2H11Z"/>
+          <path fill="#8a38f5" d="M11 1H13V2H14V3H15V5H14V6H13V5H12V4H11V3H10V2H11Z"/>
+          <path fill="#fff" d="M2 11H3V12H4V13H5V14H3V15H1V13H2Z"/>
+        </svg>
+      </div>
+      <div id="p7-cartel">Hacé el gesto para comenzar la actividad</div>
+    </div>
+  </section>
+
+  <!-- ============ Pantalla 8: juego, línea zigzagueante entre dos puntos ============ -->
+  <section id="p8" class="slide">
+    <div id="p8-caja" class="caja-profe">
+      <img class="caja-profe-img" src="../assets/nucleo1/img/profe-cara.png" alt="">
+      <div class="caja-profe-placa"></div>
+      <div id="p8-dialogo" class="caja-profe-dialogo">
+        <p>Hacé una <span class="violeta">línea zigzagueante</span> entre estos<br><span class="violeta">dos puntos</span> y cuando termines te mostraré<br>lo que <span class="violeta">realmente quería</span> que hicieras</p>
+      </div>
+    </div>
+
+    <div id="p8-lienzo" class="lienzo">
+      <canvas id="p8-canvas" width="1428" height="656"></canvas>
+      <div id="p8-tiempo">20</div>
+      <div class="p8-punto" style="left: 156px; top: 330px"></div>
+      <div class="p8-punto" style="left: 1247px; top: 330px"></div>
+      <div id="p8-cursor" class="lienzo-cursor">
+        <svg viewBox="0 0 16 16" shape-rendering="crispEdges">
+          <path fill="#000" d="M11 0H13V1H14V2H15V3H16V5H15V6H14V7H13V8H12V9H11V10H10V11H9V12H8V13H7V14H5V15H3V16H0V13H1V11H2V9H3V8H4V7H5V6H6V5H7V4H8V3H9V2H10V1H11Z"/>
+          <path fill="#c6ff34" d="M11 1H13V2H14V3H15V5H14V6H13V7H12V8H11V9H10V10H9V11H8V12H7V13H6V12H5V11H4V10H3V9H4V8H5V7H6V6H7V5H8V4H9V3H10V2H11Z"/>
+          <path fill="#8a38f5" d="M11 1H13V2H14V3H15V5H14V6H13V5H12V4H11V3H10V2H11Z"/>
+          <path fill="#fff" d="M2 11H3V12H4V13H5V14H3V15H1V13H2Z"/>
+        </svg>
+      </div>
+
+      <!-- Aparece cuando unió los dos puntos -->
+      <div id="p8-opciones">
+        <div class="p8-opcion">
+          <svg viewBox="0 0 8 12" shape-rendering="crispEdges"><path fill="#c6ff34" transform="matrix(-1 0 0 1 8 0)" d="M0 0H3V1H4V2H5V3H6V4H7V5H8V7H7V8H6V9H5V10H4V11H3V12H0V11H1V10H2V9H3V8H4V7H5V5H4V4H3V3H2V2H1V1H0Z"/></svg>
+          <span>Reintentar</span>
+        </div>
+        <div class="p8-opcion">
+          <span>Avanzar</span>
+          <svg viewBox="0 0 8 12" shape-rendering="crispEdges"><path fill="#c6ff34" d="M0 0H3V1H4V2H5V3H6V4H7V5H8V7H7V8H6V9H5V10H4V11H3V12H0V11H1V10H2V9H3V8H4V7H5V5H4V4H3V3H2V2H1V1H0Z"/></svg>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ Pantalla 9: el tuyo vs lo que esperaba ============ -->
+  <section id="p9" class="slide">
+    <div id="p9-caja">
+      <img id="p9-profe" src="../assets/nucleo1/img/profe-cara.png" alt="">
+      <div id="p9-placa"></div>
+      <p id="p9-texto">No se parecen,<br>pero puede ser<br>mejor.</p>
+    </div>
+
+    <p id="p9-etiqueta-tuyo" class="p9-etiqueta">El tuyo</p>
+    <svg id="p9-flecha-tuyo" class="p9-flecha" viewBox="0 0 8 12" shape-rendering="crispEdges">
+      <path fill="#a9d062" d="M0 0H3V1H4V2H5V3H6V4H7V5H8V7H7V8H6V9H5V10H4V11H3V12H0V11H1V10H2V9H3V8H4V7H5V5H4V4H3V3H2V2H1V1H0Z"/>
+    </svg>
+    <div id="p9-tuyo" class="p9-marco"><canvas id="p9-canvas-tuyo" width="1428" height="656"></canvas></div>
+
+    <div id="p9-esperado" class="p9-marco"><canvas id="p9-canvas-esperado" width="1428" height="656"></canvas></div>
+    <svg id="p9-flecha-esperado" class="p9-flecha" viewBox="0 0 8 12" shape-rendering="crispEdges">
+      <path fill="#a9d062" transform="matrix(-1 0 0 1 8 0)" d="M0 0H3V1H4V2H5V3H6V4H7V5H8V7H7V8H6V9H5V10H4V11H3V12H0V11H1V10H2V9H3V8H4V7H5V5H4V4H3V3H2V2H1V1H0Z"/>
+    </svg>
+    <p id="p9-etiqueta-esperado" class="p9-etiqueta">Lo que yo<br>esperaba</p>
+  </section>
+
+  <!-- ============ Pantalla 10: juego, líneas rectas entre 1, 2, 3 y 4 ============ -->
+  <section id="p10" class="slide">
+    <div id="p10-caja" class="caja-profe">
+      <img class="caja-profe-img" src="../assets/nucleo1/img/profe-cara.png" alt="">
+      <div class="caja-profe-placa"></div>
+      <div id="p10-dialogo" class="caja-profe-dialogo">
+        <p class="p7-intro">Toma el lápiz de nuevo.</p>
+        <p>Dibuja una <span class="violeta">línea recta</span> entre el <span class="n-rojo">punto 1</span> y<br><span class="n-azul">2</span>, otra línea recta del <span class="n-azul">punto 2</span> a <span class="n-verde">3</span> y otra<br>línea recta final entre <span class="n-verde">3</span> y <span class="n-amarillo">4</span></p>
+      </div>
+    </div>
+
+    <div id="p10-lienzo" class="lienzo">
+      <canvas id="p10-canvas" width="1428" height="656"></canvas>
+      <div id="p10-tiempo" class="tiempo-juego">20</div>
+      <div class="p10-punto punto-num fondo-rojo"     style="left: 156px; top: 330px">1</div>
+      <div class="p10-punto punto-num fondo-azul"     style="left: 280px; top: 572px">2</div>
+      <div class="p10-punto punto-num fondo-verde"    style="left: 872px; top: 106px">3</div>
+      <div class="p10-punto punto-num fondo-amarillo" style="left: 1247px; top: 330px">4</div>
+      <div id="p10-cursor" class="lienzo-cursor">
+        <svg viewBox="0 0 16 16" shape-rendering="crispEdges">
+          <path fill="#000" d="M11 0H13V1H14V2H15V3H16V5H15V6H14V7H13V8H12V9H11V10H10V11H9V12H8V13H7V14H5V15H3V16H0V13H1V11H2V9H3V8H4V7H5V6H6V5H7V4H8V3H9V2H10V1H11Z"/>
+          <path fill="#c6ff34" d="M11 1H13V2H14V3H15V5H14V6H13V7H12V8H11V9H10V10H9V11H8V12H7V13H6V12H5V11H4V10H3V9H4V8H5V7H6V6H7V5H8V4H9V3H10V2H11Z"/>
+          <path fill="#8a38f5" d="M11 1H13V2H14V3H15V5H14V6H13V5H12V4H11V3H10V2H11Z"/>
+          <path fill="#fff" d="M2 11H3V12H4V13H5V14H3V15H1V13H2Z"/>
+        </svg>
+      </div>
+
+      <div id="p10-opciones" class="opciones-juego">
+        <div class="p8-opcion">
+          <svg viewBox="0 0 8 12" shape-rendering="crispEdges"><path fill="#c6ff34" transform="matrix(-1 0 0 1 8 0)" d="M0 0H3V1H4V2H5V3H6V4H7V5H8V7H7V8H6V9H5V10H4V11H3V12H0V11H1V10H2V9H3V8H4V7H5V5H4V4H3V3H2V2H1V1H0Z"/></svg>
+          <span>Reintentar</span>
+        </div>
+        <div class="p8-opcion">
+          <span>Avanzar</span>
+          <svg viewBox="0 0 8 12" shape-rendering="crispEdges"><path fill="#c6ff34" d="M0 0H3V1H4V2H5V3H6V4H7V5H8V7H7V8H6V9H5V10H4V11H3V12H0V11H1V10H2V9H3V8H4V7H5V5H4V4H3V3H2V2H1V1H0Z"/></svg>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ Pantalla 11: comparación de las líneas rectas ============ -->
+  <section id="p11" class="slide">
+    <div id="p11-caja">
+      <img id="p11-profe" src="../assets/nucleo1/img/profe-cara.png" alt="">
+      <div id="p11-placa"></div>
+      <p id="p11-texto">Mejoró muchísimo,<br>¿o no?</p>
+    </div>
+
+    <p id="p11-etiqueta-tuyo" class="p9-etiqueta">El tuyo</p>
+    <svg id="p11-flecha-tuyo" class="p9-flecha" viewBox="0 0 8 12" shape-rendering="crispEdges">
+      <path fill="#a9d062" d="M0 0H3V1H4V2H5V3H6V4H7V5H8V7H7V8H6V9H5V10H4V11H3V12H0V11H1V10H2V9H3V8H4V7H5V5H4V4H3V3H2V2H1V1H0Z"/>
+    </svg>
+    <div id="p11-tuyo" class="p9-marco"><canvas id="p11-canvas-tuyo" width="1428" height="656"></canvas></div>
+
+    <div id="p11-esperado" class="p9-marco"><canvas id="p11-canvas-esperado" width="1428" height="656"></canvas></div>
+    <svg id="p11-flecha-esperado" class="p9-flecha" viewBox="0 0 8 12" shape-rendering="crispEdges">
+      <path fill="#a9d062" transform="matrix(-1 0 0 1 8 0)" d="M0 0H3V1H4V2H5V3H6V4H7V5H8V7H7V8H6V9H5V10H4V11H3V12H0V11H1V10H2V9H3V8H4V7H5V5H4V4H3V3H2V2H1V1H0Z"/>
+    </svg>
+    <p id="p11-etiqueta-esperado" class="p9-etiqueta">Lo que yo<br>esperaba</p>
+  </section>
+
+  <!-- ============ Pantalla 12: Harold Cohen ============ -->
+  <section id="p12" class="slide">
+    <h1 id="p12-titulo"><span class="p12-linea">La primera persona en usar</span><br><span class="p12-linea violeta">sistemas expertos para</span><br><span class="p12-linea violeta">imágenes</span></h1>
+
+    <img id="p12-profe" src="../assets/nucleo1/img/profe-cuerpo.png" alt="">
+
+    <div id="p12-card">
+      <img id="p12-foto" src="../assets/nucleo1/img/harold-cohen.png" alt="Harold Cohen">
+      <div id="p12-info">
+        <h2>Harold Cohen</h2>
+        <div class="guiones-n1"></div>
+        <ul id="p12-datos">
+          <li><img src="../assets/nucleo1/img/ico-paleta.svg" alt="">Comenzó como <span class="violeta">pintor</span></li>
+          <li><img src="../assets/nucleo1/img/ico-computadora.svg" alt="">Se interesó por la <span class="violeta">computación</span></li>
+          <li><img src="../assets/nucleo1/img/ico-tortuga.svg" alt="">Creó a <span class="violeta">AARON</span></li>
+        </ul>
+        <div class="guiones-n1"></div>
+        <p id="p12-cita">“AARON no copia mi estilo, sino que sigue las reglas que le enseñé”</p>
+        <div class="guiones-n1"></div>
+        <div id="p12-sello">+40 años de desarrollo</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ Pantalla 13: arte con sistemas expertos (línea de tiempo de AARON) ============ -->
+  <section id="p13" class="slide">
+    <h1 id="p13-titulo">Arte con Sistemas expertos</h1>
+
+    <div id="p13-guiones-izq" class="p3-guiones"></div>
+    <img id="p13-reloj" src="../assets/nucleo1/img/ico-reloj.svg" alt="">
+    <div id="p13-guiones-der" class="p3-guiones"></div>
+    <div id="p13-linea"></div>
+
+    <!-- Hitos: cada uno es una columna centrada en su "left" -->
+    <div class="p13-hito" style="left: 111px">
+      <div class="p3-punto"></div><div class="p3-palo" style="height: 50px"></div>
+      <div class="p3-etiqueta">Surgen en<br>1960/1970</div>
+    </div>
+    <div id="p13-codo"></div>
+    <div class="p13-hito" style="left: 971px">
+      <div class="p3-punto"></div><div class="p3-palo" style="height: 30px"></div>
+      <div class="p3-etiqueta p13-anio">1980</div>
+      <div class="p3-palo" style="height: 125px"></div>
+    </div>
+    <div class="p13-hito" style="left: 1457px">
+      <div class="p3-punto"></div><div class="p3-palo" style="height: 38px"></div>
+      <div class="p3-etiqueta p13-anio">1990</div>
+      <div class="p3-palo" style="height: 119px"></div>
+    </div>
+    <div class="p13-hito" style="left: 1782px">
+      <div class="p3-flecha"></div><div class="p3-palo" style="height: 40px"></div>
+      <div class="p3-etiqueta">Actualidad</div>
+    </div>
+
+    <!-- Etapas de AARON -->
+    <div id="p13-aaron" class="p13-card">
+      <h2>AARON</h2>
+      <p>Programa que <span class="violeta">dibujaba siguiendo reglas escritas</span> por su creador</p>
+      <div class="guiones-n1"></div>
+      <p>Dibujos abstractos - blanco y negro</p>
+      <div class="p13-obras">
+        <img src="../assets/nucleo1/img/obras-4.png" alt="">
+        <img src="../assets/nucleo1/img/obras-1.png" alt="">
+      </div>
+    </div>
+    <div id="p13-1980" class="p13-card">
+      <p>Figuras y plantas esquemáticas a color</p>
+      <div class="guiones-n1"></div>
+      <div class="p13-obras"><img src="../assets/nucleo1/img/obras-3.png" alt=""></div>
+    </div>
+    <div id="p13-1990" class="p13-card">
+      <p>Pinturas coloridas con plantas y personas</p>
+      <div class="guiones-n1"></div>
+      <div class="p13-obras"><img src="../assets/nucleo1/img/obras-2.png" alt=""></div>
+    </div>
+  </section>
+
+  <!-- ============ Pantalla 14: cuánta memoria ocupan (gráfico que cambia de escala) ============ -->
+  <section id="p14" class="slide">
+    <h1 id="p14-titulo">¿Cuánta memoria ocupan<br>estos modelos?</h1>
+
+    <div id="p14-grafico">
+      <div id="p14-escala">Escala: 0 a <span id="p14-escala-max">2 MB</span></div>
+      <!-- líneas guía con su valor (las completa el JS) -->
+      <div class="p14-guia" style="bottom: 100%"><span></span></div>
+      <div class="p14-guia" style="bottom: 75%"><span></span></div>
+      <div class="p14-guia" style="bottom: 50%"><span></span></div>
+      <div class="p14-guia" style="bottom: 25%"><span></span></div>
+      <div class="p14-guia p14-cero" style="bottom: 0"><span>0</span></div>
+
+      <div class="p14-col" style="left: 60px">
+        <div class="p14-valor" id="p14-valor-aaron">1,5 MB</div>
+        <div class="p14-barra violeta-fondo" id="p14-barra-aaron"></div>
+        <div class="p14-nombre">AARON<br><small>(~2000)</small></div>
+      </div>
+      <div class="p14-col" style="left: 340px">
+        <div class="p14-valor" id="p14-valor-sd">2.000 MB<br><small>(2 GB)</small></div>
+        <div class="p14-barra verde-fondo" id="p14-barra-sd"></div>
+        <div class="p14-nombre">Stable Diffusion<br><small>(2022)</small></div>
+      </div>
+      <div class="p14-col" style="left: 620px">
+        <div class="p14-valor" id="p14-valor-dalle">24.000 MB<br><small>(24 GB)</small></div>
+        <div class="p14-barra gris-fondo" id="p14-barra-dalle"></div>
+        <div class="p14-nombre">DALL-E<br><small>(2021)</small></div>
+      </div>
+    </div>
+
+    <div id="p14-importante">
+      <h2>Importante</h2>
+      <p>AARON está hecho de <span class="violeta">reglas escritas</span> por una persona, mientras que los otros dos son modelos avanzados con <span class="violeta">conocimiento que aprendieron solos.</span></p>
+    </div>
+  </section>
+
+  <!-- ============ Pantalla 15: fin de la etapa uno → núcleo 2 ============ -->
+  <section id="p15" class="slide">
+    <h1 id="p15-titulo"><span class="p15-linea">Felicidades, <span class="verde">terminó la</span></span><br><span class="p15-linea verde">etapa uno</span></h1>
+
+    <div id="p15-caja">
+      <img id="p15-profe" src="../assets/nucleo1/img/profe-cara.png" alt="">
+      <div id="p15-placa"></div>
+      <p id="p15-dialogo">En la <span class="violeta">siguiente etapa</span> de tu<br>evolución, aprenderás cómo<br>las IAs comenzaron a<br><span class="violeta">aprender por sí mismas.</span></p>
+    </div>
+
+    <div id="p15-memoria">
+      <p>Inserte la memoria <span class="verde-memoria">DOS</span><br>color <span class="verde-memoria">VERDE</span> en la ranura</p>
+    </div>
+
+    <img id="p15-flecha" src="../assets/nucleo1/img/flecha-abajo.svg" alt="">
+  </section>
 </div>
 
 <script src="../libs/gsap.min.js"></script>
