@@ -15,7 +15,10 @@ var partidoIntro = null, partidoModelos = null, partidoUsos = null, partidoAgua 
 var valorEvolucion = { v: 0 };   // contador de la etiqueta del gráfico
 var partidoDif1 = null, partidoDif2 = null, partidoDif3 = null, letrasPrompt = null;
 var tipeo = { n: 0, mostradas: 0 };
-var partidoPractica = null, palabrasPractica = null;   // avance del prompt que se escribe (pantalla de generación)
+var partidoPractica = null, palabrasPractica = null;
+var partidoCierre = null, lineasCierre = null;
+var partidoEncuesta = null, partidoResultados = null;
+var miVoto = null;   // lo que votó el visitante en la encuesta final   // avance del prompt que se escribe (pantalla de generación)
 
 /* Ruido gaussiano en vivo sobre una foto (pantallas del modelo de difusión).
    Cada cuadro mezcla la foto con ruido según su nivel (0 = foto, 1 = solo ruido), como un modelo de difusión.
@@ -724,6 +727,41 @@ function iniciar() {
     /* ============ Juego de difusión (3 pantallas: ensuciar, reconstruir, generar) ============ */
     ...Difusion.pantallas(),
 
+    /* ============ Cierre del juego (da paso a las curiosidades) ============ */
+    {
+      el: "#n3-cierre",
+      preparar: function () {
+        var d = Infografia.direccion;
+        partidoCierre = partidoCierre || SplitText.create("#n3k-titulo", { type: "words" });
+        lineasCierre = lineasCierre || SplitText.create("#n3k-texto", { type: "lines" });
+        gsap.set(partidoCierre.words, { autoAlpha: 0, x: 60 * d, rotation: 3 });
+        gsap.set("#n3k-personaje", { autoAlpha: 0, scale: 0.85, x: -70 * d, transformOrigin: "50% 100%" });
+        gsap.set("#n3k-sombra-personaje", { autoAlpha: 0, scaleX: 0.4 });
+        gsap.set("#n3k-tarjeta", { autoAlpha: 0, x: 80 * d });
+        gsap.set("#n3k-sombra-tarjeta", { autoAlpha: 0, scaleX: 0.5 });
+        gsap.set(lineasCierre.lines, { autoAlpha: 0, y: 24 });
+      },
+      entrar: function () {
+        entrada = gsap.timeline()
+          .to(partidoCierre.words, { autoAlpha: 1, x: 0, rotation: 0, duration: 0.7, stagger: 0.08, ease: "back.out(1.5)" })
+          .to("#n3k-personaje", { autoAlpha: 1, scale: 1, x: 0, duration: 0.9, ease: "back.out(1.4)" }, "-=0.4")
+          .to("#n3k-sombra-personaje", { autoAlpha: 1, scaleX: 1, duration: 0.8, ease: "power2.out" }, "<0.1")
+          .to("#n3k-tarjeta", { autoAlpha: 1, x: 0, duration: 0.8, ease: "power3.out" }, "-=0.6")
+          .to("#n3k-sombra-tarjeta", { autoAlpha: 1, scaleX: 1, duration: 0.8, ease: "power2.out" }, "<0.1")
+          .to(lineasCierre.lines, { autoAlpha: 1, y: 0, duration: 0.6, stagger: 0.18, ease: "power3.out" }, "-=0.3")
+          .add(function () {
+            bucles.push(gsap.to("#n3k-personaje", { y: -16, duration: 1.9, ease: "sine.inOut", yoyo: true, repeat: -1 }));
+            bucles.push(gsap.to("#n3k-sombra-personaje", { scaleX: 0.82, opacity: 0.6, duration: 1.9, ease: "sine.inOut", yoyo: true, repeat: -1 }));
+            bucles.push(gsap.to("#n3k-sombra-tarjeta", { scaleX: 0.92, opacity: 0.7, duration: 2.4, ease: "sine.inOut", yoyo: true, repeat: -1 }));
+            // el personaje "festeja" con un pequeño bamboleo al terminar de entrar
+            bucles.push(gsap.to("#n3k-personaje", { rotation: 4, duration: 0.25, ease: "sine.inOut", yoyo: true, repeat: 3, repeatDelay: 0.05,
+              transformOrigin: "50% 100%", delay: 0.4 }));
+          });
+        return entrada;
+      },
+      salir: detener
+    },
+
     /* ============ Pantalla 1: sin interactividad con el botón ============ */
     {
       el: "#p1",
@@ -877,7 +915,136 @@ function iniciar() {
       },
 
       salir: detener
-    }
+    },
+
+    /* ============ Encuesta final: se vota con los gestos ============
+       Gesto de volver = No (izquierda), gesto de avanzar = Sí (derecha). El voto lo guarda el
+       contenedor (panel de la D: resumen y CSV). Después de votar, sigue solo. */
+    (function () {
+      var votado = false;
+      function votar(resp) {
+        if (votado) return;
+        votado = true;
+        Infografia.votar("usa-ia-para-imagenes", resp);
+        miVoto = resp;   // para marcar "Tu voto" en los resultados
+        detener();
+        var elegida = resp === "si" ? "#n3v-si" : "#n3v-no", otra = resp === "si" ? "#n3v-no" : "#n3v-si";
+        document.querySelector(elegida).classList.add("elegida");
+        entrada = gsap.timeline()
+          .to("#n3v-ayuda, #n3v-mano", { autoAlpha: 0, duration: 0.3 })
+          .to(otra, { autoAlpha: 0.25, scale: 0.92, duration: 0.4 }, 0)
+          .to(elegida, { scale: 1.12, duration: 0.5, ease: "back.out(2.5)" }, 0)
+          .fromTo("#n3v-gracias", { autoAlpha: 0, y: 20 }, { autoAlpha: 1, y: 0, duration: 0.5, ease: "back.out(2)" }, 0.3)
+          .to("#n3v-personaje", { y: -40, duration: 0.3, ease: "power2.out", yoyo: true, repeat: 1 }, 0.3)
+          .add(function () { Infografia.avanzar(); }, "+=1.6");   // termina el núcleo
+      }
+      return {
+        el: "#n3-encuesta",
+        preparar: function () {
+          var d = Infografia.direccion;
+          votado = false;
+          document.querySelectorAll("#n3-encuesta .elegida").forEach(function (e) { e.classList.remove("elegida"); });
+          partidoEncuesta = partidoEncuesta || SplitText.create("#n3v-titulo", { type: "words" });
+          gsap.set(partidoEncuesta.words, { autoAlpha: 0, y: 30 });
+          gsap.set("#n3v-personaje", { autoAlpha: 0, scale: 0.85, x: -70 * d, y: 0, transformOrigin: "50% 100%" });
+          gsap.set("#n3v-sombra-personaje", { autoAlpha: 0, scaleX: 0.4 });
+          gsap.set(".n3v-opcion", { autoAlpha: 0, scale: 0.8, y: 30 });
+          gsap.set("#n3v-ayuda, #n3v-mano, #n3v-gracias", { autoAlpha: 0 });
+        },
+        entrar: function () {
+          entrada = gsap.timeline()
+            .to(partidoEncuesta.words, { autoAlpha: 1, y: 0, duration: 0.6, stagger: 0.08, ease: "back.out(1.8)" })
+            .to("#n3v-personaje", { autoAlpha: 1, scale: 1, x: 0, duration: 0.9, ease: "back.out(1.4)" }, "-=0.3")
+            .to("#n3v-sombra-personaje", { autoAlpha: 1, scaleX: 1, duration: 0.8, ease: "power2.out" }, "<0.1")
+            .to(".n3v-opcion", { autoAlpha: 1, scale: 1, y: 0, duration: 0.6, stagger: 0.15, ease: "back.out(1.8)" }, "-=0.6")
+            .to("#n3v-ayuda", { autoAlpha: 1, duration: 0.5 })
+            .add(function () {
+              bucles.push(gsap.to("#n3v-personaje", { y: -14, duration: 1.9, ease: "sine.inOut", yoyo: true, repeat: -1 }));
+              bucles.push(gsap.to("#n3v-sombra-personaje", { scaleX: 0.82, opacity: 0.6, duration: 1.9, ease: "sine.inOut", yoyo: true, repeat: -1 }));
+              // tutorial: la mano desliza hacia el No y hacia el Sí, y cada opción se ilumina cuando la mano va hacia ella
+              bucles.push(gsap.timeline({ repeat: -1, repeatDelay: 0.4 })
+                .set("#n3v-mano", { x: 0, rotation: 0 })
+                .to("#n3v-mano", { autoAlpha: 1, duration: 0.25 })
+                .to("#n3v-mano", { x: 220, rotation: 12, duration: 0.8, ease: "power2.inOut" })            // primero Sí
+                .to("#n3v-si .n3v-boton", { scale: 1.08, duration: 0.25, ease: "back.out(3)", yoyo: true, repeat: 1 }, "-=0.2")
+                .to("#n3v-mano", { autoAlpha: 0, duration: 0.25 })
+                .set("#n3v-mano", { x: 0, rotation: 0 })
+                .to("#n3v-mano", { autoAlpha: 1, duration: 0.25 }, "+=0.3")
+                .to("#n3v-mano", { x: -220, rotation: -12, duration: 0.8, ease: "power2.inOut" })          // después No
+                .to("#n3v-no .n3v-boton", { scale: 1.08, duration: 0.25, ease: "back.out(3)", yoyo: true, repeat: 1 }, "-=0.2")
+                .to("#n3v-mano", { autoAlpha: 0, duration: 0.25 }));
+            });
+          return entrada;
+        },
+        // los gestos votan (y no cambian de pantalla: la pantalla avanza sola después de votar)
+        alSiguiente: function () { votar("si"); return true; },
+        alAnterior: function () { votar("no"); return true; },
+        salir: detener
+      };
+    })(),
+
+    /* ============ Resultados de la encuesta (votos de todas las personas) ============
+       Le pide los votos al contenedor; las barras crecen hasta su porcentaje y se marca "Tu voto". */
+    (function () {
+      var datos = { si: 0, no: 0 }, cuenta = { si: 0, no: 0, ps: 0, pn: 0, total: 0 };
+      function pintar() {
+        var q = function (s) { return document.querySelector(s); };
+        q("#n3r-si .n3r-pct span").textContent = Math.round(cuenta.ps);
+        q("#n3r-no .n3r-pct span").textContent = Math.round(cuenta.pn);
+        q("#n3r-si .n3r-cant span").textContent = Math.round(cuenta.si);
+        q("#n3r-no .n3r-cant span").textContent = Math.round(cuenta.no);
+        q("#n3r-total").textContent = Math.round(cuenta.total);
+        q("#n3r-si .n3r-barra").style.height = cuenta.ps + "%";
+        q("#n3r-no .n3r-barra").style.height = cuenta.pn + "%";
+      }
+      return {
+        el: "#n3-resultados",
+        preparar: function () {
+          var d = Infografia.direccion;
+          cuenta.si = cuenta.no = cuenta.ps = cuenta.pn = cuenta.total = 0;
+          pintar();
+          document.getElementById("n3r-si").classList.toggle("mio", miVoto === "si");
+          document.getElementById("n3r-no").classList.toggle("mio", miVoto === "no");
+          Infografia.pedirVotos("usa-ia-para-imagenes", function (v) { datos = v; });
+          partidoResultados = partidoResultados || SplitText.create("#n3r-titulo", { type: "words" });
+          gsap.set(partidoResultados.words, { autoAlpha: 0, y: 30 });
+          gsap.set("#n3r-sub", { autoAlpha: 0 });
+          gsap.set("#n3r-tarjeta", { autoAlpha: 0, x: 80 * d });
+          gsap.set(".n3r-col", { autoAlpha: 0, y: 30 });
+          gsap.set(".n3r-tu", { scale: 0 });
+          gsap.set("#n3r-personaje", { autoAlpha: 0, scale: 0.85, x: -70 * d, transformOrigin: "50% 100%" });
+          gsap.set("#n3r-sombra-personaje", { autoAlpha: 0, scaleX: 0.4 });
+        },
+        entrar: function () {
+          entrada = gsap.timeline()
+            .to(partidoResultados.words, { autoAlpha: 1, y: 0, duration: 0.6, stagger: 0.08, ease: "back.out(1.8)" })
+            .to("#n3r-sub", { autoAlpha: 1, duration: 0.5 }, "-=0.2")
+            .to("#n3r-tarjeta", { autoAlpha: 1, x: 0, duration: 0.7, ease: "power3.out" }, "-=0.3")
+            .to("#n3r-personaje", { autoAlpha: 1, scale: 1, x: 0, duration: 0.9, ease: "back.out(1.4)" }, "<")
+            .to("#n3r-sombra-personaje", { autoAlpha: 1, scaleX: 1, duration: 0.8, ease: "power2.out" }, "<0.1")
+            .to(".n3r-col", { autoAlpha: 1, y: 0, duration: 0.5, stagger: 0.15, ease: "back.out(1.8)" }, "-=0.4")
+            // las barras y los números crecen hasta los valores reales (los datos ya llegaron del contenedor)
+            .add(function () {
+              var total = datos.si + datos.no;
+              gsap.to(cuenta, {
+                si: datos.si, no: datos.no, total: total,
+                ps: total ? datos.si / total * 100 : 0, pn: total ? datos.no / total * 100 : 0,
+                duration: 1.6, ease: "power2.out", onUpdate: pintar
+              });
+            })
+            .to(".n3r-col.mio .n3r-tu", { scale: 1, duration: 0.5, ease: "back.out(3)" }, "+=1.4")
+            .add(function () {
+              bucles.push(gsap.to("#n3r-personaje", { y: -14, duration: 1.9, ease: "sine.inOut", yoyo: true, repeat: -1 }));
+              bucles.push(gsap.to("#n3r-sombra-personaje", { scaleX: 0.82, opacity: 0.6, duration: 1.9, ease: "sine.inOut", yoyo: true, repeat: -1 }));
+              bucles.push(gsap.to(".n3r-col.mio .n3r-tu", { y: -6, duration: 0.8, ease: "sine.inOut", yoyo: true, repeat: -1 }));
+            });
+          return entrada;
+        },
+        // desde los resultados no se vuelve a la encuesta (para no votar dos veces)
+        alAnterior: function () { return true; },
+        salir: detener
+      };
+    })()
 
   ], { transicion: "deslizar", duracion: 0.8 });
 }

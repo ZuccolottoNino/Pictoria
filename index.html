@@ -37,6 +37,17 @@
   #velo { position: fixed; inset: 0; background: #0a0a0a; opacity: 0; pointer-events: none; transition: opacity var(--fade) ease; z-index: 10; }
   #velo.activo { opacity: 1; }
 
+  /* Pantalla de error de memoria (encima del núcleo, sin cambiar de pantalla) */
+  #error-memoria { position: fixed; inset: 0; z-index: 15; display: flex; align-items: center; justify-content: center;
+    background: rgba(10,10,10,.82); font-family: "Press Start 2P", monospace; }
+  #error-memoria[hidden] { display: none; }
+  #error-memoria .tarjeta-error { width: min(80vw, 1300px); padding: 5vmin 4vmin; text-align: center; background: #000;
+    border: 0.8vmin solid #fff; display: flex; flex-direction: column; align-items: center; gap: 3.5vmin; }
+  #error-memoria .icono-error { width: 12vmin; height: 12vmin; display: flex; align-items: center; justify-content: center;
+    background: #FF2A2A; color: #fff; font-size: 7vmin; }
+  #error-memoria .titulo-error { color: #fff; font-size: clamp(16px, 3vmin, 40px); line-height: 1.5; }
+  #error-memoria .texto-error { color: #fff; font-size: clamp(14px, 2.6vmin, 34px); line-height: 1.7; }
+
   /* Pantalla de carga (dentro del velo): solo se ve si la página tarda en estar lista */
   @font-face { font-family: "Press Start 2P"; font-display: block; src: url("assets/nucleo1/fonts/PressStart2P-Regular.ttf") format("truetype"); }
   #carga {
@@ -87,6 +98,14 @@
 
 <div id="pantalla" role="status" aria-live="polite" tabindex="-1"></div>
 <iframe id="nucleo" title="Contenido" hidden></iframe>
+<!-- Pantalla de error: se eligió una memoria que no corresponde -->
+<div id="error-memoria" hidden>
+  <div class="tarjeta-error">
+    <div class="icono-error">!</div>
+    <p class="titulo-error">¡Esa no es la memoria correcta!</p>
+    <p class="texto-error"></p>
+  </div>
+</div>
 <div id="velo">
   <div id="carga"><p>CARGANDO</p><div class="barra"><div class="relleno"></div></div></div>
 </div>
@@ -102,6 +121,12 @@
   <div class="etq">Orden de núcleos (el 2 solo después del 1, etc.)</div>
   <div class="fila"><button type="button" tabindex="-1" id="btn-orden"></button></div>
   <div class="fila"><button type="button" tabindex="-1" data-accion="REINICIAR">Reiniciar</button></div>
+  <div class="etq">Encuesta (se guarda en esta computadora)</div>
+  <div id="votos-resumen" class="etq" style="color:#fff;font-size:13px"></div>
+  <div class="fila">
+    <button type="button" tabindex="-1" id="btn-votos-csv">Descargar CSV</button>
+    <button type="button" tabindex="-1" id="btn-votos-borrar">Borrar votos</button>
+  </div>
   <div id="estado"></div>
   <div class="etq">Tecla D: ocultar/mostrar este panel</div>
 </div>
@@ -123,10 +148,12 @@ const CONFIG = {
      genérica. sinStandby: true → se pasa directo al núcleo, sin pantalla previa. Siguiente/Anterior en esa página los maneja el contenedor. */
   nucleos: [
     { archivo: "nucleos/nucleo1.html", titulo: "Núcleo 1", subtitulo: "Descripción corta del núcleo 1",
-      standby: "nucleos/nucleo1-memoria.html" },
+      standby: "nucleos/nucleo1-memoria.html", memoria: { nombre: "UNO", color: "ROJO", hex: "#FF2A2A" } },
     { archivo: "nucleos/nucleo2.html", titulo: "Núcleo 2", subtitulo: "Descripción corta del núcleo 2",
-      sinStandby: true },   // el "Inserte la memoria DOS" ya está al final del núcleo 1
-    { archivo: "nucleos/nucleo3.html", titulo: "Núcleo 3", subtitulo: "Descripción corta del núcleo 3" }
+      sinStandby: true,   // el "Inserte la memoria DOS" ya está al final del núcleo 1
+      memoria: { nombre: "DOS", color: "VERDE", hex: "#00C80F" } },
+    { archivo: "nucleos/nucleo3.html", titulo: "Núcleo 3", subtitulo: "Descripción corta del núcleo 3",
+      memoria: { nombre: "TRES", color: null, hex: "#BD72FF" } }   // TODO: color de la memoria TRES
     // el juego de difusión está dentro del núcleo 3 (botón "Juego 3" del panel para probarlo directo)
   ],
 
@@ -178,6 +205,32 @@ let nucleoListo = false;   // el núcleo avisa cuando ya puede recibir acciones
 let alEstarListo = null;   // irA espera este aviso antes de sacar el velo
 let temporizadorInactividad = null;
 const visitados = new Set();   // núcleos que ya se abrieron en esta visita
+
+/* ---------- Encuesta: los votos se guardan en el navegador de esta computadora (localStorage) ---------- */
+const CLAVE_VOTOS = "pictoria-votos";
+function leerVotos() {
+  try { return JSON.parse(localStorage.getItem(CLAVE_VOTOS)) || []; } catch (e) { return []; }
+}
+function guardarVoto(pregunta, respuesta) {
+  const votos = leerVotos();
+  votos.push({ pregunta, respuesta, fecha: new Date().toISOString() });
+  try { localStorage.setItem(CLAVE_VOTOS, JSON.stringify(votos)); } catch (e) {}
+  pintarVotos();
+}
+function pintarVotos() {
+  const votos = leerVotos(), si = votos.filter(v => v.respuesta === "si").length;
+  const el = document.getElementById("votos-resumen");
+  if (el) el.textContent = `Sí: ${si} · No: ${votos.length - si} · Total: ${votos.length}`;
+}
+function descargarVotos() {
+  const filas = [["fecha", "pregunta", "respuesta"]].concat(leerVotos().map(v => [v.fecha, v.pregunta, v.respuesta]));
+  const csv = filas.map(f => f.join(",")).join("\n");
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(new Blob(["\ufeff" + csv], { type: "text/csv;charset=utf-8" }));
+  a.download = "pictoria-votos-" + new Date().toISOString().slice(0, 10) + ".csv";
+  a.click();
+  setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+}
 
 const esperar = ms => new Promise(r => setTimeout(r, ms));
 const avisar = txt => { estado.textContent = txt; };
@@ -262,15 +315,39 @@ function irAJuego3() {
   if (indice !== -1) irA(indice, "inicio=d1");
 }
 
+/* Muestra "¡Esa no es la memoria correcta!" y qué memoria insertar; se va sola a los pocos segundos */
+let temporizadorError = null;
+function mostrarErrorMemoria(esperado) {
+  const caja = document.getElementById("error-memoria"), texto = caja.querySelector(".texto-error");
+  const n = CONFIG.nucleos[esperado];
+  if (!n) {
+    texto.textContent = "Ya recorriste todas las memorias.";
+  } else {
+    const m = n.memoria || { nombre: String(esperado + 1) };
+    texto.innerHTML = `Inserte la memoria <span style="color:${m.hex || "#fff"}">${m.nombre}</span>` +
+      (m.color ? `<br>color <span style="color:${m.hex}">${m.color}</span> en la ranura` : " en la ranura");
+  }
+  avisar("Memoria equivocada → va la " + (n ? (esperado + 1) : "—"));
+  caja.hidden = false;
+  caja.animate([{ opacity: 0, transform: "scale(1.04)" }, { opacity: 1, transform: "none" }], { duration: 250, easing: "ease-out" });
+  clearTimeout(temporizadorError);
+  temporizadorError = setTimeout(() => {
+    caja.animate([{ opacity: 1 }, { opacity: 0 }], { duration: 300 }).onfinish = () => { caja.hidden = true; };
+  }, 4000);
+  reiniciarInactividad();
+}
+
 function irANucleo(n) {
   if (ocupado) return;
   // Si el núcleo tiene pantalla previa propia, se entra por ahí
   const tipo = CONFIG.nucleos[n] && CONFIG.nucleos[n].standby ? "standby" : "nucleo";
   const indice = pasos.findIndex(p => p.tipo === tipo && p.nucleo === n);
   if (indice === -1 || indice === pasoActual) return;
-  if (CONFIG.ordenObligatorio && n > 0 && !visitados.has(n - 1)) {
-    avisar("Bloqueado: primero abrí el núcleo " + n);
-    return;
+  // Orden obligatorio: solo se puede entrar al núcleo que sigue (el siguiente al último visitado).
+  // Si eligió otro (adelantarse o volver a uno ya hecho), se le dice qué memoria insertar.
+  if (CONFIG.ordenObligatorio) {
+    const esperado = visitados.size ? Math.max(...visitados) + 1 : 0;
+    if (n !== esperado) { mostrarErrorMemoria(esperado); return; }
   }
   irA(indice);
 }
@@ -348,6 +425,13 @@ window.addEventListener("message", (e) => {
 
   switch (msg.tipo) {
     case "listo":      nucleoListo = true; if (alEstarListo) alEstarListo(); break;
+    case "voto":       guardarVoto(msg.pregunta, msg.respuesta); break;
+    case "pedir-votos": {
+      const v = leerVotos().filter(x => !msg.pregunta || x.pregunta === msg.pregunta);
+      const si = v.filter(x => x.respuesta === "si").length;
+      iframe.contentWindow.postMessage({ origen: "contenedor", tipo: "votos", si, no: v.length - si }, "*");
+      break;
+    }
     case "terminado":  nucleoListo = false; avanzarPaso(); break;
     case "volver":     nucleoListo = false; retrocederPaso(); break;
     case "actividad":  reiniciarInactividad(); break;
@@ -375,6 +459,15 @@ function alternarPanel() {
   bj.addEventListener("click", irAJuego3);
   panel.querySelectorAll("[data-accion]").forEach(b =>
     b.addEventListener("click", () => emitir(b.dataset.accion)));
+
+  document.getElementById("btn-votos-csv").addEventListener("click", descargarVotos);
+  document.getElementById("btn-votos-borrar").addEventListener("click", () => {
+    if (confirm("¿Borrar todos los votos guardados? Antes conviene descargar el CSV.")) {
+      try { localStorage.removeItem(CLAVE_VOTOS); } catch (e) {}
+      pintarVotos();
+    }
+  });
+  pintarVotos();
 
   const bo = document.getElementById("btn-orden");
   const pintarOrden = () => { bo.textContent = CONFIG.ordenObligatorio ? "🔒 Orden activado" : "🔓 Orden desactivado"; };

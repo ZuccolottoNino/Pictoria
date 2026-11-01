@@ -49,13 +49,80 @@
            background: rgba(189,114,255,.14); color: #8a3fe0; font-size: 30px; font-weight: 600; opacity: 0; visibility: hidden; }
 
 /* Puntero grande (pantalla 1): aro del tamaño exacto del pincel */
-#d-cursor { position: absolute; left: 0; top: 0; width: 152px; height: 152px; margin: -76px 0 0 -76px; opacity: 0; transition: opacity .18s; pointer-events: none; z-index: 30; }
-#d-cursor.vis { opacity: 1; }
-#d-cursor .anillo { position: absolute; inset: 0; border-radius: 50%; border: 6px solid var(--violeta); background: rgba(189,114,255,.12); transition: transform .12s, background .12s; }
-#d-cursor.pres .anillo { transform: scale(.94); background: transparent; }
-#d-cursor canvas { position: absolute; left: 6px; top: 6px; width: 140px; height: 140px; border-radius: 50%; opacity: 0; transition: opacity .12s; image-rendering: pixelated; }
-#d-cursor.pres canvas { opacity: 1; }
-#d-cursor .icono { position: absolute; left: 50%; top: 50%; width: 64px; height: 64px; margin: -32px 0 0 -32px; border-radius: 50%; background: #fff;
+#d-cursor, .d-cursor-extra { position: absolute; left: 0; top: 0; width: 152px; height: 152px; margin: -76px 0 0 -76px; opacity: 0; transition: opacity .18s; pointer-events: none; z-index: 30; }
+#d-cursor.vis, .d-cursor-extra.vis { opacity: 1; }
+#d-cursor .anillo, .d-cursor-extra .anillo { position: absolute; inset: 0; border-radius: 50%; border: 6px solid var(--violeta); background: rgba(189,114,255,.12); transition: transform .12s, background .12s; }
+#d-cursor.pres .anillo, .d-cursor-extra.pres .anillo { transform: scale(.94); background: transparent; }
+#d-cursor canvas, .d-cursor-extra canvas { position: absolute; left: 6px; top: 6px; width: 140px; height: 140px; border-radius: 50%; opacity: 0; transition: opacity .12s; image-rendering: pixelated; }
+#d-cursor.pres canvas, .d-cursor-extra.pres canvas { opacity: 1; }
+#d-cursor .icono, .d-cursor-extra .icono { position: absolute; left: 50%; top: 50%; width: 64px; height: 64px; margin: -32px 0 0 -32px; border-radius: 50%; background: #fff;
                    box-shadow: 0 4px 16px rgba(80, 60, 160, .25); display: flex; align-items: center; justify-content: center; }
-#d-cursor .icono svg, .d-consigna .anillo-demo svg { width: 38px; height: 38px; }
+#d-cursor .icono svg, .d-consigna .anillo-demo svg, .d-cursor-extra .icono svg { width: 38px; height: 38px; }
 .d-consigna .anillo-demo svg { position: absolute; left: 50%; top: 50%; margin: -19px 0 0 -19px; }
+
+
+/* ============ Pantalla 2 jugable: reconstruir siguiendo las guías ============ */
+.d-marco .d-guia { position: absolute; left: 0; top: 0; width: 1160px; height: 820px; pointer-events: none; }
+
+/* la tarjeta lateral muestra el ruido predicho (más chico) y la consigna */
+#d2 .d-pred { top: 76px; height: 130px; }
+#d2 .d-pred-txt { display: none; }
+.d2-consigna { position: absolute; left: 38px; right: 38px; top: 222px; font-size: 28px; line-height: 34px; font-weight: 700; color: var(--tinta); }
+.d2-consigna-sub { position: absolute; left: 38px; right: 38px; top: 296px; font-size: 24px; line-height: 30px; color: #5a6082; }
+
+/* cuenta regresiva, en la esquina de la imagen */
+.d-tiempo { position: absolute; left: 1124px; top: 190px; z-index: 6; min-width: 120px; padding: 12px 18px; text-align: center;
+  border-radius: 999px; background: rgba(255,255,255,.92); box-shadow: 0 8px 24px rgba(120,110,200,.25);
+  font-family: "Space Grotesk", sans-serif; font-weight: 700; font-size: 44px; line-height: 1; color: #5F6FB7;
+  opacity: 0; visibility: hidden; }
+.d-tiempo.apurado { color: #E0457B; }
+
+/* comparación final: original y reconstruida, lado a lado, sobre la imagen */
+.d-comparar { position: absolute; left: 108px; top: 170px; width: 1160px; height: 820px; z-index: 5; border-radius: 45px;
+  display: flex; align-items: center; justify-content: center; gap: 40px;
+  background: rgba(247, 248, 252, .94); opacity: 0; visibility: hidden; }
+.d-comparar figure { margin: 0; display: flex; flex-direction: column; align-items: center; gap: 18px; }
+.d-comparar canvas { width: 520px; height: 368px; border-radius: 28px; box-shadow: 0 12px 40px rgba(120,110,200,.22); }
+.d-comparar figcaption { font-family: "Space Grotesk", sans-serif; font-weight: 700; font-size: 40px; color: var(--tinta); }
+/* el aro del lápiz de la pantalla 2 mide lo mismo que la zona que limpia (radio 46 en el buffer = 92 px) */
+#d2-cursor { width: 184px; height: 184px; margin: -92px 0 0 -92px; }
+#d2-cursor canvas { display: none; }
+
+/* sin la cara placeholder de la mascota: el mensaje ocupa toda la fila */
+.d-mascota { display: none; }
+/* aro del lápiz de la pantalla 2 = zona que limpia (radio 16 en el buffer = 32 px → 64 px de diámetro) */
+#d2-cursor { width: 64px; height: 64px; margin: -32px 0 0 -32px; }
+#d2-cursor .icono { width: 26px; height: 26px; margin: -13px 0 0 -13px; }
+#d2-cursor .icono svg { width: 16px; height: 16px; }
+
+/* ============ Mini tutorial de la pantalla 2 ============ */
+.d-pista { position: absolute; left: 688px; top: 200px; transform: translateX(-50%); z-index: 6; white-space: nowrap;
+  padding: 14px 34px; border-radius: 999px; background: #fff; box-shadow: 0 10px 30px rgba(120,110,200,.3);
+  font-size: 34px; font-weight: 700; color: #7A3FD0; opacity: 0; visibility: hidden; }
+/* lápiz fantasma: el aro marca la punta (mismo tamaño que el lápiz real) y el lápiz va encima */
+.d-demo { position: absolute; left: 0; top: 0; width: 0; height: 0; z-index: 7; pointer-events: none; opacity: 0; visibility: hidden; }
+.d-demo-aro { position: absolute; left: -32px; top: -32px; width: 64px; height: 64px; border-radius: 50%;
+  border: 5px solid rgba(189,114,255,.85); background: rgba(189,114,255,.15); }
+.d-demo-lapiz { position: absolute; left: -6px; top: -78px; width: 84px; height: 84px; filter: drop-shadow(0 6px 10px rgba(80,50,160,.35)); }
+
+
+/* ============ Pantalla 3 jugable: dibujar la montaña y el sol ============ */
+.d-marco .d-boceto { position: absolute; left: 0; top: 0; width: 1160px; height: 820px; pointer-events: none; }
+.d-tiempo#d3-tiempo { left: 1124px; }
+/* el lápiz de dibujo: aro chico con punta */
+#d3-cursor { width: 44px; height: 44px; margin: -22px 0 0 -22px; }
+#d3-cursor canvas { display: none; }
+#d3-cursor .icono { width: 18px; height: 18px; margin: -9px 0 0 -9px; }
+#d3-cursor .icono svg { width: 12px; height: 12px; }
+
+/* cierre: "tu recorrido" con las tres imágenes */
+.d-final { flex-direction: column; gap: 34px; }
+.d-final h3 { font-family: "Space Grotesk", sans-serif; font-weight: 700; font-size: 46px; color: var(--tinta); }
+.d-final-fila { display: flex; gap: 28px; }
+.d-final canvas { width: 340px; height: 240px; }
+.d-final figcaption { font-size: 34px; }
+
+/* cartel grande de la pantalla 3: centrado arriba de la imagen, imposible de no ver */
+.d-pista-grande { top: 196px; transform: none; font-size: 46px; padding: 18px 46px; color: #fff;
+  background: linear-gradient(90deg, #9B6BF2, #D07FD8); box-shadow: 0 14px 40px rgba(155,107,242,.45); }
+#d3-demo .d-demo-aro { left: -22px; top: -22px; width: 44px; height: 44px; }

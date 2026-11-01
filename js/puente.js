@@ -27,6 +27,7 @@
   }
 
   var manejador = null;
+  var alVotos = null;   // respuesta pendiente de Infografia.pedirVotos
   var hayGsap = function () { return typeof window.gsap !== "undefined"; };
   var hayFlip = function () { return hayGsap() && typeof window.Flip !== "undefined"; };
   if (hayFlip()) gsap.registerPlugin(Flip);
@@ -78,6 +79,10 @@
     direccion: 1,
     terminar:  function () { enviar("terminado"); },
     volver:    function () { enviar("volver"); },
+    /* Encuesta: el contenedor guarda la respuesta (ej. Infografia.votar("usa-ia", "si")) */
+    votar:     function (pregunta, respuesta) { enviar("voto", { pregunta: pregunta, respuesta: respuesta }); },
+    /* Pide al contenedor el resumen de votos de una pregunta; responde con alRecibir({ si, no }) */
+    pedirVotos: function (pregunta, alRecibir) { alVotos = alRecibir; enviar("pedir-votos", { pregunta: pregunta }); },
     actividad: function () { enviar("actividad"); },
     reiniciar: function () { enviar("reiniciar"); },
 
@@ -178,6 +183,14 @@
       } catch (e) {}
       mostrar(inicio);
 
+      /* Avanzar desde el propio núcleo (ej. un juego que pasa solo de etapa al terminar).
+         Igual que el gesto de avanzar, pero sin pasar por alSiguiente. */
+      Infografia.avanzar = function () {
+        if (bloqueado) return;
+        if (actual < pantallas.length - 1) mostrar(actual + 1);
+        else Infografia.terminar();
+      };
+
       Infografia.alAccion(function (accion, datos) {
         if (bloqueado) return;
         // Una pantalla puede quedarse con Siguiente/Anterior (ej. un juego):
@@ -206,6 +219,7 @@
     var m = e.data;
     if (!m || m.origen !== "contenedor") return;
     if (m.tipo === "accion" && manejador) manejador(m.accion, m.datos || {});
+    if (m.tipo === "votos" && alVotos) { alVotos({ si: m.si || 0, no: m.no || 0 }); alVotos = null; }
   });
 
   /* Reenvía el teclado al contenedor (el foco puede estar dentro del núcleo) */

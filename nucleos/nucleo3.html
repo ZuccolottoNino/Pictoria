@@ -398,12 +398,39 @@
       <div class="d-etq" id="d2-pred-etq">Ruido predicho</div>
       <canvas class="d-pred" id="d2-pred" width="101" height="50"></canvas>
       <div class="d-pred-txt" id="d2-pred-txt"></div>
+      <!-- consigna de la pantalla jugable -->
+      <p class="d2-consigna" id="d2-consigna"></p>
+      <small class="d2-consigna-sub" id="d2-consigna-sub"></small>
     </div>
     <div class="d-fila">
       <div class="d-mascota" id="d2-mascota" data-estado="neutral"><span>Mascota<br></span><span>neutral</span></div>
       <div class="tarjeta d-burbuja" id="d2-msg"></div>
     </div>
     <div class="d-aviso" id="d2-aviso"></div>
+
+    <!-- cuenta regresiva y comparación final (original vs reconstruida) -->
+    <div class="d-tiempo" id="d2-tiempo"></div>
+    <!-- mini tutorial: cartel + lápiz fantasma que muestra cómo seguir la línea -->
+    <div class="d-pista" id="d2-pista">¡Seguí la línea con el lápiz!</div>
+    <div class="d-demo" id="d2-demo">
+      <div class="d-demo-aro"></div>
+      <svg class="d-demo-lapiz" viewBox="0 0 64 64"><g transform="rotate(45 32 32)">
+        <rect x="24" y="2" width="16" height="40" rx="4" fill="#C9A8F5" stroke="#7A5AF5" stroke-width="3"/>
+        <rect x="24" y="2" width="16" height="9" rx="3" fill="#F3C3E6" stroke="#7A5AF5" stroke-width="3"/>
+        <path d="M24 42 L32 60 L40 42 Z" fill="#FFE6C2" stroke="#7A5AF5" stroke-width="3" stroke-linejoin="round"/>
+        <path d="M29.5 54 L32 60 L34.5 54 Z" fill="#7A5AF5"/>
+      </g></svg>
+    </div>
+    <div class="d-comparar" id="d2-comparar">
+      <figure><canvas id="d2-comp-original" width="520" height="368"></canvas><figcaption id="d2-etq-original"></figcaption></figure>
+      <figure><canvas id="d2-comp-reconstruida" width="520" height="368"></canvas><figcaption id="d2-etq-reconstruida"></figcaption></figure>
+    </div>
+
+    <div id="d2-cursor" class="d-cursor-extra">
+      <div class="anillo"></div>
+      <canvas width="35" height="35"></canvas>
+      <div class="icono"><svg viewBox="0 0 40 40"><g fill="#BD72FF"><rect x="5" y="8" width="7" height="7" rx="2"/><rect x="18" y="4" width="7" height="7" rx="2"/><rect x="29" y="12" width="7" height="7" rx="2"/><rect x="11" y="20" width="7" height="7" rx="2"/><rect x="24" y="24" width="7" height="7" rx="2"/><rect x="6" y="31" width="5" height="5" rx="1.5"/></g></svg></div>
+    </div>
   </section>
 
   <!-- ===================== JUEGO DE DIFUSIÓN · 3: GENERAR ===================== -->
@@ -425,11 +452,52 @@
       <div class="tarjeta d-burbuja" id="d3-msg"></div>
     </div>
     <div class="d-aviso" id="d3-aviso"></div>
+
+    <!-- cuenta regresiva y cierre: las tres imágenes del visitante -->
+    <div class="d-tiempo" id="d3-tiempo"></div>
+    <!-- mini tutorial: cartel grande con el paso actual + lápiz fantasma que dibuja de ejemplo -->
+    <div class="d-pista d-pista-grande" id="d3-pista"></div>
+    <div class="d-demo" id="d3-demo">
+      <div class="d-demo-aro"></div>
+      <svg class="d-demo-lapiz" viewBox="0 0 64 64"><g transform="rotate(45 32 32)">
+        <rect x="24" y="2" width="16" height="40" rx="4" fill="#C9A8F5" stroke="#7A5AF5" stroke-width="3"/>
+        <rect x="24" y="2" width="16" height="9" rx="3" fill="#F3C3E6" stroke="#7A5AF5" stroke-width="3"/>
+        <path d="M24 42 L32 60 L40 42 Z" fill="#FFE6C2" stroke="#7A5AF5" stroke-width="3" stroke-linejoin="round"/>
+        <path d="M29.5 54 L32 60 L34.5 54 Z" fill="#7A5AF5"/>
+      </g></svg>
+    </div>
+    <div class="d-comparar d-final" id="d3-final">
+      <h3 id="d3-final-titulo"></h3>
+      <div class="d-final-fila">
+        <figure><canvas id="d3-final-1" width="340" height="240"></canvas><figcaption id="d3-final-etq-1"></figcaption></figure>
+        <figure><canvas id="d3-final-2" width="340" height="240"></canvas><figcaption id="d3-final-etq-2"></figcaption></figure>
+        <figure><canvas id="d3-final-3" width="340" height="240"></canvas><figcaption id="d3-final-etq-3"></figcaption></figure>
+      </div>
+    </div>
+
+    <div id="d3-cursor" class="d-cursor-extra">
+      <div class="anillo"></div>
+      <canvas width="35" height="35"></canvas>
+      <div class="icono"><svg viewBox="0 0 40 40"><g fill="#BD72FF"><rect x="5" y="8" width="7" height="7" rx="2"/><rect x="18" y="4" width="7" height="7" rx="2"/><rect x="29" y="12" width="7" height="7" rx="2"/><rect x="11" y="20" width="7" height="7" rx="2"/><rect x="24" y="24" width="7" height="7" rx="2"/><rect x="6" y="31" width="5" height="5" rx="1.5"/></g></svg></div>
+    </div>
+  </section>
+
+  <!-- ===================== CIERRE DEL JUEGO (da paso a las curiosidades) ===================== -->
+  <section id="n3-cierre" class="slide">
+    <h1 class="titulo" id="n3k-titulo">Modelo de difusión</h1>
+
+    <div class="sombra-ovalo" id="n3k-sombra-personaje"></div>
+    <img id="n3k-personaje" src="../assets/nucleo3/img/personaje4.png" alt="">
+
+    <div class="sombra-ovalo" id="n3k-sombra-tarjeta"></div>
+    <div class="tarjeta" id="n3k-tarjeta">
+      <p id="n3k-texto"><b>¡Felicidades por completar con éxito este recorrido!</b><br>Antes de terminar, veremos algunas curiosidades relacionadas<br>con la <span class="n3k-resalte">generación de imágenes</span> de hoy en día.</p>
+    </div>
   </section>
 
   <!-- ===================== PANTALLA 1 ===================== -->
   <section id="p1" class="slide">
-    <h1 class="titulo" id="n3-titulo">¡Felicidades por llegar a la última instancia de tu evolución!</h1>
+    <h1 class="titulo" id="n3-titulo">Curiosidad: ¿cuánto se usa hoy la IA generativa?</h1>
 
     <div class="sombra-ovalo" id="n3-sombra-personaje"></div>
     <img id="n3-personaje" src="../assets/nucleo3/img/personaje1.png" alt="">
@@ -437,11 +505,11 @@
     <div class="sombra-ovalo" id="n3-sombra-tarjeta"></div>
     <div class="tarjeta" id="n3-tarjeta">
       <p class="texto">
-        <span class="linea">Veamos <span class="vio">la importancia</span></span>
-        <span class="linea">que estás ganando en el</span>
-        <span class="linea"><b>mundo</b> con una encuesta</span>
-        <span class="linea">que se les hizo a</span>
-        <span class="linea">creadores que utilizan el</span>
+        <span class="linea">Ya sabés cómo funcionás.</span>
+        <span class="linea">Ahora veamos <span class="vio">la importancia</span></span>
+        <span class="linea">que tenés en el <b>mundo</b>, con</span>
+        <span class="linea">una encuesta a creadores</span>
+        <span class="linea">que utilizan el</span>
         <span class="linea"><span class="vio">ecosistema de Adobe.</span></span>
       </p>
       <img id="n3-adobe" src="../assets/nucleo3/img/adobe.png" alt="">
@@ -490,9 +558,9 @@
     <div id="n3-copia"></div>
 
     <div class="tarjeta" id="n3-tarjeta3">
-      <div class="n3-pregunta" id="n3-q1"><p>¿Gracias a la ia lograron hacer<br>cosas que de otra forma no<br>podrian?</p></div>
-      <div class="n3-pregunta" id="n3-q2"><p>¿La IA tuvo un buen impacto<br>economico en creadores?</p></div>
-      <div class="n3-pregunta" id="n3-q3"><p>Miedo a que la IA use su<br>contenido sin permiso para<br>entrenar.</p></div>
+      <div class="n3-pregunta" id="n3-q1"><p>¿Gracias a la IA lograron hacer<br>cosas que de otra forma no<br>podrían?</p></div>
+      <div class="n3-pregunta" id="n3-q2"><p>¿La IA tuvo un buen impacto<br>económico en los creadores?</p></div>
+      <div class="n3-pregunta" id="n3-q3"><p>¿Temen que la IA use su<br>contenido sin permiso para<br>entrenar?</p></div>
 
       <div class="n3-torta" id="n3-torta1">
         <div class="n3-disco"></div>
@@ -543,6 +611,57 @@
       <p class="n3-cap" id="n3-c1">Generas<br>imagenes</p>
       <p class="n3-cap" id="n3-c2">Consta de<br>tres etapas</p>
       <p class="n3-cap" id="n3-c3">vanguardia de la<br>IA generativa</p>
+    </div>
+  </section>
+
+  <!-- ===================== ENCUESTA FINAL (se vota con los gestos) ===================== -->
+  <!-- No a la izquierda (gesto de volver), Sí a la derecha (gesto de avanzar) -->
+  <section id="n3-encuesta" class="slide">
+    <h1 class="titulo" id="n3v-titulo">¿Usás IA para generar imágenes?</h1>
+
+    <div class="sombra-ovalo" id="n3v-sombra-personaje"></div>
+    <img id="n3v-personaje" src="../assets/nucleo3/img/personaje1.png" alt="">
+
+    <div class="n3v-opcion" id="n3v-no">
+      <div class="tarjeta n3v-boton"><span>No</span></div>
+      <p class="n3v-gesto"><svg viewBox="0 0 48 40"><path d="M44 20H8M22 6L8 20l14 14" fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/></svg>gesto de volver</p>
+    </div>
+    <div class="n3v-opcion" id="n3v-si">
+      <div class="tarjeta n3v-boton"><span>Sí</span></div>
+      <p class="n3v-gesto">gesto de avanzar<svg viewBox="0 0 48 40"><path d="M4 20h36M26 6l14 14-14 14" fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/></svg></p>
+    </div>
+
+    <!-- tutorial: cómo votar + una mano fantasma que "desliza" hacia cada lado -->
+    <p id="n3v-ayuda">Para votar, deslizá la mano: <b>hacia la derecha</b> para <b>Sí</b> o <b>hacia la izquierda</b> para <b>No</b></p>
+    <div id="n3v-mano"><svg viewBox="0 0 64 64"><path d="M22 34V14a4 4 0 0 1 8 0v16V10a4 4 0 0 1 8 0v20V13a4 4 0 0 1 8 0v19V20a4 4 0 0 1 8 0v20c0 10-7 18-17 18h-3c-6 0-10-3-13-8l-8-13a4 4 0 0 1 7-4z" fill="#fff" stroke="#7A5AF5" stroke-width="3" stroke-linejoin="round"/></svg></div>
+
+    <p id="n3v-gracias">¡Gracias por votar!</p>
+  </section>
+
+  <!-- ===================== RESULTADOS DE LA ENCUESTA ===================== -->
+  <!-- Mismo orden que la encuesta: No a la izquierda, Sí a la derecha -->
+  <section id="n3-resultados" class="slide">
+    <h1 class="titulo" id="n3r-titulo">¿Qué respondió la gente?</h1>
+    <p id="n3r-sub">¿Usás IA para generar imágenes? · Ya votaron <b id="n3r-total">0</b> personas</p>
+
+    <div class="sombra-ovalo" id="n3r-sombra-personaje"></div>
+    <img id="n3r-personaje" src="../assets/nucleo3/img/personaje5.png" alt="">
+
+    <div class="tarjeta" id="n3r-tarjeta">
+      <div class="n3r-col" id="n3r-no">
+        <div class="n3r-tu">Tu voto</div>
+        <div class="n3r-pct"><span>0</span>%</div>
+        <div class="n3r-pista"><div class="n3r-barra"></div></div>
+        <div class="n3r-nombre">No</div>
+        <div class="n3r-cant"><span>0</span> personas</div>
+      </div>
+      <div class="n3r-col" id="n3r-si">
+        <div class="n3r-tu">Tu voto</div>
+        <div class="n3r-pct"><span>0</span>%</div>
+        <div class="n3r-pista"><div class="n3r-barra"></div></div>
+        <div class="n3r-nombre">Sí</div>
+        <div class="n3r-cant"><span>0</span> personas</div>
+      </div>
     </div>
   </section>
 
