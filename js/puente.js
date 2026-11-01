@@ -170,7 +170,13 @@
         if (destino.entrar) destino.entrar(els[n]);
       }
 
-      mostrar(0);
+      // ?inicio=<id de pantalla> en la URL arranca directo en esa pantalla (atajos de prueba del panel)
+      var inicio = 0;
+      try {
+        var pedida = new URLSearchParams(location.search).get("inicio");
+        for (var k = 0; pedida && k < pantallas.length; k++) if (pantallas[k].el === "#" + pedida) inicio = k;
+      } catch (e) {}
+      mostrar(inicio);
 
       Infografia.alAccion(function (accion, datos) {
         if (bloqueado) return;

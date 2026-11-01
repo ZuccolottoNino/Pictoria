@@ -93,7 +93,7 @@
 
 <div id="panel" hidden>
   <div class="etq">Teclado → elegir núcleo</div>
-  <div class="fila" id="fila-nucleos"></div>
+  <div class="fila" id="fila-nucleos"><button type="button" tabindex="-1" id="btn-juego3">Juego 3</button></div>
   <div class="etq">Gesto de mano → pantalla anterior / siguiente</div>
   <div class="fila">
     <button type="button" tabindex="-1" data-accion="ANTERIOR">◀ Anterior</button>
@@ -126,8 +126,8 @@ const CONFIG = {
       standby: "nucleos/nucleo1-memoria.html" },
     { archivo: "nucleos/nucleo2.html", titulo: "Núcleo 2", subtitulo: "Descripción corta del núcleo 2",
       sinStandby: true },   // el "Inserte la memoria DOS" ya está al final del núcleo 1
-    { archivo: "nucleos/nucleo3.html", titulo: "Núcleo 3", subtitulo: "Descripción corta del núcleo 3" },
-    { archivo: "nucleos/nucleo-difusion.html", titulo: "Difusión", subtitulo: "Probá cómo funciona" }
+    { archivo: "nucleos/nucleo3.html", titulo: "Núcleo 3", subtitulo: "Descripción corta del núcleo 3" }
+    // el juego de difusión está dentro del núcleo 3 (botón "Juego 3" del panel para probarlo directo)
   ],
 
   /* Qué tecla dispara qué acción. En la instalación real:
@@ -137,7 +137,7 @@ const CONFIG = {
     SIGUIENTE:   ["Space", "ArrowRight"],   // placeholder del gesto
     ANTERIOR:    ["KeyA", "ArrowLeft"],
     NUCLEO:      { KeyQ: 0, KeyW: 1, KeyE: 2,
-                   Digit1: 0, Digit2: 1, Digit3: 2, Digit4: 3, Numpad1: 0, Numpad2: 1, Numpad3: 2, Numpad4: 3 },
+                   Digit1: 0, Digit2: 1, Digit3: 2, Numpad1: 0, Numpad2: 1, Numpad3: 2 },
     REINICIAR:   "KeyR",
     PANEL:       "KeyD"
   },
@@ -193,7 +193,8 @@ function dibujarPantalla(paso) {
   pantalla.innerHTML = html;
 }
 
-async function irA(indice) {
+// consulta (opcional): se agrega a la URL del núcleo, ej. "inicio=d1" para arrancar en esa pantalla
+async function irA(indice, consulta) {
   ocupado = true;
   nucleoListo = false;
   velo.classList.add("activo");
@@ -209,7 +210,8 @@ async function irA(indice) {
     pantalla.hidden = true;
     iframe.hidden = false;
     iframe.onload = () => { try { iframe.contentWindow.focus(); } catch (e) {} };
-    iframe.src = paso.tipo === "tutorial" ? CONFIG.tutorial : (standbyPropio || CONFIG.nucleos[paso.nucleo].archivo);
+    iframe.src = (paso.tipo === "tutorial" ? CONFIG.tutorial : (standbyPropio || CONFIG.nucleos[paso.nucleo].archivo))
+               + (consulta && !standbyPropio ? "?" + consulta : "");
   } else {
     // El foco estaba dentro del iframe: al ocultarlo hay que devolvérselo al contenedor,
     // si no las teclas no le llegan a nadie hasta que se hace clic.
@@ -251,6 +253,13 @@ function avanzarPaso() {
 function retrocederPaso() {
   if (ocupado || pasoActual === 0) return;
   irA(pasoActual - 1);
+}
+
+// Atajo de prueba: abre el núcleo 3 directo en el juego de difusión (sin orden obligatorio)
+function irAJuego3() {
+  if (ocupado) return;
+  const indice = pasos.findIndex(p => p.tipo === "nucleo" && p.nucleo === 2);
+  if (indice !== -1) irA(indice, "inicio=d1");
 }
 
 function irANucleo(n) {
@@ -361,6 +370,9 @@ function alternarPanel() {
     b.addEventListener("click", () => emitir("IR_A_NUCLEO", { nucleo: i }));
     fila.appendChild(b);
   });
+  const bj = document.getElementById("btn-juego3");
+  fila.appendChild(bj);   // queda después de los núcleos
+  bj.addEventListener("click", irAJuego3);
   panel.querySelectorAll("[data-accion]").forEach(b =>
     b.addEventListener("click", () => emitir(b.dataset.accion)));
 

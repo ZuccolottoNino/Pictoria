@@ -125,3 +125,219 @@
 #n3-c1 { left: 14px;  top: 179px; }
 #n3-c2 { left: 372px; top: 179px; }
 #n3-c3 { left: 741px; top: 179px; }
+/* ---------- Intro: felicidades (antes de los modelos) ---------- */
+#n3i-titulo   { position: absolute; left: 108px; top: 28px; width: 1500px; }
+#n3i-personaje { position: absolute; left: 155px; top: 280px; width: 474px; height: 621px; }
+#n3i-sombra-personaje { left: 200px; top: 925px; width: 380px; height: 62px; }
+#n3i-tarjeta  { left: 760px; top: 413px; width: 1000px; height: 368px; }
+#n3i-tarjeta .texto { position: absolute; left: 89px; top: 74px; font-size: 40px; line-height: 54px; }
+#n3i-tarjeta .linea { display: block; white-space: nowrap; }
+#n3i-sombra-tarjeta { left: 860px; top: 920px; width: 800px; height: 70px; }
+
+/* ---------- Modelos de difusión ---------- */
+#n3m-titulo { position: absolute; left: 123px; top: 32px; }
+
+/* línea de tiempo con degradé celeste → rosa */
+#n3m-linea { position: absolute; left: 123px; top: 147px; width: 1680px; height: 18px; transform-origin: 0 50%; }
+#n3m-barra { position: absolute; left: 0; right: 20px; top: 0; height: 18px; border-radius: 9px 0 0 9px;
+  background: linear-gradient(90deg, #A9E6FB 0%, #F3C3E6 55%, #F5C9E6 100%); }
+#n3m-punta { position: absolute; right: 0; top: -9px; width: 0; height: 0;
+  border-left: 26px solid #F5C9E6; border-top: 18px solid transparent; border-bottom: 18px solid transparent; }
+
+/* cada hito: columna de ancho 0 centrada en su "left" */
+.n3m-hito { position: absolute; top: 126px; width: 0; display: flex; flex-direction: column; align-items: center; }
+.n3m-glow { width: 60px; height: 60px; border-radius: 50%;
+  background: radial-gradient(circle, rgba(243, 160, 220, .9) 0%, rgba(243, 160, 220, .35) 40%, rgba(243, 160, 220, 0) 70%); }
+.n3m-flecha { width: 26px; height: 18px; margin-top: 2px; }
+.n3m-fecha { margin-top: 38px; white-space: nowrap;
+  font-family: "IBM Plex Mono", ui-monospace, monospace; font-size: 36px; line-height: 44px; color: var(--tinta); }
+.n3m-logo { margin-top: 40px; max-width: none; }
+
+#n3m-personaje { position: absolute; left: 78px; top: 540px; width: 400px; }
+#n3m-sombra-personaje { left: 118px; top: 990px; width: 320px; height: 62px; }
+#n3m-sombra-tarjeta { left: 571px; top: 930px; width: 560px; height: 66px; }
+
+#n3m-tarjeta { left: 520px; top: 611px; width: 662px; height: 296px;
+  display: flex; align-items: center; justify-content: center; padding: 0 36px; }
+#n3m-tarjeta p { text-align: center; font-family: "Inter", system-ui, sans-serif; font-size: 48px; line-height: 58px; color: var(--tinta); }
+
+/* ---------- Comparación de modelos (tabla por filas) ---------- */
+/* misma grilla para la cabecera y para cada fila: logo + 3 columnas */
+.n3c-fila-grid { position: absolute; left: 330px; width: 1520px;
+  display: grid; grid-template-columns: 360px 1fr 1fr 1fr; align-items: center; }
+
+#n3c-cabecera { top: 40px; height: 80px; }
+.n3c-col { text-align: center; font-family: "IBM Plex Mono", ui-monospace, monospace; font-size: 34px; line-height: 40px;
+  color: #5F6FB7; padding: 0 20px; }
+
+.n3c-fila { height: 270px; border-radius: 40px; background: #fff; overflow: hidden;
+  box-shadow: 0 12px 56px rgba(120, 110, 200, .12); }
+.n3c-fila:nth-of-type(2) { top: 140px; }
+.n3c-fila:nth-of-type(3) { top: 434px; }
+.n3c-fila:nth-of-type(4) { top: 728px; }
+/* franja de color del modelo a la izquierda + un tinte suave en toda la fila */
+.n3c-fila::before { content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 14px; background: var(--acento); }
+.n3c-fila::after  { content: ""; position: absolute; inset: 0; background: var(--tinte); pointer-events: none; }
+
+.n3c-logo { justify-self: center; width: 300px; height: auto; position: relative; z-index: 1; }
+.n3c-celda { position: relative; z-index: 1; height: 210px; padding: 0 30px;
+  display: flex; flex-direction: column; justify-content: center; text-align: center;
+  font-family: "IBM Plex Mono", ui-monospace, monospace; font-size: 30px; line-height: 38px; color: var(--tinta);
+  border-left: 2px dashed rgba(95, 111, 183, .25); }
+.n3c-celda b { font-weight: 400; color: #5F6FB7; }
+.n3c-dim { font-size: 24px; line-height: 30px; color: #8A90AE; }
+
+#n3c-personaje { position: absolute; left: 30px; top: 640px; width: 290px; }
+#n3c-sombra-personaje { left: 45px; top: 966px; width: 250px; height: 54px; }
+
+/* ---------- 15.000 millones de imágenes ---------- */
+#n3f-tarjeta { left: 64px; top: 88px; width: 1792px; height: 284px; text-align: center; padding-top: 26px; }
+#n3f-texto { font-family: "Inter", system-ui, sans-serif; font-size: 44px; line-height: 58px; color: var(--tinta); }
+#n3f-cifra { font-family: "Inter", system-ui, sans-serif; font-weight: 600; font-size: 100px; line-height: 110px;
+  color: #5F6FB7; margin-top: 4px; }
+
+#n3f-personaje { position: absolute; left: 92px; top: 450px; width: 420px; }
+#n3f-sombra-personaje { left: 130px; top: 1000px; width: 340px; height: 62px; }
+
+/* fila: logo (300) + línea punteada + tarjeta del dato, alineados al centro */
+.n3f-fila { position: absolute; left: 620px; width: 1236px; height: 185px; display: flex; align-items: center; }
+.n3f-logo { width: 310px; height: auto; flex: none; }
+.n3f-union { flex: none; width: 110px; height: 4px; margin: 0 6px; transform-origin: 0 50%;
+  background: repeating-linear-gradient(90deg, #BD72FF 0 14px, transparent 14px 24px); }
+.n3f-dato { position: relative; flex: 1; height: 185px; display: flex; align-items: center; justify-content: center; text-align: center; }
+.n3f-dato p { font-family: "IBM Plex Mono", ui-monospace, monospace; font-size: 42px; line-height: 54px; color: var(--tinta); }
+.n3f-dato b { font-weight: 400; color: #5F6FB7; }
+.n3f-dim { font-size: 34px; color: #8A90AE; }
+
+/* ---------- Usos de la creación de imágenes ---------- */
+#n3u-titulo { position: absolute; left: 98px; top: 22px; }
+#n3u-lista { left: 96px; top: 280px; width: 763px; height: 380px;
+  display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 6px; }
+.n3u-item { font-family: "IBM Plex Mono", ui-monospace, monospace; font-size: 34px; line-height: 56px; color: var(--tinta);
+  padding: 0 22px; border-radius: 28px; white-space: nowrap; }
+/* ítem resaltado (va junto con su imagen) */
+.n3u-item.activo { background: rgba(189, 114, 255, .14); color: #7A3FD0; }
+
+#n3u-personaje { position: absolute; left: 318px; top: 655px; width: 323px; }
+#n3u-sombra-personaje { left: 340px; top: 1010px; width: 280px; height: 56px; }
+
+.n3u-img { position: absolute; height: auto; border-radius: 34px; box-shadow: 0 12px 40px rgba(120, 110, 200, .14); }
+.n3u-img.activo { box-shadow: 0 0 0 6px rgba(189, 114, 255, .55), 0 18px 60px rgba(120, 110, 200, .3); }
+
+/* ---------- ¿Sabías que…? (agua) ---------- */
+#n3a-titulo { position: absolute; left: 233px; top: 50px; }
+#n3a-tarjeta { left: 233px; top: 200px; width: 1600px; height: 752px; }   /* corrida a la derecha: el personaje va a su izquierda */
+
+#n3a-persona { position: absolute; left: 80px; top: 90px; width: 180px; height: 440px; }
+
+/* grillas de vasos (los vasos los crea el JS) */
+.n3a-vasos { position: absolute; top: 90px; display: grid; gap: 20px 24px; grid-auto-rows: 92px; }
+#n3a-vasos-persona { left: 320px; grid-template-columns: repeat(2, 70px); }
+#n3a-vasos-imagen  { left: 1110px; grid-template-columns: repeat(5, 70px); }
+.n3a-vaso { width: 70px; height: 92px; overflow: visible; }
+.n3a-ola  { animation: n3a-ola 1.6s linear infinite; }
+@keyframes n3a-ola { to { transform: translateX(35px); } }
+
+/* contador grande al pie de cada grilla */
+.n3a-cuenta { position: absolute; top: 540px; font-family: "Space Grotesk", system-ui, sans-serif; font-weight: 700;
+  font-size: 30px; color: #8A90AE; white-space: nowrap; }
+.n3a-cuenta span { font-size: 64px; color: #5F6FB7; margin-right: 8px; }
+#n3a-cuenta-persona { left: 320px; }
+#n3a-cuenta-imagen  { left: 1110px; }
+
+.n3a-texto { position: absolute; top: 630px; width: 560px; font-family: "Inter", system-ui, sans-serif;
+  font-size: 32px; line-height: 40px; color: var(--tinta); }
+.n3a-texto b { font-weight: 700; color: var(--violeta); }
+#n3a-texto-persona { left: 80px; }
+#n3a-texto-imagen  { left: 760px; width: 780px; }
+
+/* separador suave en degradé, como la línea de tiempo */
+#n3a-divisor { position: absolute; left: 680px; top: 64px; width: 6px; height: 624px; border-radius: 3px;
+  background: linear-gradient(180deg, #A9E6FB, #F3C3E6); transform-origin: 50% 0; }
+
+/* tarjeta de imagen tipo vidrio, con chispa de "generada por IA" */
+#n3a-imagen { position: absolute; left: 760px; top: 170px; width: 300px; height: 210px; padding: 10px;
+  border-radius: 30px; background: linear-gradient(180deg, rgba(255,255,255,.9), rgba(237,233,255,.7));
+  box-shadow: 0 12px 40px rgba(120, 110, 200, .22), inset 0 0 0 2px rgba(255,255,255,.9); }
+#n3a-imagen img { width: 100%; height: 100%; object-fit: cover; border-radius: 22px; }
+.n3a-chispa { position: absolute; right: -14px; top: -14px; width: 48px; height: 48px;
+  filter: drop-shadow(0 0 8px rgba(189, 114, 255, .9)); }
+
+#n3a-personaje { position: absolute; left: 24px; top: 800px; width: 210px; }
+
+/* ---------- Evolución de la cantidad de imágenes (gráfico) ---------- */
+#n3e-titulo { position: absolute; left: 150px; top: 40px; white-space: nowrap; }
+#n3e-tarjeta { left: 422px; top: 290px; width: 1350px; height: 608px; }
+#n3e-grafico { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
+
+.n3e-grilla line { stroke: rgba(95, 111, 183, .18); stroke-width: 2; stroke-dasharray: 6 8; }
+.n3e-grilla line.n3e-base { stroke: rgba(95, 111, 183, .45); stroke-dasharray: none; }
+.n3e-grilla text { font-family: "IBM Plex Mono", ui-monospace, monospace; font-size: 24px; fill: #8A90AE; text-anchor: end; }
+.n3e-grilla .n3e-unidad { text-anchor: start; font-size: 22px; }
+.n3e-fechas text { font-family: "IBM Plex Mono", ui-monospace, monospace; font-size: 24px; fill: #5F6FB7; text-anchor: end; }
+
+.n3e-punto { fill: #fff; stroke: #7A5AF5; stroke-width: 5; }   /* el centro de las animaciones lo maneja GSAP */
+#n3e-ultimo { fill: #7A5AF5; }
+
+#n3e-etiqueta rect { fill: #7A5AF5; filter: drop-shadow(0 8px 18px rgba(122, 90, 245, .35)); }
+#n3e-etiqueta text { font-family: "Space Grotesk", system-ui, sans-serif; font-weight: 700; font-size: 28px; fill: #fff; text-anchor: middle; }
+
+#n3e-pie { position: absolute; left: 422px; top: 940px; width: 1350px; text-align: center;
+  font-family: "Inter", system-ui, sans-serif; font-size: 36px; line-height: 44px; color: var(--tinta); }
+
+#n3e-personaje { position: absolute; left: 110px; top: 630px; width: 290px; }
+#n3e-sombra-personaje { left: 130px; top: 975px; width: 250px; height: 56px; }
+
+/* ---------- Modelo de difusión · 1: difusión directa ---------- */
+#n3d-titulo-caja, .n3d-titulo-caja { left: 205px; top: 25px; width: 838px; height: 147px; background: rgba(255, 255, 255, .55);
+  box-shadow: 0 4px 30px rgba(120, 110, 200, .06); }
+#n3d-titulo, .n3d-titulo { position: absolute; left: 22px; top: 22px; white-space: nowrap; }
+
+#n3d-personaje, .n3d-personaje { position: absolute; left: 165px; top: 360px; width: 380px; }
+#n3d-sombra-personaje, .n3d-sombra-personaje { left: 205px; top: 805px; width: 300px; height: 60px; }
+
+#n3d-tarjeta, .n3d-tarjeta { left: 560px; top: 205px; width: 1195px; height: 745px; }
+
+#n3d-pasos, .n3d-pasos { position: absolute; left: 0; right: 0; top: 42px; display: flex; justify-content: center; gap: 50px; }
+.n3d-paso { display: flex; flex-direction: column; align-items: center; gap: 12px; }
+.n3d-num { width: 116px; height: 116px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
+  font-family: "Inter", system-ui, sans-serif; font-size: 72px; color: #fff;
+  background: radial-gradient(circle at 35% 30%, #F9DDF0, #F3C3E6 70%); box-shadow: 0 8px 20px rgba(200, 120, 190, .25); }
+.n3d-paso p { font-family: "Inter", system-ui, sans-serif; font-weight: 600; font-size: 34px; color: var(--tinta); white-space: nowrap; }
+.n3d-paso.activo .n3d-num { background: radial-gradient(circle at 35% 30%, #D2F3FE, #A9E6FB 70%); box-shadow: 0 8px 22px rgba(90, 170, 220, .35); }
+.n3d-paso.activo p { color: #5F6FB7; }
+
+#n3d-explica, .n3d-explica { left: 122px; top: 232px; width: 940px; height: 150px; display: flex; align-items: center; justify-content: center;
+  box-shadow: 0 4px 30px rgba(120, 110, 200, .10); }
+#n3d-explica p, .n3d-explica p { text-align: center; font-family: "Inter", system-ui, sans-serif; font-size: 34px; line-height: 44px; color: var(--tinta); }
+#n3d-explica b, .n3d-explica b { font-weight: 700; }
+
+#n3d-cuadros, .n3d-cuadros { position: absolute; left: 151px; top: 452px; display: flex; gap: 14px; }
+.n3d-cuadro { width: 210px; height: 212px; border-radius: 10px; box-shadow: 0 8px 24px rgba(120, 110, 200, .18); }
+
+/* barra que muestra el avance del ruido: imagen → ruido */
+#n3d-avance, .n3d-avance { position: absolute; left: 151px; top: 690px; width: 882px; height: 8px; border-radius: 4px; background: #EDEBF7; overflow: hidden; }
+#n3d-avance-barra, .n3d-avance-barra { width: 100%; height: 100%; background: linear-gradient(90deg, #A9E6FB, #F3C3E6); transform-origin: 0 50%; }
+
+/* ---------- Modelo de difusión · 2: difusión indirecta (misma base que la 1) ---------- */
+#n3d2-explica { height: 176px; }
+#n3d2-explica p { line-height: 46px; }
+#n3d2-cuadros { left: 268px; top: 466px; }          /* 3 cuadros, centrados en la tarjeta */
+#n3d2-avance  { left: 268px; top: 704px; width: 658px; }
+/* al revés que en la 1: va de ruido (rosa) a imagen (celeste) */
+#n3d2-avance-barra { background: linear-gradient(90deg, #F3C3E6, #A9E6FB); }
+
+/* ---------- Modelo de difusión · 3: generación ---------- */
+#n3d3-cuadros { left: 236px; top: 440px; align-items: center; gap: 40px; }   /* 297 + flecha 48 + 297, centrados */
+#n3d3-cuadros .n3d-cuadro { width: 297px; height: 224px; }
+#n3d3-flecha { width: 48px; height: 40px; flex: none; }
+#n3d3-cursor { color: #BD72FF; font-weight: 300; margin-left: 2px; }
+
+/* ---------- A la práctica (da paso al juego) ---------- */
+#n3p-titulo { position: absolute; left: 150px; top: 30px; white-space: nowrap; }
+#n3p-personaje { position: absolute; left: 180px; top: 320px; width: 400px; }
+#n3p-sombra-personaje { left: 220px; top: 815px; width: 320px; height: 62px; }
+#n3p-tarjeta { left: 613px; top: 270px; width: 1149px; height: 512px; display: flex; align-items: center; justify-content: center; }
+#n3p-sombra-tarjeta { left: 760px; top: 800px; width: 860px; height: 70px; }
+#n3p-texto { text-align: center; font-family: "Inter", system-ui, sans-serif; font-size: 52px; line-height: 64px; color: var(--tinta); }
+.n3p-resalte { display: inline-block; font-weight: 700; color: var(--violeta); }

@@ -5,11 +5,427 @@
 <title>Núcleo 3</title>
 <link rel="stylesheet" href="../libs/fuentes.css">
 <link rel="stylesheet" href="../css/base.css">
+<link rel="stylesheet" href="../css/difusion.css">
 <link rel="stylesheet" href="../css/nucleo3.css">
 </head>
 <body>
 
 <div id="escenario">
+
+  <!-- ===================== INTRO: felicidades ===================== -->
+  <section id="n3-intro" class="slide">
+    <h1 class="titulo" id="n3i-titulo">¡Felicidades por llegar a la última instancia de tu evolución!</h1>
+
+    <div class="sombra-ovalo" id="n3i-sombra-personaje"></div>
+    <img id="n3i-personaje" src="../assets/nucleo3/img/personaje1.png" alt="">
+
+    <div class="sombra-ovalo" id="n3i-sombra-tarjeta"></div>
+    <div class="tarjeta" id="n3i-tarjeta">
+      <p class="texto">
+        <span class="linea">Ahora sos parte de la <span class="vio">IA generativa</span></span>
+        <span class="linea">de imágenes. Antes de seguir,</span>
+        <span class="linea">conocé a los <b>modelos</b> que hoy</span>
+        <span class="linea"><span class="vio">generan imágenes en el mundo.</span></span>
+      </p>
+    </div>
+  </section>
+
+  <!-- ===================== MODELOS DE DIFUSIÓN ===================== -->
+  <section id="n3-modelos" class="slide">
+    <h1 class="titulo" id="n3m-titulo">Modelo de difusión</h1>
+
+    <div id="n3m-linea"><div id="n3m-barra"></div><div id="n3m-punta"></div></div>
+
+    <div class="n3m-hito" style="left: 403px">
+      <div class="n3m-glow"></div>
+      <svg class="n3m-flecha" viewBox="0 0 26 18"><path d="M13 2v12M7 9l6 6 6-6" fill="none" stroke="#F5C9E6" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      <p class="n3m-fecha">Enero 2021</p>
+      <img class="n3m-logo" src="../assets/nucleo3/img/dalle.png" alt="DALL·E">
+    </div>
+    <div class="n3m-hito" style="left: 972px">
+      <div class="n3m-glow"></div>
+      <svg class="n3m-flecha" viewBox="0 0 26 18"><path d="M13 2v12M7 9l6 6 6-6" fill="none" stroke="#F5C9E6" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      <p class="n3m-fecha">Julio 2022</p>
+      <img class="n3m-logo" src="../assets/nucleo3/img/midjourney.png" alt="Midjourney">
+    </div>
+    <div class="n3m-hito" style="left: 1450px">
+      <div class="n3m-glow"></div>
+      <svg class="n3m-flecha" viewBox="0 0 26 18"><path d="M13 2v12M7 9l6 6 6-6" fill="none" stroke="#F5C9E6" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      <p class="n3m-fecha">Agosto 2022</p>
+      <img class="n3m-logo" src="../assets/nucleo3/img/stable.png" alt="Stable Diffusion">
+    </div>
+
+    <div class="sombra-ovalo" id="n3m-sombra-personaje"></div>
+    <img id="n3m-personaje" src="../assets/nucleo3/img/personaje4.png" alt="">
+
+    <div class="sombra-ovalo" id="n3m-sombra-tarjeta"></div>
+    <div class="tarjeta" id="n3m-tarjeta">
+      <p>Estos son los principales modelos de generación de imágenes en la actualidad</p>
+    </div>
+  </section>
+
+  <!-- ===================== COMPARACIÓN DE MODELOS ===================== -->
+  <!-- Cada modelo es una FILA (tarjeta) con su color de acento: así se lee claro qué dato es de quién -->
+  <section id="n3-comparacion" class="slide">
+    <div id="n3c-cabecera" class="n3c-fila-grid">
+      <div></div>
+      <p class="n3c-col">Cantidad que generan</p>
+      <p class="n3c-col">Acceso</p>
+      <p class="n3c-col">Diferencias</p>
+    </div>
+
+    <div class="n3c-fila n3c-fila-grid" style="--acento: #10A37F; --tinte: rgba(16, 163, 127, .06)">
+      <img class="n3c-logo" src="../assets/nucleo3/img/dalle.png" alt="DALL·E">
+      <p class="n3c-celda"><b>5 millones</b> al día<br><span class="n3c-dim">(2024)</span></p>
+      <p class="n3c-celda">ChatGPT, Microsoft Copilot y API de OpenAI</p>
+      <p class="n3c-celda"><b>Facilidad</b><br>(al estar en ChatGPT)</p>
+    </div>
+
+    <div class="n3c-fila n3c-fila-grid" style="--acento: #343A56; --tinte: rgba(52, 58, 86, .05)">
+      <img class="n3c-logo" src="../assets/nucleo3/img/midjourney.png" alt="Midjourney">
+      <p class="n3c-celda"><b>10 millones</b> al día<br><span class="n3c-dim">(2024)</span></p>
+      <p class="n3c-celda">Servidor de Discord y web oficial de Midjourney</p>
+      <p class="n3c-celda"><b>Estilo artístico</b></p>
+    </div>
+
+    <div class="n3c-fila n3c-fila-grid" style="--acento: linear-gradient(180deg, #45C8FF, #F6A7EF); --tinte: rgba(200, 140, 255, .07)">
+      <img class="n3c-logo" src="../assets/nucleo3/img/stable.png" alt="Stable Diffusion">
+      <p class="n3c-celda"><b>2 millones</b> al día<br><span class="n3c-dim">(el 80% de sus usuarios lo usa desde el navegador)</span></p>
+      <p class="n3c-celda">Ejecución local en PC y en la nube</p>
+      <p class="n3c-celda"><b>Libertad de personalización</b><br>(al ser de código abierto)</p>
+    </div>
+
+    <div class="sombra-ovalo" id="n3c-sombra-personaje"></div>
+    <img id="n3c-personaje" src="../assets/nucleo3/img/personaje4.png" alt="">
+  </section>
+
+  <!-- ===================== 15.000 MILLONES DE IMÁGENES ===================== -->
+  <section id="n3-cifras" class="slide">
+    <div class="tarjeta" id="n3f-tarjeta">
+      <p id="n3f-texto">La inteligencia artificial produjo en 365 días la misma cantidad de<br>imágenes que la fotografía en 150 años, un aproximado de</p>
+      <p id="n3f-cifra"><span id="n3f-num">15.000</span> MILLONES</p>
+    </div>
+
+    <div class="sombra-ovalo" id="n3f-sombra-personaje"></div>
+    <img id="n3f-personaje" src="../assets/nucleo3/img/personaje4.png" alt="">
+
+    <!-- cada modelo: logo — línea — su dato -->
+    <div class="n3f-fila" style="top: 405px">
+      <img class="n3f-logo" src="../assets/nucleo3/img/dalle.png" alt="DALL·E">
+      <div class="n3f-union"></div>
+      <div class="tarjeta n3f-dato"><p><b>1.000 millones</b><br>en 15 meses</p></div>
+    </div>
+    <div class="n3f-fila" style="top: 622px">
+      <img class="n3f-logo" src="../assets/nucleo3/img/midjourney.png" alt="Midjourney">
+      <div class="n3f-union"></div>
+      <div class="tarjeta n3f-dato"><p><b>2,5 millones</b> de imágenes por día<br><span class="n3f-dim">1.000 millones al año</span></p></div>
+    </div>
+    <div class="n3f-fila" style="top: 846px">
+      <img class="n3f-logo" src="../assets/nucleo3/img/stable.png" alt="Stable Diffusion">
+      <div class="n3f-union"></div>
+      <div class="tarjeta n3f-dato"><p><b>12.500 millones</b><br>en 1 año</p></div>
+    </div>
+  </section>
+
+  <!-- ===================== USOS DE LA CREACIÓN DE IMÁGENES ===================== -->
+  <!-- data-uso une cada ítem de la lista con su imagen de ejemplo (se resaltan juntos) -->
+  <section id="n3-usos" class="slide">
+    <h1 class="titulo" id="n3u-titulo">Usos generales de la creación<br>de imágenes por IA</h1>
+
+    <div class="tarjeta" id="n3u-lista">
+      <p class="n3u-item" data-uso="1">Contenido para redes y trends</p>
+      <p class="n3u-item" data-uso="2">Contenido profesional personal</p>
+      <p class="n3u-item" data-uso="3">Personalizar contenido</p>
+      <p class="n3u-item" data-uso="4">Transformaciones de fantasía</p>
+      <p class="n3u-item" data-uso="5">Visuales para negocios</p>
+    </div>
+
+    <div class="sombra-ovalo" id="n3u-sombra-personaje"></div>
+    <img id="n3u-personaje" src="../assets/nucleo3/img/personaje5.png" alt="">
+
+    <img class="n3u-img" data-uso="4" src="../assets/nucleo3/img/uso1.png" alt="" style="left: 1475px; top: 23px;  width: 356px">
+    <img class="n3u-img" data-uso="2" src="../assets/nucleo3/img/uso4.png" alt="" style="left: 934px;  top: 261px; width: 501px">
+    <img class="n3u-img" data-uso="5" src="../assets/nucleo3/img/uso2.png" alt="" style="left: 1475px; top: 290px; width: 356px">
+    <img class="n3u-img" data-uso="1" src="../assets/nucleo3/img/uso3.png" alt="" style="left: 940px;  top: 536px; width: 281px">
+    <img class="n3u-img" data-uso="3" src="../assets/nucleo3/img/uso5.png" alt="" style="left: 1271px; top: 552px; width: 560px">
+  </section>
+
+  <!-- ===================== ¿SABÍAS QUE…? (agua) ===================== -->
+  <section id="n3-agua" class="slide">
+    <!-- degradé del agua, compartido por todos los vasos -->
+    <svg width="0" height="0" style="position: absolute">
+      <defs>
+        <linearGradient id="n3a-grad" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stop-color="#A9E6FB"/><stop offset=".6" stop-color="#C9B8F5"/><stop offset="1" stop-color="#F3C3E6"/>
+        </linearGradient>
+        <linearGradient id="n3a-grad-persona" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stop-color="#A9E6FB"/><stop offset="1" stop-color="#C9A8F5"/>
+        </linearGradient>
+      </defs>
+    </svg>
+
+    <h1 class="titulo" id="n3a-titulo">¿Sabías que…?</h1>
+
+    <div class="tarjeta" id="n3a-tarjeta">
+      <!-- lado persona -->
+      <svg id="n3a-persona" viewBox="0 0 180 440">
+        <circle cx="90" cy="48" r="44" fill="url(#n3a-grad-persona)"/>
+        <path d="M44 108 Q90 92 136 108 Q160 116 162 150 L170 250 Q172 268 156 268 Q142 268 140 252 L134 170 L132 430 Q132 440 112 440 Q96 440 96 428 L92 290 L88 428 Q88 440 72 440 Q52 440 52 430 L48 170 L40 252 Q38 268 24 268 Q8 268 10 250 L18 150 Q20 116 44 108 Z" fill="url(#n3a-grad-persona)"/>
+      </svg>
+      <div class="n3a-vasos" id="n3a-vasos-persona"></div>
+      <p class="n3a-cuenta" id="n3a-cuenta-persona"><span>0</span> vasos</p>
+      <p class="n3a-texto" id="n3a-texto-persona">Una persona promedio consume <b>8 vasos</b> de agua diarios.</p>
+
+      <div id="n3a-divisor"></div>
+
+      <!-- lado imagen -->
+      <div id="n3a-imagen">
+        <img src="../assets/nucleo3/img/uso1.png" alt="">
+        <svg class="n3a-chispa" viewBox="0 0 24 24"><path d="M12 0 C13 8 16 11 24 12 C16 13 13 16 12 24 C11 16 8 13 0 12 C8 11 11 8 12 0 Z" fill="#fff"/></svg>
+      </div>
+      <div class="n3a-vasos" id="n3a-vasos-imagen"></div>
+      <p class="n3a-cuenta" id="n3a-cuenta-imagen"><span>0</span> vasos</p>
+      <p class="n3a-texto" id="n3a-texto-imagen">Generar una imagen consume aproximadamente <b>3,45 litros</b>, el equivalente a <b>17,25 vasos</b> de agua.</p>
+    </div>
+
+    <img id="n3a-personaje" src="../assets/nucleo3/img/personaje4.png" alt="">
+  </section>
+
+  <!-- ===================== EVOLUCIÓN DE LA CANTIDAD DE IMÁGENES (gráfico) ===================== -->
+  <!-- Eje X en meses desde jul 2023 (52,1 px por mes); eje Y: 16,4 px por cada mil millones -->
+  <section id="n3-evolucion" class="slide">
+    <h1 class="titulo" id="n3e-titulo">Pequeña evolución de la cantidad<br>de imágenes generadas por IA.</h1>
+
+    <div class="tarjeta" id="n3e-tarjeta">
+      <svg id="n3e-grafico" viewBox="0 0 1350 608">
+        <defs>
+          <linearGradient id="n3e-area-grad" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stop-color="#8E7BF5" stop-opacity=".35"/><stop offset="1" stop-color="#F3C3E6" stop-opacity="0"/>
+          </linearGradient>
+          <linearGradient id="n3e-linea-grad" x1="0" y1="0" x2="1" y2="0">
+            <stop offset="0" stop-color="#7FCFF5"/><stop offset="1" stop-color="#7A5AF5"/>
+          </linearGradient>
+          <clipPath id="n3e-revela"><rect id="n3e-revela-rect" x="0" y="0" width="0" height="608"/></clipPath>
+        </defs>
+
+        <!-- grilla y valores del eje Y (en miles de millones) -->
+        <g class="n3e-grilla">
+          <line x1="200" x2="1210" y1="108" y2="108"/><text x="180" y="114">20</text>
+          <line x1="200" x2="1210" y1="190" y2="190"/><text x="180" y="196">15</text>
+          <line x1="200" x2="1210" y1="272" y2="272"/><text x="180" y="278">10</text>
+          <line x1="200" x2="1210" y1="354" y2="354"/><text x="180" y="360">5</text>
+          <line x1="200" x2="1210" y1="436" y2="436" class="n3e-base"/><text x="180" y="442">0</text>
+          <text x="96" y="70" class="n3e-unidad">miles de millones</text>
+        </g>
+
+        <!-- área y línea (se revelan de izquierda a derecha) -->
+        <g clip-path="url(#n3e-revela)">
+          <path id="n3e-area" fill="url(#n3e-area-grad)"
+                d="M200 419.6 L356.3 386.8 L616.8 329.4 L981.6 222.8 L1190 173.6 L1190 436 L200 436 Z"/>
+        </g>
+        <path id="n3e-linea" fill="none" stroke="url(#n3e-linea-grad)" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"
+              d="M200 419.6 L356.3 386.8 L616.8 329.4 L981.6 222.8 L1190 173.6"/>
+
+        <!-- puntos de cada dato -->
+        <circle class="n3e-punto" cx="200"    cy="419.6" r="10"/>
+        <circle class="n3e-punto" cx="356.3"  cy="386.8" r="10"/>
+        <circle class="n3e-punto" cx="616.8"  cy="329.4" r="10"/>
+        <circle class="n3e-punto" cx="981.6"  cy="222.8" r="10"/>
+        <circle class="n3e-punto" id="n3e-ultimo" cx="1190" cy="173.6" r="12"/>
+
+        <!-- fechas del eje X -->
+        <g class="n3e-fechas">
+          <text transform="translate(200 486) rotate(-28)">jul 2023</text>
+          <text transform="translate(356 486) rotate(-28)">oct 2023</text>
+          <text transform="translate(617 486) rotate(-28)">mar 2024</text>
+          <text transform="translate(982 486) rotate(-28)">oct 2024</text>
+          <text transform="translate(1190 486) rotate(-28)">feb 2025</text>
+        </g>
+
+        <!-- valor final -->
+        <g id="n3e-etiqueta">
+          <rect x="1050" y="88" width="280" height="56" rx="28"/>
+          <text x="1190" y="126">&gt;<tspan id="n3e-valor">0</tspan> millones</text>
+        </g>
+      </svg>
+    </div>
+
+    <p id="n3e-pie">Cada día aumenta la cantidad de imágenes generadas con inteligencia artificial.</p>
+
+    <div class="sombra-ovalo" id="n3e-sombra-personaje"></div>
+    <img id="n3e-personaje" src="../assets/nucleo3/img/personaje5.png" alt="">
+  </section>
+
+  <!-- ===================== MODELO DE DIFUSIÓN · 1: DIFUSIÓN DIRECTA ===================== -->
+  <!-- El ruido de los cuadros 2 a 4 se genera en vivo (ruido gaussiano real) sobre el gato del cuadro 1 -->
+  <section id="n3-dif1" class="slide">
+    <div class="tarjeta" id="n3d-titulo-caja"><h1 class="titulo" id="n3d-titulo">Modelo de difusión</h1></div>
+
+    <img id="n3d-personaje" src="../assets/nucleo3/img/personaje4.png" alt="">
+    <div class="sombra-ovalo" id="n3d-sombra-personaje"></div>
+
+    <div class="tarjeta" id="n3d-tarjeta">
+      <div id="n3d-pasos">
+        <div class="n3d-paso activo"><div class="n3d-num">1</div><p>D. Directa</p></div>
+        <div class="n3d-paso"><div class="n3d-num">2</div><p>D. Indirecta</p></div>
+        <div class="n3d-paso"><div class="n3d-num">3</div><p>Generación</p></div>
+      </div>
+
+      <div class="tarjeta" id="n3d-explica">
+        <p>El modelo añade <b>ruido gaussiano</b> progresivamente<br>hasta volver irreconocible una imagen.</p>
+      </div>
+
+      <div id="n3d-cuadros">
+        <canvas class="n3d-cuadro" width="210" height="212"></canvas>
+        <canvas class="n3d-cuadro" width="210" height="212"></canvas>
+        <canvas class="n3d-cuadro" width="210" height="212"></canvas>
+        <canvas class="n3d-cuadro" width="210" height="212"></canvas>
+      </div>
+      <div id="n3d-avance"><div id="n3d-avance-barra"></div></div>
+    </div>
+  </section>
+
+  <!-- ===================== MODELO DE DIFUSIÓN · 2: DIFUSIÓN INDIRECTA ===================== -->
+  <section id="n3-dif2" class="slide">
+    <div class="tarjeta n3d-titulo-caja" id="n3d2-titulo-caja"><h1 class="titulo n3d-titulo" id="n3d2-titulo">Modelo de difusión</h1></div>
+
+    <img class="n3d-personaje" id="n3d2-personaje" src="../assets/nucleo3/img/personaje4.png" alt="">
+    <div class="sombra-ovalo n3d-sombra-personaje" id="n3d2-sombra-personaje"></div>
+
+    <div class="tarjeta n3d-tarjeta" id="n3d2-tarjeta">
+      <div class="n3d-pasos">
+        <div class="n3d-paso"><div class="n3d-num">1</div><p>D. Directa</p></div>
+        <div class="n3d-paso activo"><div class="n3d-num">2</div><p>D. Indirecta</p></div>
+        <div class="n3d-paso"><div class="n3d-num">3</div><p>Generación</p></div>
+      </div>
+
+      <div class="tarjeta n3d-explica" id="n3d2-explica">
+        <p>Una red neuronal se entrena para <b>limpiar el</b><br><b>ruido</b> y reconstruir una estructura coherente<br>(aprende a revertir el proceso anterior).</p>
+      </div>
+
+      <div class="n3d-cuadros" id="n3d2-cuadros">
+        <canvas class="n3d-cuadro" width="210" height="212"></canvas>
+        <canvas class="n3d-cuadro" width="210" height="212"></canvas>
+        <canvas class="n3d-cuadro" width="210" height="212"></canvas>
+      </div>
+      <div class="n3d-avance" id="n3d2-avance"><div class="n3d-avance-barra" id="n3d2-avance-barra"></div></div>
+    </div>
+  </section>
+
+  <!-- ===================== MODELO DE DIFUSIÓN · 3: GENERACIÓN ===================== -->
+  <section id="n3-dif3" class="slide">
+    <div class="tarjeta n3d-titulo-caja" id="n3d3-titulo-caja"><h1 class="titulo n3d-titulo" id="n3d3-titulo">Modelo de difusión</h1></div>
+
+    <img class="n3d-personaje" id="n3d3-personaje" src="../assets/nucleo3/img/personaje4.png" alt="">
+    <div class="sombra-ovalo n3d-sombra-personaje" id="n3d3-sombra-personaje"></div>
+
+    <div class="tarjeta n3d-tarjeta" id="n3d3-tarjeta">
+      <div class="n3d-pasos">
+        <div class="n3d-paso"><div class="n3d-num">1</div><p>D. Directa</p></div>
+        <div class="n3d-paso"><div class="n3d-num">2</div><p>D. Indirecta</p></div>
+        <div class="n3d-paso activo"><div class="n3d-num">3</div><p>Generación</p></div>
+      </div>
+
+      <!-- el pedido (prompt) que recibe el modelo -->
+      <div class="tarjeta n3d-explica" id="n3d3-explica">
+        <p><span id="n3d3-prompt">“Generame un gato siamés<br>acostado mirando hacia el frente”.</span><span id="n3d3-cursor">|</span></p>
+      </div>
+
+      <div class="n3d-cuadros" id="n3d3-cuadros">
+        <canvas class="n3d-cuadro" width="297" height="224"></canvas>
+        <svg id="n3d3-flecha" viewBox="0 0 48 40"><path d="M4 20h36M26 6l14 14-14 14" fill="none" stroke="#F3C3E6" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <canvas class="n3d-cuadro" width="297" height="224"></canvas>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== A LA PRÁCTICA (da paso al juego de difusión) ===================== -->
+  <section id="n3-practica" class="slide">
+    <h1 class="titulo" id="n3p-titulo">Modelos de difusión</h1>
+
+    <div class="sombra-ovalo" id="n3p-sombra-personaje"></div>
+    <img id="n3p-personaje" src="../assets/nucleo3/img/personaje5.png" alt="">
+
+    <div class="sombra-ovalo" id="n3p-sombra-tarjeta"></div>
+    <div class="tarjeta" id="n3p-tarjeta">
+      <p id="n3p-texto">Entonces vamos a poner en <span class="n3p-resalte">práctica</span><br>lo que aprendiste</p>
+    </div>
+  </section>
+
+  <!-- El juego de difusión (antes núcleo aparte): sus pantallas las arma js/difusion.js -->
+  <!-- ===================== JUEGO DE DIFUSIÓN · 1: ENSUCIAR (jugable) ===================== -->
+  <section id="d1" class="slide d-slide">
+    <h1 class="titulo d-titulo" id="d1-titulo"></h1>
+    <div class="d-marco" id="d1-marco"></div>
+    <div class="tarjeta d-card d-contador">
+      <div class="d-etq" id="d1-etq"></div>
+      <div class="d-num" id="d1-num">0</div>
+      <div class="d-de" id="d1-de"></div>
+      <div class="d-barra"><div class="d-barra-fill" id="d1-barra"></div></div>
+    </div>
+    <div class="tarjeta d-card d-especial">
+      <div class="d-consigna">
+        <div class="anillo-demo"><svg viewBox="0 0 40 40"><g fill="#BD72FF"><rect x="5" y="8" width="7" height="7" rx="2"/><rect x="18" y="4" width="7" height="7" rx="2"/><rect x="29" y="12" width="7" height="7" rx="2"/><rect x="11" y="20" width="7" height="7" rx="2"/><rect x="24" y="24" width="7" height="7" rx="2"/><rect x="6" y="31" width="5" height="5" rx="1.5"/></g></svg></div>
+        <p id="d1-consigna"></p>
+        <small id="d1-consigna-sub"></small>
+      </div>
+    </div>
+    <div class="d-fila">
+      <div class="d-mascota" id="d1-mascota" data-estado="neutral"><span>Mascota<br></span><span>neutral</span></div>
+      <div class="tarjeta d-burbuja" id="d1-msg"></div>
+    </div>
+    <div class="d-aviso" id="d1-aviso"></div>
+
+    <!-- Puntero grande: aro del tamaño del pincel, con ícono al centro -->
+    <div id="d-cursor">
+      <div class="anillo"></div>
+      <canvas width="35" height="35"></canvas>
+      <div class="icono"><svg viewBox="0 0 40 40"><g fill="#BD72FF"><rect x="5" y="8" width="7" height="7" rx="2"/><rect x="18" y="4" width="7" height="7" rx="2"/><rect x="29" y="12" width="7" height="7" rx="2"/><rect x="11" y="20" width="7" height="7" rx="2"/><rect x="24" y="24" width="7" height="7" rx="2"/><rect x="6" y="31" width="5" height="5" rx="1.5"/></g></svg></div>
+    </div>
+  </section>
+
+  <!-- ===================== JUEGO DE DIFUSIÓN · 2: RECONSTRUIR ===================== -->
+  <section id="d2" class="slide d-slide">
+    <h1 class="titulo d-titulo" id="d2-titulo"></h1>
+    <div class="d-marco" id="d2-marco"></div>
+    <div class="tarjeta d-card d-contador">
+      <div class="d-etq" id="d2-etq"></div>
+      <div class="d-num" id="d2-num">0</div>
+      <div class="d-de" id="d2-de"></div>
+      <div class="d-barra"><div class="d-barra-fill" id="d2-barra"></div></div>
+    </div>
+    <div class="tarjeta d-card d-especial">
+      <div class="d-etq" id="d2-pred-etq">Ruido predicho</div>
+      <canvas class="d-pred" id="d2-pred" width="101" height="50"></canvas>
+      <div class="d-pred-txt" id="d2-pred-txt"></div>
+    </div>
+    <div class="d-fila">
+      <div class="d-mascota" id="d2-mascota" data-estado="neutral"><span>Mascota<br></span><span>neutral</span></div>
+      <div class="tarjeta d-burbuja" id="d2-msg"></div>
+    </div>
+    <div class="d-aviso" id="d2-aviso"></div>
+  </section>
+
+  <!-- ===================== JUEGO DE DIFUSIÓN · 3: GENERAR ===================== -->
+  <section id="d3" class="slide d-slide">
+    <h1 class="titulo d-titulo" id="d3-titulo"></h1>
+    <div class="d-marco" id="d3-marco"></div>
+    <div class="tarjeta d-card d-contador">
+      <div class="d-etq" id="d3-etq"></div>
+      <div class="d-num" id="d3-num">0</div>
+      <div class="d-de" id="d3-de"></div>
+      <div class="d-barra"><div class="d-barra-fill" id="d3-barra"></div></div>
+    </div>
+    <div class="tarjeta d-card d-especial">
+      <div class="d-etq" id="d3-prompt-etq"></div>
+      <div class="d-prompt"><span id="d3-prompt"></span><span class="d-caret"></span></div>
+    </div>
+    <div class="d-fila">
+      <div class="d-mascota" id="d3-mascota" data-estado="neutral"><span>Mascota<br></span><span>neutral</span></div>
+      <div class="tarjeta d-burbuja" id="d3-msg"></div>
+    </div>
+    <div class="d-aviso" id="d3-aviso"></div>
+  </section>
 
   <!-- ===================== PANTALLA 1 ===================== -->
   <section id="p1" class="slide">
@@ -135,6 +551,7 @@
 <script src="../libs/gsap.min.js"></script>
 <script src="../libs/SplitText.min.js"></script>
 <script src="../js/puente.js"></script>
+<script src="../js/difusion.js"></script>
 <script src="../js/nucleo3.js"></script>
 </body>
 </html>
