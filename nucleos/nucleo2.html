@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <title>Núcleo 2</title>
+<link rel="stylesheet" href="../libs/fuentes.css">
 <link rel="stylesheet" href="../css/nucleo2.css">
 </head>
 <body>
@@ -19,11 +20,207 @@
   <section id="p3" class="slide">
     <div class="vidrio"><h1>Pantalla 3</h1><p>Siguiente en esta pantalla termina el núcleo.</p></div>
   </section>
+
+  <!-- ===================== JUEGO 2 · intro: dos tipos de datos ===================== -->
+  <section id="j2-intro" class="slide j2">
+    <img id="j2i-personaje" src="../assets/nucleo2/img/personaje1.png" alt="">
+
+    <div class="vidrio j2-panel" id="j2i-panel">
+      <p class="j2-texto" id="j2i-texto">Observá que hay dos tipos de datos<br>(gatos y bicicletas)</p>
+      <div class="j2i-tipo" id="j2i-gatos">
+        <p class="j2-etiqueta">Gatos</p>
+        <img class="j2-foto" src="../assets/nucleo2/img/gato1.png" alt="Gato">
+      </div>
+      <div class="j2i-tipo" id="j2i-bicis">
+        <p class="j2-etiqueta">Bicicletas</p>
+        <img class="j2-foto" src="../assets/nucleo2/img/bici1.png" alt="Bicicleta">
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== JUEGO 2 · clasificar: gatos a la izquierda, bicis a la derecha ===================== -->
+  <!-- Las cards aparecen de a una en el centro; gesto de volver → Gatos (izq.), gesto de avanzar → Bicicletas (der.) -->
+  <section id="j2-clasificar" class="slide j2">
+    <div class="vidrio j2-panel" id="j2c-titulo-caja"><h1 id="j2c-titulo">Machine Learning</h1></div>
+    <p id="j2c-contador">Dato <span>1</span> de 4</p>
+
+    <div class="j2c-zona" id="j2c-zona-gatos">
+      <div class="j2c-pildora">Gatos</div>
+      <p class="j2c-solta">Soltá acá</p>
+      <p class="j2c-gesto"><svg viewBox="0 0 48 40"><path d="M44 20H8M22 6L8 20l14 14" fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/></svg>gesto de volver</p>
+    </div>
+    <div class="j2c-zona" id="j2c-zona-bicis">
+      <div class="j2c-pildora">Bicicletas</div>
+      <p class="j2c-solta">Soltá acá</p>
+      <p class="j2c-gesto">gesto de avanzar<svg viewBox="0 0 48 40"><path d="M4 20h36M26 6l14 14-14 14" fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/></svg></p>
+    </div>
+
+    <!-- las 4 cards (aparecen en orden aleatorio) -->
+    <div class="j2c-card" data-tipo="gato"><img src="../assets/nucleo2/img/gato2.png" alt="Gato"></div>
+    <div class="j2c-card" data-tipo="bici"><img src="../assets/nucleo2/img/bici3.png" alt="Bicicleta"></div>
+    <div class="j2c-card" data-tipo="bici"><img src="../assets/nucleo2/img/bici2.png" alt="Bicicleta"></div>
+    <div class="j2c-card" data-tipo="gato"><img src="../assets/nucleo2/img/gato3.png" alt="Gato"></div>
+
+    <!-- tutorial y mensajes -->
+    <p id="j2c-ayuda">Deslizá la mano <b>hacia la izquierda</b> si es un <b>gato</b> o <b>hacia la derecha</b> si es una <b>bicicleta</b></p>
+    <div id="j2c-mano"><svg viewBox="0 0 64 64"><path d="M22 34V14a4 4 0 0 1 8 0v16V10a4 4 0 0 1 8 0v20V13a4 4 0 0 1 8 0v19V20a4 4 0 0 1 8 0v20c0 10-7 18-17 18h-3c-6 0-10-3-13-8l-8-13a4 4 0 0 1 7-4z" fill="#fff" stroke="#2C7FB8" stroke-width="3" stroke-linejoin="round"/></svg></div>
+    <p id="j2c-error">¡Ups! Ese no va ahí, probá para el otro lado</p>
+    <p id="j2c-bien">¡Muy bien! Clasificaste todos los datos</p>
+  </section>
+
+  <!-- ===================== JUEGO 2 · explicación: así aprende la computadora ===================== -->
+  <section id="j2-explica" class="slide j2">
+    <img id="j2e-personaje" src="../assets/nucleo2/img/personaje1.png" alt="">
+
+    <div class="vidrio j2-panel" id="j2e-panel">
+      <h2 id="j2e-titulo">¡Así aprende una computadora!</h2>
+      <p class="j2-texto" id="j2e-texto">Recién hiciste lo mismo que hace el <b>Machine Learning</b>: le mostraste <b>ejemplos</b><br>
+        con su respuesta («esto es un gato», «esto es una bicicleta»). Con muchísimos ejemplos así,<br>
+        la computadora <b>descubre los patrones</b> por su cuenta y aprende a reconocer imágenes<br>
+        que <b>nunca vio</b>.</p>
+
+      <div id="j2e-pasos">
+        <div class="j2e-paso">
+          <div class="j2e-icono"><img src="../assets/nucleo2/img/gato2.png" alt=""><img src="../assets/nucleo2/img/bici2.png" alt=""></div>
+          <p><b>1.</b> Le das ejemplos</p>
+        </div>
+        <svg class="j2e-flecha" viewBox="0 0 48 40"><path d="M4 20h36M26 6l14 14-14 14" fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <div class="j2e-paso">
+          <div class="j2e-icono j2e-patrones"><span>orejas</span><span>bigotes</span><span>ruedas</span><span>manubrio</span></div>
+          <p><b>2.</b> Encuentra patrones</p>
+        </div>
+        <svg class="j2e-flecha" viewBox="0 0 48 40"><path d="M4 20h36M26 6l14 14-14 14" fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <div class="j2e-paso">
+          <div class="j2e-icono j2e-reconoce"><img src="../assets/nucleo2/img/gato3.png" alt=""><span>¡Es un gato!</span></div>
+          <p><b>3.</b> Reconoce lo nuevo</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== JUEGO 2.2 · observá estos peces ===================== -->
+  <section id="j22-observa" class="slide j2">
+    <h1 class="j22-titulo" id="j22o-titulo">Machine Learning</h1>
+    <img class="j22-personaje" id="j22o-personaje" src="../assets/nucleo2/img/personaje2.png" alt="">
+    <div class="j22-globo" id="j22o-globo">Observá estos peces</div>
+    <div id="j22-grilla">
+        <div class="j22-celda"><canvas width="280" height="190"></canvas></div>
+        <div class="j22-celda"><canvas width="280" height="190"></canvas></div>
+        <div class="j22-celda"><canvas width="280" height="190"></canvas></div>
+        <div class="j22-celda"><canvas width="280" height="190"></canvas></div>
+        <div class="j22-celda"><canvas width="280" height="190"></canvas></div>
+        <div class="j22-celda"><canvas width="280" height="190"></canvas></div>
+        <div class="j22-celda"><canvas width="280" height="190"></canvas></div>
+        <div class="j22-celda"><canvas width="280" height="190"></canvas></div>
+        <div class="j22-celda"><canvas width="280" height="190"></canvas></div>
+        <div class="j22-celda"><canvas width="280" height="190"></canvas></div>
+        <div class="j22-celda"><canvas width="280" height="190"></canvas></div>
+        <div class="j22-celda"><canvas width="280" height="190"></canvas></div>
+    </div>
+  </section>
+
+  <!-- ===================== JUEGO 2.2 · dibujá tu pez (jugable) ===================== -->
+  <section id="j22-dibuja" class="slide j2">
+    <h1 class="j22-titulo" id="j22d-titulo">Machine Learning</h1>
+    <img class="j22-personaje" id="j22d-personaje" src="../assets/nucleo2/img/personaje2.png" alt="">
+
+    <div id="j22-marco">
+      <canvas id="j22-guia" width="1100" height="700"></canvas>
+      <canvas id="j22-lienzo" width="1100" height="700"></canvas>
+      <canvas id="j22-demo-lienzo" width="1100" height="700"></canvas>
+      <div id="j22-tiempo"></div>
+    </div>
+
+    <div id="j22-pista"></div>
+    <div id="j22-fantasma"><div class="j22-fantasma-aro"></div><svg viewBox="0 0 64 64"><g transform="rotate(45 32 32)">
+        <rect x="24" y="2" width="16" height="40" rx="4" fill="#AEE4FF" stroke="#2C7FB8" stroke-width="3"/>
+        <rect x="24" y="2" width="16" height="9" rx="3" fill="#8BC34A" stroke="#2C7FB8" stroke-width="3"/>
+        <path d="M24 42 L32 60 L40 42 Z" fill="#FFE6C2" stroke="#2C7FB8" stroke-width="3" stroke-linejoin="round"/>
+        <path d="M29.5 54 L32 60 L34.5 54 Z" fill="#2C7FB8"/></g></svg></div>
+    <div id="j22-cursor"></div>
+
+    <!-- elegir color (se toca con el lápiz) y las partes que hay que dibujar -->
+    <div id="j22-colores">
+      <span class="j22-colores-etq">Elegí un color:</span>
+      <button class="j22-color" type="button" tabindex="-1"></button>
+      <button class="j22-color" type="button" tabindex="-1"></button>
+      <button class="j22-color" type="button" tabindex="-1"></button>
+      <button class="j22-color" type="button" tabindex="-1"></button>
+      <span class="j22-partes"><span class="j22-parte">Cuerpo</span><span class="j22-parte">Ojo</span><span class="j22-parte">Aleta</span></span>
+    </div>
+
+    <!-- 4 peces de referencia para inspirarse mientras dibuja -->
+    <p id="j22-refs-etq">Referencias</p>
+    <div id="j22-refs">
+      <canvas width="360" height="150"></canvas>
+      <canvas width="360" height="150"></canvas>
+      <canvas width="360" height="150"></canvas>
+      <canvas width="360" height="150"></canvas>
+    </div>
+  </section>
+
+  <!-- ===================== JUEGO 2.2 · la computadora reconoce tu pez ===================== -->
+  <section id="j22-reconoce" class="slide j2">
+    <h1 class="j22-titulo" id="j22r-titulo">Machine Learning</h1>
+    <img class="j22-personaje" id="j22r-personaje" src="../assets/nucleo2/img/personaje2.png" alt="">
+
+    <div id="j22r-monitor">
+      <div id="j22r-barra"><i></i><i></i><i></i><span>reconocedor-de-imagenes.exe</span></div>
+      <div id="j22r-pantalla">
+        <canvas id="j22r-dibujo" width="770" height="490"></canvas>
+        <div id="j22r-escaner"></div>
+        <div class="j22r-caja" id="j22r-caja-cuerpo"><span></span></div>
+        <div class="j22r-caja" id="j22r-caja-ojo"><span></span></div>
+        <div class="j22r-caja" id="j22r-caja-aleta"><span></span></div>
+      </div>
+      <div id="j22r-panel">
+        <p id="j22r-estado"></p>
+        <p class="j22r-item" id="j22r-it-cuerpo"></p>
+        <p class="j22r-item" id="j22r-it-ojo"></p>
+        <p class="j22r-item" id="j22r-it-aleta"></p>
+        <p class="j22r-item" id="j22r-it-color"></p>
+        <p id="j22r-veredicto"></p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== JUEGO 2.2 · comparación: lo que vio la IA vs tu pez ===================== -->
+  <section id="j22-compara" class="slide j2">
+    <h1 class="j22-titulo" id="j22c-titulo">Machine Learning</h1>
+    <img class="j22-personaje" id="j22c-personaje" src="../assets/nucleo2/img/personaje2.png" alt="">
+
+    <div class="vidrio j2-panel" id="j22c-panel">
+      <div class="j22c-col" id="j22c-col-refs">
+        <p class="j22c-etq">Lo que vio la computadora</p>
+        <div id="j22c-refs">
+        <canvas width="200" height="136"></canvas>
+        <canvas width="200" height="136"></canvas>
+        <canvas width="200" height="136"></canvas>
+        <canvas width="200" height="136"></canvas>
+        <canvas width="200" height="136"></canvas>
+        <canvas width="200" height="136"></canvas>
+        <canvas width="200" height="136"></canvas>
+        <canvas width="200" height="136"></canvas>
+        <canvas width="200" height="136"></canvas>
+        <canvas width="200" height="136"></canvas>
+        <canvas width="200" height="136"></canvas>
+        <canvas width="200" height="136"></canvas>
+        </div>
+      </div>
+      <svg id="j22c-flecha" viewBox="0 0 48 40"><path d="M4 20h36M26 6l14 14-14 14" fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      <div class="j22c-col" id="j22c-col-mio">
+        <p class="j22c-etq">Tu pez</p>
+        <canvas id="j22c-mio" width="1100" height="700"></canvas>
+      </div>
+      <p id="j22c-texto"></p>
+    </div>
+  </section>
 </div>
 
 <script src="../libs/gsap.min.js"></script>
 <script src="../js/puente.js"></script>
 <script src="../js/fondo-aero.js"></script>
+<script src="../js/juego-peces.js"></script>
 <script src="../js/nucleo2.js"></script>
 </body>
 </html>

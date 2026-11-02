@@ -24,3 +24,188 @@ html, body { height: 100%; overflow: hidden; background: #08918f; cursor: none; 
 }
 h1 { position: relative; font-size: 84px; color: #fff; text-shadow: 0 3px 12px rgba(0,70,80,.45); }
 p  { position: relative; font-size: 38px; color: #e9fdff; margin-top: 18px; text-shadow: 0 2px 8px rgba(0,70,80,.4); }
+
+
+/* ============ Juego 2 (estética Frutiger Aero) ============ */
+.j2 { display: block; }   /* posiciones absolutas dentro del escenario */
+.j2 p { margin: 0; text-shadow: none; }
+
+/* panel de vidrio claro, como en el diseño */
+.j2-panel { position: absolute; max-width: none; padding: 0; border-radius: 34px;
+  background: linear-gradient(180deg, rgba(240,252,255,.92), rgba(220,244,250,.85)); }
+#j2i-panel { left: 325px; top: 200px; width: 1270px; height: 739px; }   /* centrado en el escenario */
+
+.j2-texto { position: absolute; left: 0; right: 0; top: 54px; text-align: center;
+  font-family: "Inter", "Segoe UI", system-ui, sans-serif; font-size: 40px; line-height: 52px; color: #23476B; }
+.j2-etiqueta { text-align: center; font-family: "IBM Plex Mono", "Consolas", monospace; font-size: 40px; color: #8BC34A; }
+.j2-foto { display: block; border-radius: 12px; box-shadow: 0 10px 30px rgba(20,80,110,.18); }
+
+.j2i-tipo { position: absolute; top: 190px; display: flex; flex-direction: column; align-items: center; gap: 18px; }
+#j2i-gatos { left: 151px; }
+#j2i-bicis { left: 669px; }
+#j2i-gatos .j2-foto { width: 399px; }
+#j2i-bicis .j2-foto { width: 389px; }
+
+#j2i-personaje { position: absolute; left: 30px; top: 560px; width: 300px;
+  filter: drop-shadow(0 20px 30px rgba(0,60,80,.25)); }
+
+
+/* ============ Juego 2 · clasificar ============ */
+#j2c-titulo-caja { left: 220px; top: 36px; width: 1480px; height: 140px; border-radius: 28px;
+  background: linear-gradient(180deg, rgba(120,200,235,.55), rgba(60,150,200,.35)); }
+#j2c-titulo { position: absolute; left: 50px; top: 20px; margin: 0; font-family: "Space Grotesk", "Segoe UI", sans-serif; font-weight: 700;
+  font-size: 92px; line-height: 100px; color: #fff; text-shadow: 0 0 18px rgba(255,255,255,.7), 0 4px 14px rgba(0,70,110,.5); }
+#j2c-contador { position: absolute; left: 0; top: 200px; width: 1920px; text-align: center;
+  font-family: "IBM Plex Mono", monospace; font-size: 34px; color: #fff; text-shadow: 0 2px 8px rgba(0,70,110,.5); }
+
+/* zonas de destino */
+.j2c-zona { position: absolute; top: 300px; width: 560px; height: 520px; border-radius: 26px;
+  border: 3px dashed rgba(255,255,255,.75); background: rgba(235,250,255,.55); backdrop-filter: blur(8px); }
+#j2c-zona-gatos { left: 110px; }
+#j2c-zona-bicis { left: 1250px; }
+.j2c-pildora { position: absolute; left: 50%; top: -38px; transform: translateX(-50%); padding: 10px 34px; border-radius: 999px;
+  background: linear-gradient(180deg, #8FD3FF, #3E9EEA); box-shadow: 0 8px 20px rgba(30,110,180,.35), inset 0 2px 0 rgba(255,255,255,.6);
+  font-family: "Inter", "Segoe UI", sans-serif; font-weight: 700; font-size: 40px; color: #fff; white-space: nowrap; }
+.j2c-solta { position: absolute; left: 0; right: 0; top: 230px; text-align: center; font-family: "IBM Plex Mono", monospace; font-size: 38px; color: #8BC34A; }
+.j2c-gesto { position: absolute; left: 0; right: 0; bottom: 22px; display: flex; justify-content: center; align-items: center; gap: 12px;
+  font-family: "Inter", "Segoe UI", sans-serif; font-size: 26px; color: #2C6E99; }
+.j2c-gesto svg { width: 38px; height: 32px; color: #2C7FB8; }
+.j2c-zona.brilla { box-shadow: 0 0 0 6px rgba(139,195,74,.7), 0 0 40px rgba(139,195,74,.5); }
+.j2c-zona.mal { box-shadow: 0 0 0 6px rgba(240,90,110,.75); }
+
+/* la card actual, grande y centrada (las ya clasificadas se achican hacia su zona) */
+.j2c-card { position: absolute; left: 770px; top: 300px; width: 380px; height: 380px; border-radius: 26px;
+  display: flex; align-items: center; justify-content: center; transform-origin: 0 0;
+  background: linear-gradient(180deg, rgba(255,255,255,.85), rgba(225,245,252,.75));
+  border: 2px solid rgba(255,255,255,.9); box-shadow: 0 20px 50px rgba(0,70,110,.25); }
+.j2c-card img { max-width: 82%; max-height: 82%; }
+
+#j2c-ayuda { position: absolute; left: 0; top: 860px; width: 1920px; text-align: center;
+  font-family: "Inter", "Segoe UI", sans-serif; font-size: 36px; line-height: 46px; color: #fff; text-shadow: 0 2px 10px rgba(0,60,100,.55); }
+#j2c-ayuda b { color: #E9FF9E; }
+#j2c-mano { position: absolute; left: 960px; top: 700px; width: 100px; height: 100px; margin-left: -50px; z-index: 5;
+  filter: drop-shadow(0 8px 14px rgba(0,60,100,.35)); }
+#j2c-mano svg { width: 100%; height: 100%; }
+#j2c-error, #j2c-bien { position: absolute; left: 0; top: 860px; width: 1920px; text-align: center;
+  font-family: "Space Grotesk", "Segoe UI", sans-serif; font-weight: 700; font-size: 52px; text-shadow: 0 3px 12px rgba(0,60,100,.5); }
+#j2c-error { color: #FFD0D8; }
+#j2c-bien { color: #E9FF9E; }
+
+
+/* ============ Juego 2 · explicación ============ */
+#j2e-personaje { position: absolute; left: 30px; top: 560px; width: 300px; filter: drop-shadow(0 20px 30px rgba(0,60,80,.25)); }
+#j2e-panel { left: 325px; top: 130px; width: 1270px; height: 820px; }
+#j2e-titulo { position: absolute; left: 0; right: 0; top: 46px; margin: 0; text-align: center;
+  font-family: "Space Grotesk", "Segoe UI", sans-serif; font-weight: 700; font-size: 64px; color: #23476B; text-shadow: none; }
+#j2e-texto { top: 150px; font-size: 32px; line-height: 46px; }
+#j2e-texto b { color: #2C7FB8; }
+
+#j2e-pasos { position: absolute; left: 0; right: 0; top: 430px; display: flex; justify-content: center; align-items: center; gap: 30px; }
+.j2e-paso { display: flex; flex-direction: column; align-items: center; gap: 18px; }
+.j2e-paso p { margin: 0; font-family: "Inter", "Segoe UI", sans-serif; font-size: 30px; color: #23476B; text-shadow: none; }
+.j2e-paso b { color: #8BC34A; }
+.j2e-icono { width: 260px; height: 220px; border-radius: 26px; display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 8px;
+  background: linear-gradient(180deg, rgba(255,255,255,.95), rgba(225,245,252,.85)); box-shadow: 0 14px 34px rgba(0,70,110,.18); }
+.j2e-icono img { max-width: 44%; max-height: 70%; }
+.j2e-patrones span { padding: 6px 14px; border-radius: 999px; background: #DDF1FF; color: #2C7FB8;
+  font-family: "IBM Plex Mono", monospace; font-size: 22px; }
+.j2e-reconoce { flex-direction: column; }
+.j2e-reconoce img { max-width: 60%; max-height: 62%; }
+.j2e-reconoce span { font-family: "Inter", "Segoe UI", sans-serif; font-weight: 700; font-size: 26px; color: #8BC34A; }
+.j2e-flecha { width: 56px; height: 46px; color: #2C7FB8; flex: none; }
+
+
+/* ============ Juego 2.2 · peces ============ */
+.j22-titulo { position: absolute; left: 70px; top: 40px; margin: 0; font-family: "Space Grotesk", "Segoe UI", sans-serif; font-weight: 700;
+  font-size: 64px; color: #fff; text-shadow: 0 0 14px rgba(255,255,255,.6), 0 4px 12px rgba(0,70,110,.45); }
+.j22-personaje { position: absolute; left: 50px; top: 560px; width: 300px; filter: drop-shadow(0 20px 30px rgba(0,60,80,.25)); }
+.j22-globo { position: absolute; left: 50px; top: 430px; z-index: 2; padding: 22px 30px; border-radius: 24px;
+  background: linear-gradient(180deg, rgba(60,110,120,.85), rgba(20,60,70,.85)); border: 2px solid rgba(255,255,255,.7);
+  font-family: "Inter", "Segoe UI", sans-serif; font-weight: 700; font-size: 34px; color: #fff; white-space: nowrap; }
+
+/* grilla de peces de referencia */
+#j22-grilla { position: absolute; left: 600px; top: 170px; width: 1240px; height: 820px; padding: 22px; border-radius: 28px;
+  display: grid; grid-template-columns: repeat(4, 1fr); grid-template-rows: repeat(3, 1fr); gap: 16px;
+  background: rgba(255,255,255,.9); box-shadow: 0 24px 60px rgba(0,60,90,.3); }
+.j22-celda { display: flex; align-items: center; justify-content: center; border-radius: 18px; background: #F2FBFF; }
+
+/* lienzo de dibujo (posición = LIENZO_X/Y de juego-peces.js) */
+#j22-marco { position: absolute; left: 420px; top: 240px; width: 1000px; height: 636px; border-radius: 28px; overflow: hidden;
+  background: #fff; box-shadow: 0 0 0 10px rgba(255,255,255,.55), 0 24px 60px rgba(0,60,90,.3); }
+#j22-marco canvas { position: absolute; left: 0; top: 0; width: 1000px; height: 636px; }
+#j22-tiempo { position: absolute; right: 24px; top: 20px; z-index: 3; min-width: 110px; padding: 12px 18px; text-align: center; border-radius: 999px;
+  background: #fff; box-shadow: 0 8px 24px rgba(0,70,110,.25); font-family: "Space Grotesk", sans-serif; font-weight: 700; font-size: 42px;
+  color: #2C7FB8; opacity: 0; visibility: hidden; }
+#j22-tiempo.apurado { color: #E0457B; }
+
+#j22-pista { position: absolute; left: 920px; top: 155px; z-index: 6; white-space: nowrap; padding: 16px 40px; border-radius: 999px;
+  background: linear-gradient(180deg, #8FD3FF, #3E9EEA); box-shadow: 0 12px 30px rgba(30,110,180,.4), inset 0 2px 0 rgba(255,255,255,.6);
+  font-family: "Inter", "Segoe UI", sans-serif; font-weight: 700; font-size: 40px; color: #fff; opacity: 0; visibility: hidden; }
+
+#j22-fantasma { position: absolute; left: 0; top: 0; width: 0; height: 0; z-index: 7; pointer-events: none; opacity: 0; visibility: hidden; }
+.j22-fantasma-aro { position: absolute; left: -16px; top: -16px; width: 32px; height: 32px; border-radius: 50%;
+  border: 4px solid rgba(44,127,184,.85); background: rgba(44,127,184,.15); }
+#j22-fantasma svg { position: absolute; left: -6px; top: -78px; width: 84px; height: 84px; filter: drop-shadow(0 6px 10px rgba(0,60,100,.35)); }
+#j22-cursor { position: absolute; left: -12px; top: -12px; width: 24px; height: 24px; z-index: 8; pointer-events: none; border-radius: 50%;
+  border: 4px solid #2C7FB8; background: rgba(44,127,184,.18); opacity: 0; visibility: hidden; }
+
+
+
+/* referencias al costado del lienzo */
+#j22-refs-etq { position: absolute; left: 1460px; top: 190px; width: 360px; margin: 0; text-align: center;
+  font-family: "Inter", "Segoe UI", sans-serif; font-weight: 700; font-size: 32px; color: #fff; text-shadow: 0 2px 8px rgba(0,60,100,.5); }
+#j22-refs { position: absolute; left: 1460px; top: 240px; width: 360px; display: flex; flex-direction: column; gap: 12px; }
+#j22-refs canvas { width: 360px; height: 150px; border-radius: 18px; background: rgba(255,255,255,.92); box-shadow: 0 10px 24px rgba(0,60,90,.2); }
+
+/* pantalla de comparación */
+#j22c-panel { left: 400px; top: 150px; width: 1440px; height: 800px; }
+.j22c-col { position: absolute; top: 60px; display: flex; flex-direction: column; align-items: center; gap: 20px; }
+#j22c-col-refs { left: 50px; }
+#j22c-col-mio { left: 790px; }
+.j22c-etq { margin: 0; font-family: "Space Grotesk", "Segoe UI", sans-serif; font-weight: 700; font-size: 40px; color: #23476B; text-shadow: none; }
+#j22c-refs { display: grid; grid-template-columns: repeat(4, 150px); gap: 10px; }
+#j22c-refs canvas { width: 150px; height: 102px; border-radius: 14px; background: #fff; box-shadow: 0 6px 16px rgba(0,70,110,.12); }
+#j22c-mio { width: 600px; height: 382px; border-radius: 24px; box-shadow: 0 0 0 8px rgba(139,195,74,.7), 0 18px 44px rgba(0,70,110,.3); }
+#j22c-flecha { position: absolute; left: 708px; top: 300px; width: 70px; height: 60px; color: #2C7FB8; }
+#j22c-texto { position: absolute; left: 60px; right: 60px; top: 600px; margin: 0; text-align: center;
+  font-family: "Inter", "Segoe UI", sans-serif; font-size: 34px; line-height: 44px; color: #23476B; text-shadow: none; }
+
+/* elegir color y partes del dibujo (debajo del lienzo) */
+#j22-colores { position: absolute; left: 420px; top: 900px; width: 1000px; display: flex; align-items: center; gap: 18px;
+  font-family: "Inter", "Segoe UI", sans-serif; color: #fff; text-shadow: 0 2px 8px rgba(0,60,100,.5); }
+.j22-colores-etq { font-weight: 700; font-size: 30px; }
+.j22-color { width: 70px; height: 70px; border-radius: 50%; border: 5px solid rgba(255,255,255,.85); cursor: none; padding: 0;
+  box-shadow: 0 6px 14px rgba(0,60,100,.3); transition: transform .15s, box-shadow .15s; }
+.j22-color.elegido { transform: scale(1.18); box-shadow: 0 0 0 6px #fff, 0 0 0 11px #2C7FB8, 0 8px 18px rgba(0,60,100,.35); }
+.j22-partes { margin-left: auto; display: flex; gap: 10px; }
+.j22-parte { padding: 8px 18px; border-radius: 999px; background: rgba(255,255,255,.25); font-size: 26px; font-weight: 700; text-shadow: none; color: rgba(255,255,255,.8); }
+.j22-parte.actual { background: #fff; color: #2C7FB8; }
+.j22-parte.hecha { background: #8BC34A; color: #fff; }
+.j22-parte.hecha::before { content: "✓ "; }
+
+/* pantalla de reconocimiento: una "ventana de computadora" */
+#j22r-monitor { position: absolute; left: 400px; top: 150px; width: 1440px; height: 800px; border-radius: 26px; overflow: hidden;
+  background: #0E2A3B; box-shadow: 0 0 0 10px rgba(255,255,255,.5), 0 30px 70px rgba(0,40,60,.45); }
+#j22r-barra { height: 56px; display: flex; align-items: center; gap: 12px; padding: 0 22px; background: linear-gradient(180deg, #DDF1FF, #A8D8F5); }
+#j22r-barra i { width: 18px; height: 18px; border-radius: 50%; background: #F06A9E; }
+#j22r-barra i:nth-child(2) { background: #F4D03F; } #j22r-barra i:nth-child(3) { background: #3FB56A; }
+#j22r-barra span { margin-left: 14px; font-family: "IBM Plex Mono", monospace; font-size: 24px; color: #23476B; }
+#j22r-pantalla { position: absolute; left: 40px; top: 96px; width: 770px; height: 490px; border-radius: 14px; overflow: hidden; background: #fff; }
+#j22r-dibujo { position: absolute; inset: 0; width: 770px; height: 490px; }
+#j22r-escaner { position: absolute; left: 0; right: 0; top: 0; height: 12px; opacity: 0;
+  background: linear-gradient(180deg, rgba(139,195,74,0), rgba(139,195,74,.95), rgba(139,195,74,0)); box-shadow: 0 0 30px 10px rgba(139,195,74,.45); }
+.j22r-caja { position: absolute; border: 4px solid #8BC34A; border-radius: 8px; background: rgba(139,195,74,.08); }
+.j22r-caja span { position: absolute; left: -4px; top: -40px; padding: 4px 12px; border-radius: 6px 6px 6px 0; white-space: nowrap;
+  background: #8BC34A; color: #fff; font-family: "IBM Plex Mono", monospace; font-weight: 700; font-size: 22px; }
+#j22r-caja-ojo { border-color: #3E9EEA; } #j22r-caja-ojo span { background: #3E9EEA; }
+#j22r-caja-aleta { border-color: #F06A9E; } #j22r-caja-aleta span { background: #F06A9E; }
+
+#j22r-panel { position: absolute; left: 850px; top: 96px; width: 550px; display: flex; flex-direction: column; gap: 18px;
+  font-family: "IBM Plex Mono", monospace; color: #DDF1FF; }
+#j22r-panel p { margin: 0; text-shadow: none; }
+#j22r-estado { font-size: 28px; color: #8FD3FF; }
+.j22r-item { font-size: 32px; }
+.j22r-item b { color: #8BC34A; } .j22r-item b.no { color: #F06A9E; }
+#j22r-veredicto { margin-top: 30px !important; padding: 24px 28px; border-radius: 20px; background: linear-gradient(180deg, #8FD3FF, #3E9EEA);
+  font-family: "Space Grotesk", "Segoe UI", sans-serif; font-weight: 700; font-size: 52px; color: #fff; text-align: center; }
+#j22r-veredicto small { display: block; font-size: 26px; font-weight: 400; opacity: .9; }

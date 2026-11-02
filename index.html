@@ -112,7 +112,9 @@
 
 <div id="panel" hidden>
   <div class="etq">Teclado → elegir núcleo</div>
-  <div class="fila" id="fila-nucleos"><button type="button" tabindex="-1" id="btn-juego3">Juego 3</button></div>
+  <div class="fila" id="fila-nucleos"></div>
+  <div class="etq">Juegos (prueba rápida, sin orden obligatorio)</div>
+  <div class="fila" id="fila-juegos"></div>
   <div class="etq">Gesto de mano → pantalla anterior / siguiente</div>
   <div class="fila">
     <button type="button" tabindex="-1" data-accion="ANTERIOR">◀ Anterior</button>
@@ -308,11 +310,19 @@ function retrocederPaso() {
   irA(pasoActual - 1);
 }
 
-// Atajo de prueba: abre el núcleo 3 directo en el juego de difusión (sin orden obligatorio)
-function irAJuego3() {
+/* Atajos de prueba del panel: abren un núcleo directo en la pantalla de su juego (sin orden obligatorio).
+   pantalla: id de la <section> donde arranca el juego (null = todavía no existe). */
+const JUEGOS = [
+  { nombre: "Juego 1",   nucleo: 0, pantalla: "p7" },        // núcleo 1: probar la tableta → unir puntos
+  { nombre: "Juego 2",   nucleo: 1, pantalla: "j2-intro" },  // núcleo 2: gatos y bicicletas
+  { nombre: "Juego 2.2", nucleo: 1, pantalla: "j22-observa" },  // núcleo 2: observar peces y dibujar uno
+  { nombre: "Juego 3",   nucleo: 2, pantalla: "d1" }         // núcleo 3: juego de difusión
+];
+function irAJuego(j) {
   if (ocupado) return;
-  const indice = pasos.findIndex(p => p.tipo === "nucleo" && p.nucleo === 2);
-  if (indice !== -1) irA(indice, "inicio=d1");
+  if (!j.pantalla) { avisar(j.nombre + ": todavía no está hecho"); return; }
+  const indice = pasos.findIndex(p => p.tipo === "nucleo" && p.nucleo === j.nucleo);
+  if (indice !== -1) irA(indice, "inicio=" + j.pantalla);
 }
 
 /* Muestra "¡Esa no es la memoria correcta!" y qué memoria insertar; se va sola a los pocos segundos */
@@ -454,9 +464,14 @@ function alternarPanel() {
     b.addEventListener("click", () => emitir("IR_A_NUCLEO", { nucleo: i }));
     fila.appendChild(b);
   });
-  const bj = document.getElementById("btn-juego3");
-  fila.appendChild(bj);   // queda después de los núcleos
-  bj.addEventListener("click", irAJuego3);
+  const filaJuegos = document.getElementById("fila-juegos");
+  JUEGOS.forEach(j => {
+    const b = document.createElement("button");
+    b.type = "button"; b.tabIndex = -1; b.textContent = j.nombre;
+    if (!j.pantalla) b.style.opacity = ".45";
+    b.addEventListener("click", () => irAJuego(j));
+    filaJuegos.appendChild(b);
+  });
   panel.querySelectorAll("[data-accion]").forEach(b =>
     b.addEventListener("click", () => emitir(b.dataset.accion)));
 
