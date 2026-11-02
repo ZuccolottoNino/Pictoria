@@ -918,7 +918,7 @@ function iniciar() {
     },
 
     /* ============ Encuesta final: se vota con los gestos ============
-       Gesto de volver = No (izquierda), gesto de avanzar = Sí (derecha). El voto lo guarda el
+       Gesto de AVANZAR = No (izquierda), gesto de VOLVER = Sí (derecha). El voto lo guarda el
        contenedor (panel de la D: resumen y CSV). Después de votar, sigue solo. */
     (function () {
       var votado = false;
@@ -977,8 +977,9 @@ function iniciar() {
           return entrada;
         },
         // los gestos votan (y no cambian de pantalla: la pantalla avanza sola después de votar)
-        alSiguiente: function () { votar("si"); return true; },
-        alAnterior: function () { votar("no"); return true; },
+        // invertido a pedido: con la cámara, avanzar es deslizar la mano hacia la izquierda (→ No)
+        alSiguiente: function () { votar("no"); return true; },
+        alAnterior: function () { votar("si"); return true; },
         salir: detener
       };
     })(),
