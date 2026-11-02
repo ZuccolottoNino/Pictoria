@@ -36,8 +36,8 @@ Infografia.presentacion([
   },
 
   /* ============ Juego 2 · clasificar con gestos ============
-     Las cards aparecen de a una en el centro. Gesto de volver = Gatos (izquierda),
-     gesto de avanzar = Bicicletas (derecha). Si va al lado correcto, la card vuela a su zona;
+     Las cards aparecen de a una en el centro. Gesto de AVANZAR = Gatos (izquierda),
+     gesto de VOLVER = Bicicletas (derecha). Si va al lado correcto, la card vuela a su zona;
      si no, se sacude y vuelve. Al clasificar las 4, pasa sola a la siguiente pantalla. */
   (function () {
     var ZONA = { gato: { slot0: 130, borde: "#j2c-zona-gatos" }, bici: { slot0: 1270, borde: "#j2c-zona-bicis" } };
@@ -142,8 +142,9 @@ Infografia.presentacion([
           });
       },
       // los gestos clasifican la card (no cambian de pantalla hasta terminar)
-      alAnterior: function () { if (termino) return false; clasificar("gato"); return true; },
-      alSiguiente: function () { if (termino) return false; clasificar("bici"); return true; },
+      // invertido a pedido: con la cámara, avanzar es deslizar la mano hacia la izquierda (→ Gatos)
+      alSiguiente: function () { if (termino) return false; clasificar("gato"); return true; },
+      alAnterior: function () { if (termino) return false; clasificar("bici"); return true; },
       salir: function () { pararBucles(); pararTutorial(); }
     };
   })(),
