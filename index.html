@@ -129,6 +129,8 @@
     <button type="button" tabindex="-1" id="btn-votos-csv">Descargar CSV</button>
     <button type="button" tabindex="-1" id="btn-votos-borrar">Borrar votos</button>
   </div>
+  <div class="etq">Cámara (gestos con la mano)</div>
+  <div id="estado-camara" class="etq" style="font-size:13px">⚪ buscando el sensado…</div>
   <div id="estado"></div>
   <div class="etq">Tecla D: ocultar/mostrar este panel</div>
 </div>
@@ -165,7 +167,10 @@ const CONFIG = {
   teclas: {
     SIGUIENTE:   ["Space", "ArrowRight"],   // placeholder del gesto
     ANTERIOR:    ["KeyA", "ArrowLeft"],
-    NUCLEO:      { KeyQ: 0, KeyW: 1, KeyE: 2,
+    // S / O / C: las teclas que mandan las memorias de la instalación (O y el cero, por las dudas, van al 2).
+    // Q/W/E y 1/2/3 quedan para probar con el teclado.
+    NUCLEO:      { KeyS: 0, KeyO: 1, Digit0: 1, Numpad0: 1, KeyC: 2,
+                   KeyQ: 0, KeyW: 1, KeyE: 2,
                    Digit1: 0, Digit2: 1, Digit3: 2, Numpad1: 0, Numpad2: 1, Numpad3: 2 },
     REINICIAR:   "KeyR",
     PANEL:       "KeyD"
@@ -175,6 +180,10 @@ const CONFIG = {
   panelPruebas: true,      // mostrar el panel de botones (poné false en la instalación)
   inactividadMs: 120000,   // sin actividad → vuelve al inicio (0 = desactivado)
   pantallaCompleta: true,
+  /* Cámara (sensado/sensado_manos.py): manda "siguiente" / "anterior" por WebSocket.
+     Si el script no está corriendo, la página reintenta sola; el teclado sigue funcionando igual. */
+  camaraWS: "ws://localhost:9980",
+  camaraReintentoMs: 3000,
   fadeMs: 600
 };
 
@@ -388,7 +397,28 @@ function emitir(accion, datos = {}) {
     iframe.contentWindow.postMessage({ origen: "contenedor", tipo: "accion", accion, datos }, "*");
   }
 }
-window.Acciones = { emitir };   // <- acá se enchufa MediaPipe más adelante
+window.Acciones = { emitir };
+
+/* ---------- Cámara: gestos de la mano (MediaPipe en sensado/sensado_manos.py) ----------
+   El script de Python abre un WebSocket y manda "siguiente" o "anterior" con cada deslizamiento.
+   Entran por el mismo bus que las teclas (Espacio / A), así que todo lo demás funciona igual. */
+(function conectarCamara() {
+  const estadoCam = document.getElementById("estado-camara");
+  const pintar = (txt, color) => { estadoCam.textContent = txt; estadoCam.style.color = color; };
+  let ws;
+  try { ws = new WebSocket(CONFIG.camaraWS); }
+  catch (e) { setTimeout(conectarCamara, CONFIG.camaraReintentoMs); return; }
+  ws.onopen = () => pintar("🟢 cámara conectada", "#8BC34A");
+  ws.onmessage = (e) => {
+    const msg = String(e.data).trim().toLowerCase();
+    if (msg === "siguiente") emitir("SIGUIENTE");
+    else if (msg === "anterior") emitir("ANTERIOR");
+  };
+  ws.onclose = () => {   // el script no está corriendo (o se cortó): reintentar
+    pintar("🔴 cámara desconectada (¿corre sensado_manos.py?)", "#F06A9E");
+    setTimeout(conectarCamara, CONFIG.camaraReintentoMs);
+  };
+})();
 
 /* ---------- Inactividad ---------- */
 function reiniciarInactividad() {
