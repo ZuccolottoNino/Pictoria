@@ -274,6 +274,7 @@ function dibujarPantalla(paso) {
 
 // consulta (opcional): se agrega a la URL del núcleo, ej. "inicio=d1" para arrancar en esa pantalla
 async function irA(indice, consulta) {
+  confirmacionActiva = true;   // cada página nueva arranca con la confirmación prendida
   ocupado = true;
   nucleoListo = false;
   velo.classList.add("activo");
@@ -421,7 +422,9 @@ window.Acciones = { emitir };
    sepa que el sistema la vio y no repita el gesto aunque la pantalla tarde un poco en cambiar.
    Se muestra con la cámara y también con el teclado (Espacio/→ y A/←), para poder probarlo. */
 let temporizadorGesto = null;
+let confirmacionActiva = true;   // un núcleo la puede apagar (ej. en los juegos de dibujo)
 function confirmarGesto(lado) {
+  if (!confirmacionActiva) return;
   const caja = document.getElementById("gesto-ok");
   caja.querySelector(".gesto-ok-mano").innerHTML = Manos.svg(lado);
   caja.hidden = false;
@@ -498,6 +501,7 @@ window.addEventListener("message", (e) => {
   switch (msg.tipo) {
     case "listo":      nucleoListo = true; if (alEstarListo) alEstarListo(); break;
     case "voto":       guardarVoto(msg.pregunta, msg.respuesta); break;
+    case "confirmacion": confirmacionActiva = !!msg.activa; break;
     case "pedir-votos": {
       const v = leerVotos().filter(x => !msg.pregunta || x.pregunta === msg.pregunta);
       const si = v.filter(x => x.respuesta === "si").length;

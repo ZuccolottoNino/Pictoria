@@ -83,6 +83,8 @@
     votar:     function (pregunta, respuesta) { enviar("voto", { pregunta: pregunta, respuesta: respuesta }); },
     /* Pide al contenedor el resumen de votos de una pregunta; responde con alRecibir({ si, no }) */
     pedirVotos: function (pregunta, alRecibir) { alVotos = alRecibir; enviar("pedir-votos", { pregunta: pregunta }); },
+    /* Prende/apaga la burbuja de "gesto detectado" del contenedor (ej. apagada en los juegos de dibujo) */
+    confirmarGestos: function (activa) { enviar("confirmacion", { activa: !!activa }); },
     actividad: function () { enviar("actividad"); },
     reiniciar: function () { enviar("reiniciar"); },
 
