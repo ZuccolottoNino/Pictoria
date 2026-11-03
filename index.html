@@ -37,6 +37,15 @@
   #velo { position: fixed; inset: 0; background: #0a0a0a; opacity: 0; pointer-events: none; transition: opacity var(--fade) ease; z-index: 10; }
   #velo.activo { opacity: 1; }
 
+  /* Confirmación de gesto: una burbuja con la mano y un tilde, abajo al centro */
+  #gesto-ok { position: fixed; left: 50%; bottom: 4vmin; z-index: 16; transform: translateX(-50%);
+    display: flex; align-items: center; gap: 1.2vmin; padding: 1.2vmin 2.4vmin; border-radius: 999px;
+    background: rgba(255,255,255,.95); box-shadow: 0 1vmin 3vmin rgba(0,0,0,.3); pointer-events: none; }
+  #gesto-ok[hidden] { display: none; }
+  #gesto-ok .gesto-ok-mano { font-size: 4vmin; line-height: 0; }
+  #gesto-ok .gesto-ok-tilde { width: 4.5vmin; height: 4.5vmin; border-radius: 50%; display: flex; align-items: center; justify-content: center;
+    background: #3FB56A; color: #fff; font: 700 3vmin/1 "Segoe UI", sans-serif; }
+
   /* Pantalla de error de memoria (encima del núcleo, sin cambiar de pantalla) */
   #error-memoria { position: fixed; inset: 0; z-index: 15; display: flex; align-items: center; justify-content: center;
     background: rgba(10,10,10,.82); font-family: "Press Start 2P", monospace; }
@@ -98,6 +107,9 @@
 
 <div id="pantalla" role="status" aria-live="polite" tabindex="-1"></div>
 <iframe id="nucleo" title="Contenido" hidden></iframe>
+<!-- Confirmación de gesto detectado por la cámara (aparece un instante y se va) -->
+<div id="gesto-ok" hidden><div class="gesto-ok-mano"></div><div class="gesto-ok-tilde">✓</div></div>
+
 <!-- Pantalla de error: se eligió una memoria que no corresponde -->
 <div id="error-memoria" hidden>
   <div class="tarjeta-error">
@@ -405,6 +417,22 @@ window.Acciones = { emitir };
 /* ---------- Cámara: gestos de la mano (MediaPipe en sensado/sensado_manos.py) ----------
    El script de Python abre un WebSocket y manda "siguiente" o "anterior" con cada deslizamiento.
    Entran por el mismo bus que las teclas (Espacio / A), así que todo lo demás funciona igual. */
+/* Muestra un instante qué gesto se detectó (mano roja o azul + tilde verde), para que la persona
+   sepa que el sistema la vio y no repita el gesto aunque la pantalla tarde un poco en cambiar.
+   Se muestra con la cámara y también con el teclado (Espacio/→ y A/←), para poder probarlo. */
+let temporizadorGesto = null;
+function confirmarGesto(lado) {
+  const caja = document.getElementById("gesto-ok");
+  caja.querySelector(".gesto-ok-mano").innerHTML = Manos.svg(lado);
+  caja.hidden = false;
+  caja.animate([{ opacity: 0, transform: "translateX(-50%) scale(.7)" }, { opacity: 1, transform: "translateX(-50%) scale(1.08)" },
+                { opacity: 1, transform: "translateX(-50%) scale(1)" }], { duration: 300, easing: "ease-out" });
+  clearTimeout(temporizadorGesto);
+  temporizadorGesto = setTimeout(() => {
+    caja.animate([{ opacity: 1 }, { opacity: 0 }], { duration: 250 }).onfinish = () => { caja.hidden = true; };
+  }, 1100);
+}
+
 (function conectarCamara() {
   const estadoCam = document.getElementById("estado-camara");
   const pintar = (txt, color) => { estadoCam.textContent = txt; estadoCam.style.color = color; };
@@ -414,8 +442,8 @@ window.Acciones = { emitir };
   ws.onopen = () => pintar("🟢 cámara conectada", "#8BC34A");
   ws.onmessage = (e) => {
     const msg = String(e.data).trim().toLowerCase();
-    if (msg === "siguiente") emitir("SIGUIENTE");
-    else if (msg === "anterior") emitir("ANTERIOR");
+    if (msg === "siguiente") { confirmarGesto("der"); emitir("SIGUIENTE"); }
+    else if (msg === "anterior") { confirmarGesto("izq"); emitir("ANTERIOR"); }
   };
   ws.onclose = () => {   // el script no está corriendo (o se cortó): reintentar
     pintar("🔴 cámara desconectada (¿corre sensado_manos.py?)", "#F06A9E");
@@ -437,8 +465,9 @@ function procesarTecla(code, abajo) {
 
   if (!abajo) return false;
 
-  if (T.SIGUIENTE.includes(code))        { emitir("SIGUIENTE"); return true; }
-  if (T.ANTERIOR.includes(code))         { emitir("ANTERIOR"); return true; }
+  // con el teclado también se muestra la confirmación del gesto (para probar sin cámara)
+  if (T.SIGUIENTE.includes(code))        { confirmarGesto("der"); emitir("SIGUIENTE"); return true; }
+  if (T.ANTERIOR.includes(code))         { confirmarGesto("izq"); emitir("ANTERIOR"); return true; }
   if (code in T.NUCLEO)                  { emitir("IR_A_NUCLEO", { nucleo: T.NUCLEO[code] }); return true; }
   if (code === T.REINICIAR)              { emitir("REINICIAR"); return true; }
   if (code === T.PANEL)                  { alternarPanel(); return true; }

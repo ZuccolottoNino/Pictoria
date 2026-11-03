@@ -3,6 +3,62 @@ Infografia.escalar("#escenario", 1920, 1080);
 var bucles = [];
 function pararBucles() { bucles.forEach(function (b) { b.kill(); }); bucles = []; }
 
+/* ============================================================
+   RECORDATORIO DEL GESTO DE AVANZAR (solo en el núcleo 1)
+   Para seguir enseñando el gesto después del tutorial:
+   - en las primeras pantallas (hasta la mitad del núcleo) aparece cuando terminan las animaciones de entrada;
+   - en el resto, aparece solo si la persona pasa un rato sin avanzar.
+   No aparece en las pantallas que ya tienen sus propias indicaciones (inicio, juegos, memoria DOS).
+   ============================================================ */
+var PISTA = {
+  enseñar: ["#p2", "#p3", "#p4", "#p5", "#p6"],        // primeras pantallas: aparece enseguida
+  nunca: ["#p1", "#p7", "#p8", "#p10", "#p15"],        // ya indican qué hacer por su cuenta
+  demoraEnseñar: 0.4,                                  // segundos después de que terminan las animaciones de entrada
+  inactividad: 20                                      // en el resto: segundos sin avanzar
+};
+var pistaAvance = (function () {
+  var el = document.createElement("div"), espera = null, latido = null;
+  el.id = "pista-avance";
+  el.innerHTML = '<span class="pista-mano">' + Manos.svg("der") + '</span> Traé la mano derecha hacia el centro para avanzar';
+  document.getElementById("escenario").appendChild(el);
+  gsap.set(el, { autoAlpha: 0 });
+  function mostrar() {
+    gsap.fromTo(el, { autoAlpha: 0, y: 30, scale: 0.85 }, { autoAlpha: 1, y: 0, scale: 1, duration: 0.5, ease: "back.out(2.2)" });
+    // la mano "arrastra" hacia la izquierda, una y otra vez
+    latido = gsap.fromTo(el.querySelector(".pista-mano"), { x: 0 }, { x: -14, duration: 0.45, ease: "power2.inOut", yoyo: true, repeat: -1, repeatDelay: 0.4 });
+  }
+  return {
+    programar: function (selector) {
+      this.ocultar();
+      if (PISTA.nunca.indexOf(selector) !== -1) return;
+      var seg = PISTA.enseñar.indexOf(selector) !== -1 ? PISTA.demoraEnseñar : PISTA.inactividad;
+      espera = gsap.delayedCall(seg, mostrar);
+    },
+    ocultar: function () {
+      if (espera) { espera.kill(); espera = null; }
+      if (latido) { latido.kill(); latido = null; }
+      gsap.to(el, { autoAlpha: 0, duration: 0.2 });
+    }
+  };
+})();
+// envuelve cada pantalla: al terminar su entrada se programa el recordatorio; al salir, se oculta
+function conPistaDeAvance(pantallas) {
+  return pantallas.map(function (p) {
+    var entrar = p.entrar, salir = p.salir;
+    p.entrar = function (el) {
+      var r = entrar ? entrar(el) : null;
+      // se programa cuando terminan las animaciones de entrada de la pantalla
+      if (r && typeof r.eventCallback === "function") {
+        var fin = r.eventCallback("onComplete");
+        r.eventCallback("onComplete", function () { if (fin) fin(); pistaAvance.programar(p.el); });
+      } else pistaAvance.programar(p.el);
+      return r;
+    };
+    p.salir = function (el) { pistaAvance.ocultar(); if (salir) return salir(el); };
+    return p;
+  });
+}
+
 /* Parte el texto de un elemento en <span class="letra"> (una por carácter) para escribirlo
    letra por letra. Respeta los <span> de color y los <br>. Solo lo hace una vez. */
 function letrasDe(selector) {
@@ -319,7 +375,7 @@ function comparacion(cfg) {
 }
 
 function iniciar() {
-  Infografia.presentacion([
+  Infografia.presentacion(conPistaDeAvance([
 
     /* ============ Pantalla 1: Pictoria cargando ============ */
     {
@@ -933,6 +989,6 @@ function iniciar() {
       salir: pararBucles
     }
 
-  ], { transicion: "deslizar", duracion: 0.8 });
+  ]), { transicion: "deslizar", duracion: 0.8 });
 }
 (document.fonts && document.fonts.ready ? document.fonts.ready : Promise.resolve()).then(iniciar);
