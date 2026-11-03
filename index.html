@@ -135,14 +135,15 @@
   <div class="etq">Tecla D: ocultar/mostrar este panel</div>
 </div>
 
+<script src="js/manos.js"></script>
 <script>
 /* ============================================================
    CONFIGURACIÓN
    ============================================================ */
 const CONFIG = {
-  textoStandby: "Hacé el gesto para continuar",
+  textoStandby: '<span data-mano="der"></span> Arrastrá con la mano derecha para continuar',
   textoFin: "Gracias por participar",
-  textoReinicio: "Hacé el gesto para volver al inicio",
+  textoReinicio: '<span data-mano="der"></span> Arrastrá con la mano derecha para volver al inicio',
 
   /* Tutorial de navegación: lo primero que se ve. Funciona como un núcleo más
      (sus pantallas reciben Siguiente/Anterior) y al terminarlo pasa al núcleo 1. */
@@ -157,6 +158,7 @@ const CONFIG = {
       sinStandby: true,   // el "Inserte la memoria DOS" ya está al final del núcleo 1
       memoria: { nombre: "DOS", color: "VERDE", hex: "#00C80F" } },
     { archivo: "nucleos/nucleo3.html", titulo: "Núcleo 3", subtitulo: "Descripción corta del núcleo 3",
+      sinStandby: true,   // el "Insertá la memoria TRES" ya está al final del núcleo 2
       memoria: { nombre: "TRES", color: null, hex: "#BD72FF" } }   // TODO: color de la memoria TRES
     // el juego de difusión está dentro del núcleo 3 (botón "Juego 3" del panel para probarlo directo)
   ],
@@ -255,6 +257,7 @@ function dibujarPantalla(paso) {
     html = `<h1>${CONFIG.textoFin}</h1><p class="aviso">${CONFIG.textoReinicio}</p>`;
   }
   pantalla.innerHTML = html;
+  Manos.llenar(pantalla);
 }
 
 // consulta (opcional): se agrega a la URL del núcleo, ej. "inicio=d1" para arrancar en esa pantalla
@@ -343,7 +346,7 @@ function mostrarErrorMemoria(esperado) {
     texto.textContent = "Ya recorriste todas las memorias.";
   } else {
     const m = n.memoria || { nombre: String(esperado + 1) };
-    texto.innerHTML = `Inserte la memoria <span style="color:${m.hex || "#fff"}">${m.nombre}</span>` +
+    texto.innerHTML = `Insertá la memoria <span style="color:${m.hex || "#fff"}">${m.nombre}</span>` +
       (m.color ? `<br>color <span style="color:${m.hex}">${m.color}</span> en la ranura` : " en la ranura");
   }
   avisar("Memoria equivocada → va la " + (n ? (esperado + 1) : "—"));
@@ -358,9 +361,9 @@ function mostrarErrorMemoria(esperado) {
 
 function irANucleo(n) {
   if (ocupado) return;
-  // Si el núcleo tiene pantalla previa propia, se entra por ahí
-  const tipo = CONFIG.nucleos[n] && CONFIG.nucleos[n].standby ? "standby" : "nucleo";
-  const indice = pasos.findIndex(p => p.tipo === tipo && p.nucleo === n);
+  // Insertar la memoria arranca el núcleo directamente. Su pantalla previa ("Insertá la memoria…")
+  // es la que pide la memoria: se ve al llegar desde el paso anterior (ej. al terminar el tutorial).
+  const indice = pasos.findIndex(p => p.tipo === "nucleo" && p.nucleo === n);
   if (indice === -1 || indice === pasoActual) return;
   // Orden obligatorio: solo se puede entrar al núcleo que sigue (el siguiente al último visitado).
   // Si eligió otro (adelantarse o volver a uno ya hecho), se le dice qué memoria insertar.

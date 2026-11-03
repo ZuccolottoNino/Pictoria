@@ -39,7 +39,7 @@
   </section>
 
   <!-- ===================== JUEGO 2 · clasificar: gatos a la izquierda, bicis a la derecha ===================== -->
-  <!-- Las cards aparecen de a una en el centro; gesto de avanzar → Gatos (izq.), gesto de volver → Bicicletas (der.) -->
+  <!-- Las cards aparecen de a una en el centro; mano derecha (avanzar) → Gatos (izq.), mano izquierda (volver) → Bicicletas (der.) -->
   <section id="j2-clasificar" class="slide j2">
     <div class="vidrio j2-panel" id="j2c-titulo-caja"><h1 id="j2c-titulo">Machine Learning</h1></div>
     <p id="j2c-contador">Dato <span>1</span> de 4</p>
@@ -47,12 +47,12 @@
     <div class="j2c-zona" id="j2c-zona-gatos">
       <div class="j2c-pildora">Gatos</div>
       <p class="j2c-solta">Soltá acá</p>
-      <p class="j2c-gesto"><svg viewBox="0 0 48 40"><path d="M44 20H8M22 6L8 20l14 14" fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/></svg>gesto de avanzar</p>
+      <p class="j2c-gesto"><span data-mano="der"></span>mano derecha</p>
     </div>
     <div class="j2c-zona" id="j2c-zona-bicis">
       <div class="j2c-pildora">Bicicletas</div>
       <p class="j2c-solta">Soltá acá</p>
-      <p class="j2c-gesto">gesto de volver<svg viewBox="0 0 48 40"><path d="M4 20h36M26 6l14 14-14 14" fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/></svg></p>
+      <p class="j2c-gesto">mano izquierda<span data-mano="izq"></span></p>
     </div>
 
     <!-- las 4 cards (aparecen en orden aleatorio) -->
@@ -62,7 +62,7 @@
     <div class="j2c-card" data-tipo="gato"><img src="../assets/nucleo2/img/gato3.png" alt="Gato"></div>
 
     <!-- tutorial y mensajes -->
-    <p id="j2c-ayuda">Deslizá la mano <b>hacia la izquierda</b> si es un <b>gato</b> o <b>hacia la derecha</b> si es una <b>bicicleta</b></p>
+    <p id="j2c-ayuda">Arrastrá hacia vos la <b class="mano-der-txt">mano derecha</b> si es un <b>gato</b> o la <b class="mano-izq-txt">mano izquierda</b> si es una <b>bicicleta</b></p>
     <div id="j2c-mano"><svg viewBox="0 0 64 64"><path d="M22 34V14a4 4 0 0 1 8 0v16V10a4 4 0 0 1 8 0v20V13a4 4 0 0 1 8 0v19V20a4 4 0 0 1 8 0v20c0 10-7 18-17 18h-3c-6 0-10-3-13-8l-8-13a4 4 0 0 1 7-4z" fill="#fff" stroke="#2C7FB8" stroke-width="3" stroke-linejoin="round"/></svg></div>
     <p id="j2c-error">¡Ups! Ese no va ahí, probá para el otro lado</p>
     <p id="j2c-bien">¡Muy bien! Clasificaste todos los datos</p>
@@ -74,10 +74,7 @@
 
     <div class="vidrio j2-panel" id="j2e-panel">
       <h2 id="j2e-titulo">¡Así aprende una computadora!</h2>
-      <p class="j2-texto" id="j2e-texto">Recién hiciste lo mismo que hace el <b>Machine Learning</b>: le mostraste <b>ejemplos</b><br>
-        con su respuesta («esto es un gato», «esto es una bicicleta»). Con muchísimos ejemplos así,<br>
-        la computadora <b>descubre los patrones</b> por su cuenta y aprende a reconocer imágenes<br>
-        que <b>nunca vio</b>.</p>
+      <p class="j2-texto" id="j2e-texto">Recién hiciste lo mismo que hace el <b>Machine Learning</b>: le mostraste <b>ejemplos</b> con su respuesta («esto es un gato», «esto es una bicicleta»). Con muchísimos ejemplos así, la computadora <b>descubre los patrones</b> por su cuenta y aprende a reconocer imágenes que <b>nunca vio</b>.</p>
 
       <div id="j2e-pasos">
         <div class="j2e-paso">
@@ -215,10 +212,23 @@
       <p id="j22c-texto"></p>
     </div>
   </section>
+
+  <!-- ===================== FIN DEL NÚCLEO 2: insertar la memoria TRES ===================== -->
+  <!-- Al insertar la memoria (tecla del núcleo 3) arranca el núcleo 3 directamente. -->
+  <section id="j2-fin" class="slide j2">
+    <img id="j2f-personaje" src="../assets/nucleo2/img/personaje1.png" alt="">
+    <div class="vidrio j2-panel" id="j2f-panel">
+      <h2 id="j2f-titulo">¡Terminaste la etapa dos!</h2>
+      <p id="j2f-memoria">Insertá la memoria <b>TRES</b><br>en la ranura</p>
+      <!-- cuando se defina el color de la memoria TRES, va acá: "Insertá la memoria TRES color ___" -->
+    </div>
+    <svg id="j2f-flecha" viewBox="0 0 64 48"><path d="M8 8l24 28L56 8" fill="none" stroke="#fff" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"/></svg>
+  </section>
 </div>
 
 <script src="../libs/gsap.min.js"></script>
 <script src="../js/puente.js"></script>
+<script src="../js/manos.js"></script>
 <script src="../js/fondo-aero.js"></script>
 <script src="../js/juego-peces.js"></script>
 <script src="../js/nucleo2.js"></script>

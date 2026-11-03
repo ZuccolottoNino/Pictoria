@@ -23,7 +23,8 @@
     duracionReconstruccion: 9,
     pasosGeneracion: 30,
     duracionGeneracion: 10,
-    segundosEtapa: 40,       // pantallas 2 y 3: tiempo para jugar desde el primer trazo
+    segundosEtapa: 40,
+    segundosAuto: 8,         // pantallas 2 y 3: al terminar, tiempo para reintentar antes de pasar solos       // pantallas 2 y 3: tiempo para jugar desde el primer trazo
     umbralGuia: 0.97,        // pantalla 2: parte de las líneas guía que hay que repasar (casi todas) para que el modelo termine solo
     radioLimpieza: 16,       // pantalla 2: radio del lápiz que limpia (en píxeles del buffer de ruido): fino = más difícil
     rebrote: 0.006           // pantalla 2: cuánto vuelve el ruido por cuadro donde no se repasó (hay que ser constante)
@@ -41,7 +42,7 @@
     predTexto: "Lo que el modelo predice y resta.",
     promptEtiqueta: "Prompt",
     prompt: "Dibujá una montaña y un sol.",
-    avisoSiguiente: "Hacé el gesto para continuar",
+    avisoSiguiente: "Arrastrá con la mano derecha para continuar",
     // [cobertura mínima, mensaje, estado de la mascota]
     mensajes1: [
       [0,    "Apoyá el lápiz y pintá",  "neutral"],
@@ -63,10 +64,10 @@
     etiquetaReconstruida: "Reconstruida",
     msgGenMontaña: "1. Dibujá la silueta de la montaña",
     msgGenSol: "2. Ahora dibujá el sol",
-    msgGenListo: "¡Listo! Hacé el gesto para generar",
+    msgGenListo: "¡Listo! Arrastrá con la mano derecha para generar",
     pistaMontaña: "Dibujá la montaña",
     pistaSol: "¡Ahora dibujá un sol!",
-    pistaListo: "¡Listo! Hacé el gesto para generar",
+    pistaListo: "¡Listo! Mano derecha para generar",
     msgGen1: "El modelo lo va revelando del ruido",
     msgGenFin: "Una imagen nueva, nacida de tu dibujo",
     recorrido: "Tu recorrido como modelo de difusión",
@@ -211,6 +212,20 @@
   }
 
   function mostrarAviso(id) { gsap.to("#" + id, { autoAlpha: 1, duration: 0.5 }); }
+
+  /* Al terminar una etapa que se puede reintentar (mano izquierda), se esperan unos segundos
+     y se pasa sola a la siguiente. Devuelve el tween para poder cancelarlo al reintentar o salir. */
+  function autoAvance(idAviso) {
+    var el = ya(idAviso), base = Manos.svg("der") + " " + TEXTOS.avisoSiguiente, cuenta = { t: CFG.segundosAuto };
+    return gsap.to(cuenta, { t: 0, duration: CFG.segundosAuto, ease: "none",
+      onUpdate: function () { el.innerHTML = base + " · seguimos solos en " + Math.ceil(cuenta.t) + " s"; },
+      onComplete: function () { el.innerHTML = base; Infografia.avanzar(); } });
+  }
+  function frenarAuto(t, idAviso) {
+    if (t) t.kill();
+    var el = ya(idAviso); if (el) el.innerHTML = Manos.svg("der") + " " + TEXTOS.avisoSiguiente;
+    return null;
+  }
 
   function mensaje(id, txt) { if (ya(id).textContent !== txt) ya(id).textContent = txt; }
 
@@ -371,6 +386,7 @@
     var pc = ya("d2-pred"), pcx = pc.getContext("2d"), pdata = pcx.createImageData(101, 50);
     var limpio = new Float32Array(NPX);            // 0 = con ruido, 1 = limpio (lo pinta el visitante)
     var bucles2 = [];                              // animaciones en bucle de la demo
+    var auto2 = null;                              // paso automático a la etapa 3 (cancelable)
     var fin = { g: 0 };                            // limpieza final automática (0 a 1)
     var entrada = null, intervalo = null, reloj = null, cierre = null, partido = null, ocultar = null, demo = null;
     var presionando = false, ux = 0, uy = 0, hayUltimo = false, empezo = false, terminado = false, estadoMascota = "";
@@ -499,7 +515,7 @@
         // original y reconstruida, lado a lado
         .to("#d2-comparar", { autoAlpha: 1, duration: 0.6, ease: "power2.out" }, "+=0.4")
         .fromTo("#d2-comparar figure", { y: 30, autoAlpha: 0 }, { y: 0, autoAlpha: 1, duration: 0.6, stagger: 0.2, ease: "back.out(1.6)" }, "<0.1")
-        .add(function () { mostrarAviso("d2-aviso"); });
+        .add(function () { mostrarAviso("d2-aviso"); auto2 = autoAvance("d2-aviso"); });
     }
 
     /* Mini tutorial: un lápiz "fantasma" recorre un tramo de la primera línea guía limpiando el ruido,
@@ -536,6 +552,7 @@
       gsap.set("#d2-tiempo", { autoAlpha: 0, scale: 0 });
       ya("d2-tiempo").classList.remove("apurado");
       gsap.set("#d2-comparar", { autoAlpha: 0 });
+      auto2 = frenarAuto(auto2, "d2-aviso");
       gsap.set("#d2-aviso", { autoAlpha: 0 });
       dibujarGuias(); pintar();
       if (intervalo) arrancarDemo();   // al reintentar, vuelve la demo
@@ -606,6 +623,7 @@
         if (entrada) entrada.kill(); if (reloj) reloj.kill(); if (cierre) cierre.kill();
         entrada = reloj = cierre = null;
         cursor.classList.remove("vis", "pres"); soltar();
+        auto2 = frenarAuto(auto2, "d2-aviso");
       }
     };
   }
@@ -628,6 +646,7 @@
     var dcx = demoLienzo.getContext("2d");
     var entrada = null, tipeo = null, reloj = null, gen = null, cierre = null, partido = null, ocultar = null, intervalo = null;
     var demo = null, latido = null;
+    var auto3 = null;                              // paso automático al terminar (cancelable)
     var trazos = [], actual = null, presionando = false, empezo = false;
     var fase = "montaña";   // montaña → sol → listo → generando → fin
 
@@ -819,7 +838,7 @@
         .to("#d3-final", { autoAlpha: 1, duration: 0.6, ease: "power2.out" })
         .fromTo("#d3-final h3", { y: -20, autoAlpha: 0 }, { y: 0, autoAlpha: 1, duration: 0.5, ease: "power3.out" }, "<0.1")
         .fromTo("#d3-final figure", { y: 30, autoAlpha: 0, scale: 0.9 }, { y: 0, autoAlpha: 1, scale: 1, duration: 0.6, stagger: 0.25, ease: "back.out(1.6)" }, "-=0.2")
-        .add(function () { mostrarAviso("d3-aviso"); });
+        .add(function () { mostrarAviso("d3-aviso"); auto3 = autoAvance("d3-aviso"); });
     }
 
     function escribirPrompt() {
@@ -850,6 +869,7 @@
       setNumero("d3-num", "d3-barra", 1);
       gsap.set("#d3-tiempo", { autoAlpha: 0, scale: 0 }); ya("d3-tiempo").classList.remove("apurado");
       gsap.set("#d3-final, #d3-aviso", { autoAlpha: 0 });
+      auto3 = frenarAuto(auto3, "d3-aviso");
       pararDemo();
       if (latido) { latido.kill(); latido = null; }
       ya("d3-pista").textContent = ""; gsap.set("#d3-pista", { autoAlpha: 0, xPercent: -50 });   // centrado lo maneja GSAP
@@ -920,6 +940,7 @@
         if (entrada) entrada.kill(); if (tipeo) tipeo.kill(); if (reloj) reloj.kill(); if (gen) gen.kill(); if (cierre) cierre.kill();
         entrada = tipeo = reloj = gen = cierre = null;
         pararDemo(); if (latido) { latido.kill(); latido = null; }
+        auto3 = frenarAuto(auto3, "d3-aviso");
         cursor.classList.remove("vis", "pres"); presionando = false; actual = null;
       }
     };
@@ -939,7 +960,7 @@
     ya("d3-prompt-etq").textContent = TEXTOS.promptEtiqueta;
     ya("d3-final-titulo").textContent = TEXTOS.recorrido;
     ya("d3-final-etq-1").textContent = TEXTOS.recorrido1; ya("d3-final-etq-2").textContent = TEXTOS.recorrido2; ya("d3-final-etq-3").textContent = TEXTOS.recorrido3;
-    ["d1-aviso", "d2-aviso", "d3-aviso"].forEach(function (id) { ya(id).textContent = TEXTOS.avisoSiguiente; });
+    ["d1-aviso", "d2-aviso", "d3-aviso"].forEach(function (id) { ya(id).innerHTML = Manos.svg("der") + " " + TEXTOS.avisoSiguiente; });
   }
 
   window.Difusion = {

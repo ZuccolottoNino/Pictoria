@@ -125,7 +125,8 @@ function juegoDePuntos(cfg) {
   var id = cfg.id, P = cfg.puntos;
   var TOLERANCIA = cfg.tolerancia || 70;
   var SEGUNDOS = cfg.segundos || 20;
-  var terminado = false, reloj = null, trazos = [];
+  var terminado = false, reloj = null, trazos = [], autoAvance = null;
+  var SEG_AUTO = cfg.segundosAuto || 8;   // tiempo para reintentar antes de pasar solos
 
   function cerca(p, q) { return Math.hypot(p.x - q.x, p.y - q.y) <= TOLERANCIA; }
   function pararReloj() { if (reloj) { reloj.kill(); reloj = null; } }
@@ -140,6 +141,20 @@ function juegoDePuntos(cfg) {
       .to("." + id + "-punto", { scale: 1.4, duration: 0.15, ease: "steps(2)", yoyo: true, repeat: 1 })
       .to("#" + id + "-tiempo", { autoAlpha: 0, duration: 0.2, ease: "steps(2)" }, 0)
       .to("#" + id + "-opciones", { autoAlpha: 1, y: 0, duration: 0.5, ease: "back.out(2)" });
+    arrancarAutoAvance();
+  }
+
+  // al terminar, unos segundos para reintentar (mano izquierda) antes de pasar solos a la siguiente pantalla
+  function arrancarAutoAvance() {
+    pararAutoAvance();
+    var el = document.getElementById(id + "-cuenta"), cuenta = { t: SEG_AUTO };
+    autoAvance = gsap.to(cuenta, { t: 0, duration: SEG_AUTO, ease: "none",
+      onUpdate: function () { el.textContent = "Seguimos solos en " + Math.ceil(cuenta.t) + " s"; },
+      onComplete: function () { Infografia.avanzar(); } });
+  }
+  function pararAutoAvance() {
+    if (autoAvance) { autoAvance.kill(); autoAvance = null; }
+    var el = document.getElementById(id + "-cuenta"); if (el) el.textContent = "";
   }
 
   // cuenta regresiva que arranca con el primer trazo
@@ -166,6 +181,7 @@ function juegoDePuntos(cfg) {
     terminado = false;
     trazos = [];
     pararReloj();
+    pararAutoAvance();
     gsap.set("#" + id + "-opciones", { autoAlpha: 0, y: 30 });
     gsap.set("#" + id + "-tiempo", { autoAlpha: 0, scale: 0 });
     document.getElementById(id + "-tiempo").classList.remove("apurado");
@@ -212,7 +228,7 @@ function juegoDePuntos(cfg) {
       jugar();                        // ya jugó: volver = reintentar
       return true;
     },
-    salir: function () { pararBucles(); pararReloj(); cfg.lienzo.parar(); }
+    salir: function () { pararBucles(); pararReloj(); pararAutoAvance(); cfg.lienzo.parar(); }
   };
 }
 

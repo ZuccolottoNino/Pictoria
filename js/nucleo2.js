@@ -56,13 +56,15 @@ Infografia.presentacion([
       gsap.set("#j2c-ayuda", { autoAlpha: 1 });
       tutorial = gsap.timeline({ repeat: -1, repeatDelay: 0.4 })
         .set("#j2c-mano", { x: 0, rotation: 0 })
+        .add(function () { document.getElementById("j2c-mano").innerHTML = Manos.svg("der", false, "100%"); })   // mano derecha (roja)
         .to("#j2c-mano", { autoAlpha: 1, duration: 0.25 })
         .to("#j2c-mano", { x: -420, rotation: -12, duration: 0.9, ease: "power2.inOut" })   // primero: izquierda = gato
         .add(function () { document.querySelector("#j2c-zona-gatos").classList.add("brilla"); }, "-=0.2")
         .to("#j2c-mano", { autoAlpha: 0, duration: 0.25 })
         .add(function () { document.querySelector("#j2c-zona-gatos").classList.remove("brilla"); })
         .set("#j2c-mano", { x: 0, rotation: 0 })
-        .to("#j2c-mano", { autoAlpha: 1, duration: 0.25 }, "+=0.3")
+        .add(function () { document.getElementById("j2c-mano").innerHTML = Manos.svg("izq", false, "100%"); }, "+=0.3")   // mano izquierda (azul)
+        .to("#j2c-mano", { autoAlpha: 1, duration: 0.25 })
         .to("#j2c-mano", { x: 420, rotation: 12, duration: 0.9, ease: "power2.inOut" })     // después: derecha = bici
         .add(function () { document.querySelector("#j2c-zona-bicis").classList.add("brilla"); }, "-=0.2")
         .to("#j2c-mano", { autoAlpha: 0, duration: 0.25 })
@@ -181,5 +183,34 @@ Infografia.presentacion([
   },
 
   /* ============ Juego 2.2: observá los peces y dibujá uno nuevo (js/juego-peces.js) ============ */
-  ...JuegoPeces.pantallas()
+  ...JuegoPeces.pantallas(),
+
+  /* ============ Fin del núcleo 2: insertar la memoria TRES ============
+     La memoria (tecla del núcleo 3) arranca el núcleo 3 directamente desde el contenedor. */
+  {
+    el: "#j2-fin",
+    preparar: function () {
+      var d = Infografia.direccion;
+      gsap.set("#j2f-personaje", { autoAlpha: 0, scale: 0.85, x: -70 * d, transformOrigin: "50% 100%" });
+      gsap.set("#j2f-panel", { autoAlpha: 0, x: 90 * d, scale: 0.97 });
+      gsap.set("#j2f-titulo", { autoAlpha: 0, y: -20 });
+      gsap.set("#j2f-memoria", { autoAlpha: 0, scale: 0.85 });
+      gsap.set("#j2f-flecha", { autoAlpha: 0, y: -20 });
+    },
+    entrar: function () {
+      return gsap.timeline()
+        .to("#j2f-panel", { autoAlpha: 1, x: 0, scale: 1, duration: 0.8, ease: "power3.out" })
+        .to("#j2f-personaje", { autoAlpha: 1, scale: 1, x: 0, duration: 0.9, ease: "back.out(1.5)" }, "-=0.5")
+        .to("#j2f-titulo", { autoAlpha: 1, y: 0, duration: 0.6, ease: "back.out(1.8)" }, "-=0.5")
+        .to("#j2f-memoria", { autoAlpha: 1, scale: 1, duration: 0.6, ease: "back.out(2)" }, "-=0.2")
+        .to("#j2f-flecha", { autoAlpha: 1, y: 0, duration: 0.4, ease: "power2.out" })
+        .add(function () {
+          bucles.push(gsap.to("#j2f-personaje", { y: -16, duration: 1.9, ease: "sine.inOut", yoyo: true, repeat: -1 }));
+          // "TRES" late y la flecha señala hacia abajo, hacia la ranura
+          bucles.push(gsap.to("#j2f-memoria b", { opacity: 0.4, duration: 0.6, ease: "steps(1)", yoyo: true, repeat: -1, repeatDelay: 0.3 }));
+          bucles.push(gsap.to("#j2f-flecha", { y: 16, duration: 0.5, ease: "sine.inOut", yoyo: true, repeat: -1 }));
+        });
+    },
+    salir: pararBucles
+  }
 ], { transicion: "deslizar", duracion: 0.8 });

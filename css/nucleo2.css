@@ -97,7 +97,7 @@ p  { position: relative; font-size: 38px; color: #e9fdff; margin-top: 18px; text
 #j2e-panel { left: 325px; top: 130px; width: 1270px; height: 820px; }
 #j2e-titulo { position: absolute; left: 0; right: 0; top: 46px; margin: 0; text-align: center;
   font-family: "Space Grotesk", "Segoe UI", sans-serif; font-weight: 700; font-size: 64px; color: #23476B; text-shadow: none; }
-#j2e-texto { top: 150px; font-size: 32px; line-height: 46px; }
+#j2e-texto { top: 150px; left: 90px; right: 90px; font-size: 32px; line-height: 46px; text-wrap: balance; }   /* renglones parejos */
 #j2e-texto b { color: #2C7FB8; }
 
 #j2e-pasos { position: absolute; left: 0; right: 0; top: 430px; display: flex; justify-content: center; align-items: center; gap: 30px; }
@@ -209,3 +209,20 @@ p  { position: relative; font-size: 38px; color: #e9fdff; margin-top: 18px; text
 #j22r-veredicto { margin-top: 30px !important; padding: 24px 28px; border-radius: 20px; background: linear-gradient(180deg, #8FD3FF, #3E9EEA);
   font-family: "Space Grotesk", "Segoe UI", sans-serif; font-weight: 700; font-size: 52px; color: #fff; text-align: center; }
 #j22r-veredicto small { display: block; font-size: 26px; font-weight: 400; opacity: .9; }
+
+/* manos de los gestos (rojo = derecha / avanzar, azul = izquierda / volver) */
+.j2c-gesto .mano-icono { font-size: 34px; }
+.mano-der-txt { color: #FF8A94 !important; }
+.mano-izq-txt { color: #7FE4F5 !important; }
+#j2c-mano { width: 150px; height: 100px; margin-left: -75px; }
+
+
+/* ============ Fin del núcleo 2: insertar la memoria TRES ============ */
+#j2f-personaje { position: absolute; left: 60px; top: 520px; width: 330px; filter: drop-shadow(0 20px 30px rgba(0,60,80,.25)); }
+#j2f-panel { left: 420px; top: 220px; width: 1180px; height: 560px; }
+#j2f-titulo { position: absolute; left: 0; right: 0; top: 70px; margin: 0; text-align: center;
+  font-family: "Space Grotesk", "Segoe UI", sans-serif; font-weight: 700; font-size: 72px; color: #23476B; text-shadow: none; }
+#j2f-memoria { position: absolute; left: 0; right: 0; top: 230px; margin: 0; text-align: center;
+  font-family: "Space Grotesk", "Segoe UI", sans-serif; font-weight: 700; font-size: 64px; line-height: 84px; color: #2C7FB8; text-shadow: none; }
+#j2f-memoria b { color: #8BC34A; }
+#j2f-flecha { position: absolute; left: 975px; top: 840px; width: 90px; height: 68px; filter: drop-shadow(0 6px 14px rgba(0,60,100,.4)); }

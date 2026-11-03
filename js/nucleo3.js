@@ -964,12 +964,14 @@ function iniciar() {
               // tutorial: la mano desliza hacia el No y hacia el Sí, y cada opción se ilumina cuando la mano va hacia ella
               bucles.push(gsap.timeline({ repeat: -1, repeatDelay: 0.4 })
                 .set("#n3v-mano", { x: 0, rotation: 0 })
+                .add(function () { document.getElementById("n3v-mano").innerHTML = Manos.svg("izq", false, "100%"); })   // Sí: mano izquierda (azul)
                 .to("#n3v-mano", { autoAlpha: 1, duration: 0.25 })
                 .to("#n3v-mano", { x: 220, rotation: 12, duration: 0.8, ease: "power2.inOut" })            // primero Sí
                 .to("#n3v-si .n3v-boton", { scale: 1.08, duration: 0.25, ease: "back.out(3)", yoyo: true, repeat: 1 }, "-=0.2")
                 .to("#n3v-mano", { autoAlpha: 0, duration: 0.25 })
                 .set("#n3v-mano", { x: 0, rotation: 0 })
-                .to("#n3v-mano", { autoAlpha: 1, duration: 0.25 }, "+=0.3")
+                .add(function () { document.getElementById("n3v-mano").innerHTML = Manos.svg("der", false, "100%"); }, "+=0.3")   // No: mano derecha (roja)
+                .to("#n3v-mano", { autoAlpha: 1, duration: 0.25 })
                 .to("#n3v-mano", { x: -220, rotation: -12, duration: 0.8, ease: "power2.inOut" })          // después No
                 .to("#n3v-no .n3v-boton", { scale: 1.08, duration: 0.25, ease: "back.out(3)", yoyo: true, repeat: 1 }, "-=0.2")
                 .to("#n3v-mano", { autoAlpha: 0, duration: 0.25 }));

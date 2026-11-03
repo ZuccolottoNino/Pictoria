@@ -1,6 +1,6 @@
 /* juego-peces.js: juego 2.2 del núcleo 2 (machine learning: reconocer patrones).
      1) Observá estos peces: 12 peces de referencia, dibujados por código.
-     2) Dibujá tu pez: elegís un color y dibujás por partes (cuerpo con guía, ojo y aleta), 40 s, con tutorial.
+     2) Dibujá tu pez: elegís un color para cada parte y dibujás por partes (cuerpo con guía, ojo y aleta), 40 s, con tutorial.
      3) La computadora reconoce tu pez: lo "escanea" y marca las partes que encuentra, como un dato más.
      4) Comparación: lo que vio la computadora (los ejemplos) vs tu pez.
    Uso:  Infografia.presentacion([ ...tusPantallas, ...JuegoPeces.pantallas() ])
@@ -15,7 +15,7 @@
     paso_cuerpo: "1. Dibujá el cuerpo siguiendo la guía",
     paso_ojo: "2. Ahora dibujá el ojo",
     paso_aleta: "3. Ahora dibujá la aleta",
-    paso_listo: "¡Listo! Hacé el gesto de avanzar →",
+    paso_listo: "¡Listo! Arrastrá con la mano derecha →",
     analizando: "Analizando el dibujo…",
     encontrando: "Buscando patrones…",
     listo: "Análisis terminado",
@@ -128,15 +128,18 @@
     { nombre: "verde",   hex: "#3FB56A" }
   ];
   var W = 1100, H = 700;   // tamaño interno del lienzo
-  var dibujo = { color: COLORES[0], partes: { cuerpo: [], ojo: [], aleta: [] } };
+  // color: el que está elegido ahora; colores: con qué color quedó dibujada cada parte
+  var dibujo = { color: COLORES[0], partes: { cuerpo: [], ojo: [], aleta: [] }, colores: {} };
 
-  function dibujarTrazos(ctx, partes, color, fondoBlanco) {
+  // colorDe: color de una parte (hex), o una función (parte) → hex
+  function dibujarTrazos(ctx, partes, colorDe, fondoBlanco) {
     ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
     if (fondoBlanco) { ctx.fillStyle = "#fff"; ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height); }
     var k = ctx.canvas.width / W;
     ctx.save(); ctx.scale(k, k);
-    ctx.lineWidth = 10; ctx.lineCap = "round"; ctx.lineJoin = "round"; ctx.strokeStyle = color;
+    ctx.lineWidth = 10; ctx.lineCap = "round"; ctx.lineJoin = "round";
     ["cuerpo", "ojo", "aleta"].forEach(function (p) {
+      ctx.strokeStyle = typeof colorDe === "function" ? colorDe(p) : colorDe;
       partes[p].forEach(function (t) {
         ctx.beginPath();
         t.forEach(function (q, i) { if (i) ctx.lineTo(q.x, q.y); else ctx.moveTo(q.x, q.y); });
@@ -146,6 +149,7 @@
     });
     ctx.restore();
   }
+  function colorDeParte(p) { return (dibujo.colores[p] || dibujo.color).hex; }
   function caja(lista) {   // caja que envuelve una o varias líneas
     var b = { x0: 1e9, x1: -1e9, y0: 1e9, y1: -1e9 };
     lista.forEach(function (t) { t.forEach(function (p) { b.x0 = Math.min(b.x0, p.x); b.x1 = Math.max(b.x1, p.x); b.y0 = Math.min(b.y0, p.y); b.y1 = Math.max(b.y1, p.y); }); });
@@ -202,7 +206,8 @@
     function repintar() {
       var partes = { cuerpo: dibujo.partes.cuerpo.slice(), ojo: dibujo.partes.ojo.slice(), aleta: dibujo.partes.aleta.slice() };
       if (actual) partes[PASOS[paso]].push(actual);
-      dibujarTrazos(ctx, partes, dibujo.color.hex);
+      // las partes ya hechas mantienen su color; la que se está dibujando usa el color elegido
+      dibujarTrazos(ctx, partes, function (p) { return (dibujo.colores[p] || dibujo.color).hex; });
     }
 
     /* ---- guías punteadas: el cuerpo siempre; el ojo y la aleta cuando les toca ---- */
@@ -276,7 +281,7 @@
 
     function reiniciar() {
       if (reloj) { reloj.kill(); reloj = null; }
-      dibujo.partes = { cuerpo: [], ojo: [], aleta: [] };
+      dibujo.partes = { cuerpo: [], ojo: [], aleta: [] }; dibujo.colores = {};
       paso = 0; actual = null; empezo = false; presionando = false;
       ctx.clearRect(0, 0, W, H);
       gsap.set("#j22-tiempo", { autoAlpha: 0, scale: 0 }); ya("j22-tiempo").classList.remove("apurado");
@@ -316,7 +321,7 @@
       var parte = PASOS[paso], b = caja([actual]);
       // el cuerpo tiene que ser grande; el ojo y la aleta, cualquier trazo
       var valido = parte !== "cuerpo" || Math.max(b.w, b.h) > W * 0.25;
-      if (valido) { dibujo.partes[parte].push(actual); paso++; }
+      if (valido) { dibujo.partes[parte].push(actual); dibujo.colores[parte] = dibujo.color; paso++; }
       actual = null;
       repintar();
       if (valido) indicarPaso(); else arrancarDemo();
@@ -396,7 +401,7 @@
       el: "#j22-reconoce",
       preparar: function () {
         var d = Infografia.direccion, P = dibujo.partes;
-        dibujarTrazos(pantalla.getContext("2d"), P, dibujo.color.hex, true);
+        dibujarTrazos(pantalla.getContext("2d"), P, colorDeParte, true);
         var hay = { cuerpo: ubicarCaja("j22r-caja-cuerpo", P.cuerpo), ojo: ubicarCaja("j22r-caja-ojo", P.ojo), aleta: ubicarCaja("j22r-caja-aleta", P.aleta) };
         var pc = confianza(93, 99), po = hay.ojo ? confianza(86, 97) : 0, pa = hay.aleta ? confianza(80, 94) : 0;
         document.querySelector("#j22r-caja-cuerpo span").textContent = "Cuerpo " + pc + "%";
@@ -406,7 +411,13 @@
         ya("j22r-it-cuerpo").innerHTML = "<b>✓</b> Cuerpo y cola";
         ya("j22r-it-ojo").innerHTML = hay.ojo ? "<b>✓</b> Ojo" : "<b class='no'>✗</b> Ojo (no encontrado)";
         ya("j22r-it-aleta").innerHTML = hay.aleta ? "<b>✓</b> Aleta" : "<b class='no'>✗</b> Aleta (no encontrada)";
-        ya("j22r-it-color").innerHTML = "<b>✓</b> Color: <span style='color:" + dibujo.color.hex + "'>" + dibujo.color.nombre + "</span>";
+        // colores de cada parte (pueden ser distintos)
+        var usados = ["cuerpo", "ojo", "aleta"].filter(function (p) { return P[p].length; }).map(function (p) {
+          var c = dibujo.colores[p] || dibujo.color;
+          return "<span style='color:" + c.hex + "'>" + c.nombre + "</span>";
+        });
+        var distintos = usados.filter(function (x, i) { return usados.indexOf(x) === i; });
+        ya("j22r-it-color").innerHTML = "<b>✓</b> " + (distintos.length > 1 ? "Colores: " : "Color: ") + distintos.join(", ");
         var total = Math.round((pc + (po || 55) + (pa || 55)) / 3);
         ya("j22r-veredicto").innerHTML = "¡Es un <b>pez</b>! <small>" + total + "% de seguridad</small>";
 
@@ -464,7 +475,7 @@
       el: "#j22-compara",
       preparar: function () {
         var d = Infografia.direccion;
-        dibujarTrazos(ya("j22c-mio").getContext("2d"), dibujo.partes, dibujo.color.hex, true);   // el pez que dibujó
+        dibujarTrazos(ya("j22c-mio").getContext("2d"), dibujo.partes, colorDeParte, true);   // el pez que dibujó
         gsap.set("#j22c-titulo", { autoAlpha: 0, y: -30 });
         gsap.set("#j22c-personaje", { autoAlpha: 0, scale: 0.85, x: -70 * d, transformOrigin: "50% 100%" });
         gsap.set("#j22c-panel", { autoAlpha: 0, x: 90 * d, scale: 0.97 });
