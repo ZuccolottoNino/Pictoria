@@ -13,8 +13,9 @@ function pararBucles() { bucles.forEach(function (b) { b.kill(); }); bucles = []
    No aparece en las pantallas que ya tienen sus propias indicaciones (inicio, juegos, memoria DOS).
    ============================================================ */
 var PISTA = {
-  enseñar: ["#p2", "#p3", "#p4", "#p5", "#p6"],        // primeras pantallas: aparece enseguida
-  nunca: ["#p1", "#p15"],                              // ya indican qué hacer por su cuenta
+  enseñar: ["#p3", "#p4", "#p5"],                      // primeras pantallas manuales: aparece enseguida
+  nunca: ["#p1", "#p15",                               // ya indican qué hacer por su cuenta
+          "#p2", "#p6", "#p9", "#p11", "#p12", "#p13", "#p14"],   // pasan solas (tienen su relojito)
   dibujar: ["#p7", "#p8", "#p10"],                     // juegos: cartel de "Dibujá" (sin burbuja de gesto)
   demoraEnseñar: 0.4,                                  // segundos después de que terminan las animaciones de entrada
   inactividad: 20                                      // en el resto: segundos sin avanzar
@@ -1009,6 +1010,8 @@ function iniciar() {
       salir: pararBucles
     }
 
-  ]), { transicion: "deslizar", duracion: 0.8 });
+  ]), { transicion: "deslizar", duracion: 0.8,
+    // pantallas que pasan solas (segundos de lectura después de que termina la entrada)
+    auto: { "#p1": 12, "#p2": 7, "#p6": 7, "#p9": 6, "#p11": 6, "#p12": 9, "#p13": 6, "#p14": 6 } });
 }
 (document.fonts && document.fonts.ready ? document.fonts.ready : Promise.resolve()).then(iniciar);

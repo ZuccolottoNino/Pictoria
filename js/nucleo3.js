@@ -1049,7 +1049,10 @@ function iniciar() {
       };
     })()
 
-  ], { transicion: "deslizar", duracion: 0.8 });
+  ], { transicion: "deslizar", duracion: 0.8,
+    // pantallas que pasan solas (segundos de lectura después de que termina la entrada)
+    auto: { "#n3-intro": 7, "#n3-modelos": 6, "#n3-cifras": 6, "#n3-usos": 8, "#n3-evolucion": 6, "#p4": 7,
+            "#n3-dif1": 5, "#n3-dif2": 5, "#n3-dif3": 6, "#n3-practica": 4, "#n3-cierre": 5, "#n3-resultados": 10 } });
 }
 
 // Esperamos a que carguen las tipografías para que SplitText mida bien

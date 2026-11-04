@@ -546,3 +546,6 @@ html, body { height: 100%; overflow: hidden; background: #000; cursor: none; }
   padding: 14px 24px; background: #000; border: 5px solid #fff; color: #fff;
   font-family: "Press Start 2P", monospace; font-size: 20px; line-height: 1.4; pointer-events: none; }
 #pista-avance .pista-mano { display: inline-block; font-size: 30px; }
+
+/* color del relojito de las pantallas automáticas (lo dibuja puente.js) */
+:root { --auto-color: #c6ff34; }

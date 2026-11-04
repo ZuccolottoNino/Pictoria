@@ -408,3 +408,6 @@
 .mano-der-txt { color: #FF4554 !important; }
 .mano-izq-txt { color: #00A9C7 !important; }
 #n3v-mano { width: 140px; height: 90px; margin-left: -70px; }
+
+/* color del relojito de las pantallas automáticas (lo dibuja puente.js) */
+:root { --auto-color: #BD72FF; }

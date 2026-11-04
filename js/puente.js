@@ -10,6 +10,7 @@
      Infografia.presentacion([
        { el: "#p1", preparar(el){}, entrar(el){}, salir(el){}, interactuar(tipo, el){}, transicion: "deslizar" },
        Opcionales: alSiguiente(el) / alAnterior(el) → devolver true para "quedarse" con la acción.
+       Pantallas automáticas: Infografia.presentacion(pantallas, { auto: { "#p2": 8, ... } })
        { el: "#p2", ... }
      ], { transicion: "fundido", duracion: 0.8 });
 
@@ -124,6 +125,43 @@
 
       var actual = -1, bloqueado = false;
 
+      /* ---------- Pantallas automáticas ----------
+         opciones.auto = { "#id": segundos, ... }: esas pantallas pasan solas a la siguiente.
+         El reloj arranca cuando termina la animación de entrada y se ve como un relojito
+         (aro que se vacía + segundos) abajo a la derecha. Los gestos siguen funcionando:
+         avanzar la saltea, volver vuelve. Color del aro: variable CSS --auto-color de cada núcleo. */
+      var AUTO = opciones.auto || {}, autoTween = null, reloj = null;
+      function crearReloj() {
+        var d = document.createElement("div");
+        d.id = "auto-reloj";
+        d.setAttribute("style", "position:fixed;right:2.2vmin;bottom:2.2vmin;width:9vmin;height:9vmin;z-index:40;pointer-events:none;" +
+          "opacity:0;transition:opacity .3s;display:flex;align-items:center;justify-content:center;");
+        d.innerHTML =
+          '<svg viewBox="0 0 100 100" style="position:absolute;inset:0;width:100%;height:100%;transform:rotate(-90deg)">' +
+          '<circle cx="50" cy="50" r="44" fill="rgba(0,0,0,.55)" stroke="rgba(255,255,255,.25)" stroke-width="8"/>' +
+          '<circle class="aro" cx="50" cy="50" r="44" fill="none" stroke="var(--auto-color, #fff)" stroke-width="8"' +
+          ' stroke-linecap="round" stroke-dasharray="276.5" stroke-dashoffset="0"/></svg>' +
+          '<span style="position:relative;font:700 3.4vmin/1 system-ui,sans-serif;color:#fff"></span>';
+        document.body.appendChild(d);
+        return d;
+      }
+      function pararAuto() {
+        if (autoTween) { autoTween.kill(); autoTween = null; }
+        if (reloj) reloj.style.opacity = 0;
+      }
+      function arrancarAuto(seg) {
+        if (!hayGsap()) return;
+        reloj = reloj || crearReloj();
+        var aro = reloj.querySelector(".aro"), num = reloj.querySelector("span"), t = { v: 0 };
+        reloj.style.opacity = 1;
+        autoTween = gsap.to(t, { v: 1, duration: seg, ease: "none",
+          onUpdate: function () {
+            aro.setAttribute("stroke-dashoffset", (276.5 * t.v).toFixed(1));   // el aro se vacía
+            num.textContent = Math.ceil(seg * (1 - t.v)) || "";
+          },
+          onComplete: function () { pararAuto(); Infografia.avanzar(); } });
+      }
+
       function esperarA(r) {
         if (r && typeof r.then === "function") return r;
         if (r && typeof r.eventCallback === "function") return new Promise(function (ok) { r.eventCallback("onComplete", ok); });
@@ -146,6 +184,7 @@
       }
 
       async function mostrar(n, dir) {
+        pararAuto();
         bloqueado = true;
         Infografia.direccion = dir || 1;
         var saliente = actual >= 0 ? els[actual] : null;
@@ -174,7 +213,12 @@
 
         actual = n;
         bloqueado = false;   // se puede seguir usando mientras corre la animación interna
-        if (destino.entrar) destino.entrar(els[n]);
+        var entrada = destino.entrar ? destino.entrar(els[n]) : null;
+        // pantalla automática: el reloj arranca cuando termina su animación de entrada
+        if (AUTO[destino.el]) {
+          var esta = n;
+          esperarA(entrada).then(function () { if (actual === esta) arrancarAuto(AUTO[destino.el]); });
+        }
       }
 
       // ?inicio=<id de pantalla> en la URL arranca directo en esa pantalla (atajos de prueba del panel)

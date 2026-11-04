@@ -213,4 +213,6 @@ Infografia.presentacion([
     },
     salir: pararBucles
   }
-], { transicion: "deslizar", duracion: 0.8 });
+], { transicion: "deslizar", duracion: 0.8,
+  // pantallas que pasan solas (segundos de lectura después de que termina la entrada)
+  auto: { "#j2-intro": 6, "#j22-observa": 6, "#j22-reconoce": 5 } });

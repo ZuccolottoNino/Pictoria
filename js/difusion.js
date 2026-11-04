@@ -23,11 +23,11 @@
     duracionReconstruccion: 9,
     pasosGeneracion: 30,
     duracionGeneracion: 10,
-    segundosEtapa: 40,
-    segundosAuto: 8,         // pantallas 2 y 3: al terminar, tiempo para reintentar antes de pasar solos       // pantallas 2 y 3: tiempo para jugar desde el primer trazo
-    umbralGuia: 0.97,        // pantalla 2: parte de las líneas guía que hay que repasar (casi todas) para que el modelo termine solo
+    segundosEtapa: 40,       // pantallas 2 y 3: tiempo para jugar desde el primer trazo
+    segundosAuto: 8,         // pantallas 2 y 3: al terminar, tiempo para reintentar antes de pasar solos
+    umbralGuia: 0.90,        // pantalla 2: parte de las líneas guía que hay que repasar para que el modelo termine solo
     radioLimpieza: 16,       // pantalla 2: radio del lápiz que limpia (en píxeles del buffer de ruido): fino = más difícil
-    rebrote: 0.006           // pantalla 2: cuánto vuelve el ruido por cuadro donde no se repasó (hay que ser constante)
+    rebrote: 0               // pantalla 2: cuánto vuelve el ruido por cuadro donde no se repasó (0 = lo limpio queda limpio)
   };
 
   var TEXTOS = {
@@ -696,7 +696,7 @@
       }
       if (latido) latido.kill();
       latido = gsap.to(el, { scale: 1.06, duration: 0.6, ease: "sine.inOut", yoyo: true, repeat: -1, delay: 0.5 });
-      if (fase === "montaña" || fase === "sol") arrancarDemo(fase); else pararDemo();
+      pararDemo();   // sin trazado de ejemplo: si no, la persona copia exactamente ese dibujo (el cartel indica qué dibujar)
     }
 
     /* Lápiz fantasma: dibuja de ejemplo una montaña o un sol (punteado), y se repite
@@ -738,14 +738,12 @@
     // al soltar el lápiz: la primera línea ancha es la montaña; lo que venga después, el sol
     function alSoltar() {
       if (!actual) return;
-      var antes = fase;
       if (actual.length > 1) trazos.push(actual);
       actual = null;
       if (fase === "montaña" && trazos.some(function (t) { return caja(t).w > BW * 0.3; })) fase = "sol";
       else if (fase === "sol" && trazos.length >= 2) fase = "listo";
       indicacion();
       if (fase === "montaña" || fase === "sol") pararDemo();          // recién dibujó: que no tape su trazo
-      if (fase === "sol" && antes === "montaña") arrancarDemo("sol");  // recién pasó al sol: mostrar cómo
       dibujarBoceto();
     }
 
