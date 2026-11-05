@@ -11,22 +11,112 @@
 <canvas id="fondo-aero"></canvas>
 
 <div id="escenario">
-  <section id="p1" class="slide">
-    <div class="vidrio"><h1>Núcleo 2 · Pantalla 1</h1><p>Prototipo del fondo animado estilo Frutiger Aero.</p></div>
+  <!-- ===================== Pantalla 1: bienvenida a la etapa 2 (Machine Learning) ===================== -->
+  <section id="p1" class="slide j2">
+    <h1 id="e2-titulo">Bienvenido a la <span class="e2-verde">ETAPA 2</span></h1>
+
+    <div class="vidrio j2-panel e2-caja" id="e2-cabecera"><p id="e2-nombre">MACHINE LEARNING.</p></div>
+    <div class="vidrio j2-panel e2-caja" id="e2-cuerpo">
+      <p id="e2-texto">
+        <span class="linea">Ahora sos una <span class="e2-verde">IA</span> de <span class="e2-verde">aprendizaje automático</span>, conocida</span>
+        <span class="linea">como <span class="e2-verde">Machine Learning</span>. Dejaste de depender de órdenes</span>
+        <span class="linea">fijas preestablecidas para <span class="e2-verde">aprender por tu cuenta</span> a partir</span>
+        <span class="linea">de la experiencia.</span>
+      </p>
+
+      <div id="e2-pasos">
+      <div class="e2-paso" id="e2-reglas">
+        <div class="e2-burbuja"><img src="../assets/nucleo2/img/vector1.png" alt=""></div>
+        <p>REGLAS</p>
+      </div>
+      <svg id="e2-flecha" viewBox="0 0 48 40"><path d="M4 20h36M26 6l14 14-14 14" fill="none" stroke="#fff" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      <div class="e2-paso" id="e2-experiencia">
+        <div class="e2-burbuja"><img src="../assets/nucleo2/img/vector2.png" alt=""></div>
+        <p>EXPERIENCIA</p>
+      </div>
+      </div>
+    </div>
+
+    <img id="e2-personaje" src="../assets/nucleo2/img/personaje2.png" alt="">
   </section>
-  <section id="p2" class="slide">
-    <div class="vidrio"><h1>Pantalla 2</h1><p>El fondo sigue fluyendo mientras cambian las pantallas.</p></div>
+  <!-- ===================== Pantalla 2: línea de tiempo del Machine Learning ===================== -->
+  <!-- Fotos: assets/nucleo2/img/foto1.png, ml-1990.png y ml-2006.png (si faltan, queda el recuadro vacío) -->
+  <section id="p2" class="slide j2">
+    <div class="vidrio j2-panel e2-caja ml-titulo-caja" id="ml-titulo-caja"><h1 class="ml-titulo" id="ml-titulo">Machine Learning</h1></div>
+
+    <div class="vidrio j2-panel e2-caja ml-caja" id="ml-caja">
+      <div class="ml-linea" id="ml-linea"><div class="ml-linea-barra" id="ml-linea-barra"></div>
+        <svg class="ml-linea-punta" id="ml-linea-punta" viewBox="0 0 24 24"><path d="M4 4l14 8-14 8" fill="none" stroke="#3FD9C8" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </div>
+      <div class="ml-cols" id="ml-cols">
+        <div class="ml-col" id="ml-c1">
+          <div class="ml-punto"></div><div class="ml-palo"></div>
+          <div class="vidrio j2-panel ml-cabeza"><p class="ml-anio">1950</p><p class="ml-sub">Primer caso de Machine Learning</p></div>
+          <div class="vidrio j2-panel ml-card">
+            <p class="ml-texto">Arthur Samuel publicó <span class="e2-verde">métodos</span> que permiten a un programa de damas mejorar con la experiencia</p>
+            <div class="ml-foto" style="background-image: url(../assets/nucleo2/img/foto1.png)"></div>
+          </div>
+        </div>
+        <div class="ml-col" id="ml-c2">
+          <div class="ml-punto"></div><div class="ml-palo"></div>
+          <div class="vidrio j2-panel ml-cabeza"><p class="ml-anio">1990</p><p class="ml-sub">En la década del 90 lo cambió todo</p></div>
+          <div class="vidrio j2-panel ml-card">
+            <p class="ml-texto">Se pasa de un enfoque guiado por el conocimiento a uno donde las computadoras <span class="e2-verde">analizan</span> <span class="e2-verde">miles de datos para sacar</span> <span class="e2-verde">conclusiones</span> (aprender)</p>
+            <div class="ml-foto" style="background-image: url(../assets/nucleo2/img/foto2.png)"></div>
+          </div>
+        </div>
+        <div class="ml-col" id="ml-c3">
+          <div class="ml-punto"></div><div class="ml-palo"></div>
+          <div class="vidrio j2-panel ml-cabeza"><p class="ml-anio">2006</p><p class="ml-sub">Nace el aprendizaje profundo</p></div>
+          <div class="vidrio j2-panel ml-card">
+            <p class="ml-texto"><span class="e2-verde">Red neuronal artificial</span> formada por capas con conceptos cada vez más complejos</p>
+            <div class="ml-foto" style="background-image: url(../assets/nucleo2/img/foto3.png)"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <img class="ml-personaje" id="ml-personaje" src="../assets/nucleo2/img/personaje2.png" alt="">
   </section>
-  <section id="p3" class="slide">
-    <div class="vidrio"><h1>Pantalla 3</h1><p>Siguiente en esta pantalla termina el núcleo.</p></div>
+  <!-- ===================== Pantalla 3: línea de tiempo, segunda parte (2012 y 2014) ===================== -->
+  <!-- Comparte título, caja, línea y personaje con la pantalla 2: entre ellas sólo cambian las columnas -->
+  <section id="p3" class="slide j2">
+    <div class="vidrio j2-panel e2-caja ml-titulo-caja" id="ml2-titulo-caja"><h1 class="ml-titulo">Machine Learning</h1></div>
+
+    <div class="vidrio j2-panel e2-caja ml-caja" id="ml2-caja">
+      <div class="ml-linea"><div class="ml-linea-barra"></div>
+        <svg class="ml-linea-punta" viewBox="0 0 24 24"><path d="M4 4l14 8-14 8" fill="none" stroke="#3FD9C8" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </div>
+      <div class="ml-cols ml-cols-dos">
+        <div class="ml-col ml-col-ancha" id="ml2-c1">
+          <div class="ml-punto"></div><div class="ml-palo"></div>
+          <div class="vidrio j2-panel ml-cabeza ml-cabeza-fila"><p class="ml-anio">2012</p><p class="ml-sub">Despegue del<br>Machine Learning</p></div>
+          <div class="vidrio j2-panel ml-card">
+            <p class="ml-texto">Una <span class="e2-verde">red neuronal</span> (AlexNet) gana un concurso de <span class="e2-verde">reconocimiento de imágenes</span> superando ampliamente al resto de los participantes</p>
+            <div class="ml-foto" style="background-image: url(../assets/nucleo2/img/foto4.png)"></div>
+          </div>
+        </div>
+        <div class="ml-col ml-col-ancha" id="ml2-c2">
+          <div class="ml-punto"></div><div class="ml-palo"></div>
+          <div class="vidrio j2-panel ml-cabeza ml-cabeza-fila"><p class="ml-anio">2014</p><p class="ml-sub">Machine Learning<br>genera imágenes</p></div>
+          <div class="vidrio j2-panel ml-card">
+            <p class="ml-texto">(GAN) <span class="e2-verde">Modelos generativos</span> de Deep Learning en los que <span class="e2-verde">dos redes neuronales entrenan una contra otra</span>: un generador que fabrica datos sintéticos y un discriminador que intenta descubrirlos</p>
+            <div class="ml-foto" style="background-image: url(../assets/nucleo2/img/foto5.png)"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <img class="ml-personaje" id="ml2-personaje" src="../assets/nucleo2/img/personaje2.png" alt="">
   </section>
 
   <!-- ===================== JUEGO 2 · intro: dos tipos de datos ===================== -->
   <section id="j2-intro" class="slide j2">
     <img id="j2i-personaje" src="../assets/nucleo2/img/personaje1.png" alt="">
 
-    <div class="vidrio j2-panel" id="j2i-panel">
+    <div class="vidrio j2-panel e2-caja" id="j2i-panel">
       <p class="j2-texto" id="j2i-texto">Observá que hay dos tipos de datos<br>(gatos y bicicletas)</p>
+      <div id="j2i-tipos">
       <div class="j2i-tipo" id="j2i-gatos">
         <p class="j2-etiqueta">Gatos</p>
         <img class="j2-foto" src="../assets/nucleo2/img/gato1.png" alt="Gato">
@@ -35,21 +125,22 @@
         <p class="j2-etiqueta">Bicicletas</p>
         <img class="j2-foto" src="../assets/nucleo2/img/bici1.png" alt="Bicicleta">
       </div>
+      </div>
     </div>
   </section>
 
   <!-- ===================== JUEGO 2 · clasificar: gatos a la izquierda, bicis a la derecha ===================== -->
   <!-- Las cards aparecen de a una en el centro; mano derecha (avanzar) → Gatos (izq.), mano izquierda (volver) → Bicicletas (der.) -->
   <section id="j2-clasificar" class="slide j2">
-    <div class="vidrio j2-panel" id="j2c-titulo-caja"><h1 id="j2c-titulo">Machine Learning</h1></div>
+    <div class="vidrio j2-panel e2-caja" id="j2c-titulo-caja"><h1 id="j2c-titulo">Machine Learning</h1></div>
     <p id="j2c-contador">Dato <span>1</span> de 4</p>
 
-    <div class="j2c-zona" id="j2c-zona-gatos">
+    <div class="j2c-zona e2-caja" id="j2c-zona-gatos">
       <div class="j2c-pildora">Gatos</div>
       <p class="j2c-solta">Soltá acá</p>
       <p class="j2c-gesto"><span data-mano="der"></span>mano derecha</p>
     </div>
-    <div class="j2c-zona" id="j2c-zona-bicis">
+    <div class="j2c-zona e2-caja" id="j2c-zona-bicis">
       <div class="j2c-pildora">Bicicletas</div>
       <p class="j2c-solta">Soltá acá</p>
       <p class="j2c-gesto">mano izquierda<span data-mano="izq"></span></p>
@@ -72,7 +163,7 @@
   <section id="j2-explica" class="slide j2">
     <img id="j2e-personaje" src="../assets/nucleo2/img/personaje1.png" alt="">
 
-    <div class="vidrio j2-panel" id="j2e-panel">
+    <div class="vidrio j2-panel e2-caja" id="j2e-panel">
       <h2 id="j2e-titulo">¡Así aprende una computadora!</h2>
       <p class="j2-texto" id="j2e-texto">Recién hiciste lo mismo que hace el <b>Machine Learning</b>: le mostraste <b>ejemplos</b> con su respuesta («esto es un gato», «esto es una bicicleta»). Con muchísimos ejemplos así, la computadora <b>descubre los patrones</b> por su cuenta y aprende a reconocer imágenes que <b>nunca vio</b>.</p>
 
@@ -186,7 +277,7 @@
     <h1 class="j22-titulo" id="j22c-titulo">Machine Learning</h1>
     <img class="j22-personaje" id="j22c-personaje" src="../assets/nucleo2/img/personaje2.png" alt="">
 
-    <div class="vidrio j2-panel" id="j22c-panel">
+    <div class="vidrio j2-panel e2-caja" id="j22c-panel">
       <div class="j22c-col" id="j22c-col-refs">
         <p class="j22c-etq">Lo que vio la computadora</p>
         <div id="j22c-refs">
@@ -217,7 +308,7 @@
   <!-- Al insertar la memoria (tecla del núcleo 3) arranca el núcleo 3 directamente. -->
   <section id="j2-fin" class="slide j2">
     <img id="j2f-personaje" src="../assets/nucleo2/img/personaje1.png" alt="">
-    <div class="vidrio j2-panel" id="j2f-panel">
+    <div class="vidrio j2-panel e2-caja" id="j2f-panel">
       <h2 id="j2f-titulo">¡Terminaste la etapa dos!</h2>
       <p id="j2f-memoria">Insertá la memoria <b>TRES</b><br>en la ranura</p>
       <!-- cuando se defina el color de la memoria TRES, va acá: "Insertá la memoria TRES color ___" -->

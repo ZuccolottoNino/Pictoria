@@ -4,10 +4,131 @@ FondoAero.iniciar("#fondo-aero");
 var bucles = [];   // animaciones en bucle de la pantalla actual
 function pararBucles() { bucles.forEach(function (t) { t.kill(); }); bucles = []; }
 
+/* ---------- Línea de tiempo del Machine Learning (pantallas 2 y 3) ----------
+   Las dos pantallas tienen el mismo título, caja, línea y personaje en el mismo lugar.
+   Entre ellas no se mueve la pantalla: sólo se van las columnas viejas y entran las nuevas. */
+var ML = ["p2", "p3"];
+function otraML(el) {   // la pantalla de la línea de tiempo de la que se viene (todavía visible en preparar)
+  for (var i = 0; i < ML.length; i++) {
+    var s = document.getElementById(ML[i]);
+    if (s !== el && !s.hidden) return s;
+  }
+  return null;
+}
+Infografia.transiciones.mlCambio = function (sale, entra, d, dir) {
+  var cols = sale.querySelectorAll(".ml-col");
+  return gsap.timeline()
+    .to(cols, { autoAlpha: 0, x: -60 * dir, duration: 0.4, stagger: 0.06, ease: "power2.in" })
+    .set(cols, { x: 0 });   // quedan ocultas pero en su lugar, para la próxima vez
+};
+function transicionML(saliente) { return ML.indexOf(saliente.id) >= 0 ? "mlCambio" : null; }
+function prepararML(el, d) {
+  var q = function (s) { return el.querySelectorAll(s); };
+  var otra = otraML(el);
+  el._sigue = !!otra;
+  gsap.set(q(".ml-punto"), { scale: 0 });
+  gsap.set(q(".ml-palo"), { scaleY: 0 });
+  gsap.set(q(".ml-cabeza"), { autoAlpha: 0, y: -20 });
+  gsap.set(q(".ml-card"), { autoAlpha: 0, y: 30 });
+  gsap.set(q(".ml-foto"), { autoAlpha: 0, scale: 0.92 });
+  gsap.set(q(".ml-col"), { autoAlpha: 1, x: 0 });
+  if (otra) {   // título, caja, línea y personaje ya están: quedan como en la pantalla anterior
+    gsap.set(q(".ml-titulo-caja, .ml-caja"), { autoAlpha: 1, x: 0 });
+    gsap.set(q(".ml-linea-barra"), { scaleX: 1 });
+    gsap.set(q(".ml-linea-punta"), { autoAlpha: 1, x: 0 });
+    gsap.set(q(".ml-personaje"), { autoAlpha: 1, scale: 1, x: 0, transformOrigin: "50% 100%",
+      y: gsap.getProperty(otra.querySelector(".ml-personaje"), "y") });
+  } else {
+    gsap.set(q(".ml-titulo-caja, .ml-caja"), { autoAlpha: 0, x: 80 * d });
+    gsap.set(q(".ml-linea-barra"), { scaleX: 0 });
+    gsap.set(q(".ml-linea-punta"), { autoAlpha: 0, x: -20 });
+    gsap.set(q(".ml-personaje"), { autoAlpha: 0, scale: 0.85, x: -70 * d, y: 0, transformOrigin: "50% 100%" });
+  }
+}
+function entrarML(el) {
+  var q = function (s) { return el.querySelectorAll(s); };
+  var tl = gsap.timeline(), inicio = 0.1;
+  if (!el._sigue) {
+    tl.to(q(".ml-titulo-caja"), { autoAlpha: 1, x: 0, duration: 0.7, ease: "power3.out" })
+      .to(q(".ml-caja"), { autoAlpha: 1, x: 0, duration: 0.7, ease: "power3.out" }, "-=0.45")
+      .to(q(".ml-personaje"), { autoAlpha: 1, scale: 1, x: 0, duration: 0.9, ease: "back.out(1.5)" }, "-=0.5")
+      .to(q(".ml-linea-barra"), { scaleX: 1, duration: 1.6, ease: "power1.inOut" }, "-=0.4")
+      .to(q(".ml-linea-punta"), { autoAlpha: 1, x: 0, duration: 0.3 }, "-=0.2");
+    inicio = 1.7;   // cada hito aparece cuando la línea pasa por su año
+  }
+  q(".ml-col").forEach(function (col, i) {
+    var c = function (s) { return col.querySelector(s); };
+    tl.to(c(".ml-punto"), { scale: 1, duration: 0.4, ease: "back.out(3)" }, inicio + i * 0.5)
+      .to(c(".ml-palo"), { scaleY: 1, duration: 0.25, ease: "power2.out" }, ">-0.1")
+      .to(c(".ml-cabeza"), { autoAlpha: 1, y: 0, duration: 0.45, ease: "back.out(1.8)" }, ">-0.05")
+      .to(c(".ml-card"), { autoAlpha: 1, y: 0, duration: 0.5, ease: "power3.out" }, ">-0.15")
+      .to(c(".ml-foto"), { autoAlpha: 1, scale: 1, duration: 0.5, ease: "power2.out" }, ">-0.2");
+  });
+  return tl.add(function () {
+    bucles.push(gsap.to(q(".ml-personaje"), { y: -16, duration: 1.9, ease: "sine.inOut", yoyo: true, repeat: -1 }));
+    bucles.push(gsap.to(q(".ml-punto"), { scale: 1.3, duration: 0.5, ease: "sine.inOut", yoyo: true, repeat: 1,
+      stagger: { each: 0.5, repeat: -1, repeatDelay: 1.5 } }));
+  });
+}
+
 Infografia.presentacion([
-  { el: "#p1" },
-  { el: "#p2" },
-  { el: "#p3" },
+  /* ============ Pantalla 1: bienvenida a la etapa 2 (Machine Learning) ============ */
+  {
+    el: "#p1",
+    preparar: function () {
+      var d = Infografia.direccion;
+      gsap.set("#e2-titulo", { autoAlpha: 0, y: -30 });
+      gsap.set("#e2-cabecera, #e2-cuerpo", { autoAlpha: 0, x: 80 * d });
+      gsap.set("#e2-texto .linea", { autoAlpha: 0, x: 26 * d });
+      gsap.set(".e2-burbuja", { autoAlpha: 0, scale: 0.4, transformOrigin: "50% 50%" });
+      gsap.set(".e2-paso p", { autoAlpha: 0, y: 14 });
+      gsap.set("#e2-flecha", { autoAlpha: 0, x: -16 });
+      gsap.set("#e2-personaje", { autoAlpha: 0, scale: 0.85, x: -70 * d, rotation: 0, transformOrigin: "50% 100%" });
+    },
+    entrar: function () {
+      return gsap.timeline()
+        .to("#e2-titulo", { autoAlpha: 1, y: 0, duration: 0.7, ease: "back.out(1.6)" })
+        .to("#e2-cabecera", { autoAlpha: 1, x: 0, duration: 0.7, ease: "power3.out" }, "-=0.3")
+        .to("#e2-cuerpo", { autoAlpha: 1, x: 0, duration: 0.7, ease: "power3.out" }, "-=0.5")
+        .to("#e2-personaje", { autoAlpha: 1, scale: 1, x: 0, duration: 0.9, ease: "back.out(1.5)" }, "-=0.5")
+        .to("#e2-texto .linea", { autoAlpha: 1, x: 0, duration: 0.5, stagger: 0.12, ease: "power2.out" }, "-=0.5")
+        // de las reglas a la experiencia
+        .to("#e2-reglas .e2-burbuja", { autoAlpha: 1, scale: 1, duration: 0.6, ease: "back.out(2)" }, "+=0.1")
+        .to("#e2-reglas p", { autoAlpha: 1, y: 0, duration: 0.4 }, "-=0.3")
+        .to("#e2-flecha", { autoAlpha: 1, x: 0, duration: 0.4, ease: "power2.out" })
+        .to("#e2-experiencia .e2-burbuja", { autoAlpha: 1, scale: 1, duration: 0.6, ease: "back.out(2)" })
+        .to("#e2-experiencia p", { autoAlpha: 1, y: 0, duration: 0.4 }, "-=0.3")
+        .add(function () {
+          bucles.push(gsap.to("#e2-personaje", { y: -16, duration: 1.9, ease: "sine.inOut", yoyo: true, repeat: -1 }));
+          // las burbujas laten de a una y la flecha empuja hacia la experiencia
+          bucles.push(gsap.to(".e2-burbuja", { scale: 1.06, duration: 0.8, ease: "sine.inOut", yoyo: true, repeat: -1, stagger: 0.8 }));
+          bucles.push(gsap.to("#e2-flecha", { x: 8, duration: 0.6, ease: "sine.inOut", yoyo: true, repeat: -1 }));
+        });
+    },
+    salir: pararBucles
+  },
+  /* ============ Pantalla 2: línea de tiempo del Machine Learning ============
+     La línea se dibuja y en cada año baja un hito: año → texto → foto. */
+  {
+    el: "#p2",
+    transicion: transicionML,
+    preparar: function (el) { prepararML(el, Infografia.direccion); },
+    entrar: function (el) { return entrarML(el); },
+    salir: pararBucles
+  },
+  /* ============ Pantalla 3: línea de tiempo, segunda parte (2012 y 2014) ============
+     Viniendo de la pantalla 2 (o volviendo a ella) título, caja, línea y personaje quedan quietos:
+     sólo se van las columnas viejas y entran las nuevas (ver transiciones.mlCambio). */
+  {
+    el: "#p3",
+    transicion: transicionML,
+    preparar: function (el) {
+      var d = Infografia.direccion;
+      prepararML(el, d);
+    },
+    entrar: function (el) { return entrarML(el); },
+    salir: pararBucles
+  },
 
   /* ============ Juego 2 · intro: dos tipos de datos (gatos y bicicletas) ============ */
   {
@@ -215,4 +336,4 @@ Infografia.presentacion([
   }
 ], { transicion: "deslizar", duracion: 0.8,
   // pantallas que pasan solas (segundos de lectura después de que termina la entrada)
-  auto: { "#j2-intro": 6, "#j22-observa": 6, "#j22-reconoce": 5 } });
+  auto: { "#p1": 12, "#j2-intro": 6, "#j22-observa": 6, "#j22-reconoce": 5 } });

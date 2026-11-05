@@ -50,6 +50,78 @@ p  { position: relative; font-size: 38px; color: #e9fdff; margin-top: 18px; text
   filter: drop-shadow(0 20px 30px rgba(0,60,80,.25)); }
 
 
+/* ============ Pantalla 1: bienvenida a la etapa 2 ============
+   Tipografías del núcleo 2: títulos en Audiowide, párrafos en ADLaM Display (libs/fuentes.css) */
+.e2-verde { color: #A6E35B; }
+#e2-titulo { position: absolute; left: 0; top: 105px; width: 1920px; text-align: center; margin: 0;
+  font-family: "Audiowide", "Segoe UI", sans-serif; font-weight: 400; font-size: 96px; line-height: 120px; letter-spacing: .02em;
+  color: #fff; text-shadow: 0 0 22px rgba(255,255,255,.45), 0 4px 14px rgba(0,70,90,.45); }
+#e2-titulo .e2-verde { text-shadow: 0 0 22px rgba(166,227,91,.6), 0 4px 14px rgba(0,70,90,.45); }
+/* cajas de vidrio verdoso con borde claro, como en el diseño */
+.e2-caja { border-radius: 22px; border: 2px solid rgba(255,255,255,.75);
+  background: linear-gradient(180deg, rgba(120,225,215,.38), rgba(20,120,120,.28)); }
+#e2-cabecera { left: 347px; top: 309px; width: 1227px; height: 121px; display: flex; align-items: center; justify-content: center; }
+#e2-nombre { font-family: "Audiowide", "Segoe UI", sans-serif; font-weight: 400; font-size: 58px; letter-spacing: .06em; color: #fff;
+  text-shadow: 0 0 16px rgba(255,255,255,.5), 0 3px 10px rgba(0,70,90,.4); }
+#e2-cuerpo { left: 347px; top: 446px; width: 1227px; height: 572px;
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 44px;
+  background: linear-gradient(180deg, rgba(20,120,120,.30), rgba(10,90,95,.22)); }
+#e2-cuerpo.vidrio::before { display: none; }   /* sin el brillo de arriba: ahí va el texto */
+#e2-texto { text-align: left;
+  font-family: "ADLaM Display", "Segoe UI", sans-serif; font-weight: 400; font-size: 33px; line-height: 52px; color: #fff;
+  text-shadow: 0 2px 8px rgba(0,60,70,.45); }
+#e2-texto .linea { display: block; }
+/* reglas → experiencia: burbujas verdes con el ícono adentro */
+#e2-pasos { display: flex; align-items: center; gap: 40px; }
+.e2-paso { width: 260px; display: flex; flex-direction: column; align-items: center; gap: 22px; }
+.e2-burbuja { width: 212px; height: 212px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
+  background: radial-gradient(circle at 50% 35%, rgba(190,240,120,.55), rgba(70,160,90,.55) 60%, rgba(30,110,90,.75));
+  box-shadow: 0 0 34px rgba(166,227,91,.45), inset 0 4px 10px rgba(255,255,255,.45), inset 0 -10px 24px rgba(0,60,50,.35); }
+.e2-burbuja img { width: 118px; }
+.e2-paso p { font-family: "ADLaM Display", "Segoe UI", sans-serif; font-weight: 400; font-size: 32px; color: #fff; text-shadow: 0 2px 8px rgba(0,60,70,.45); }
+#e2-flecha { width: 56px; height: 46px; margin-bottom: 70px; }   /* a la altura del centro de las burbujas */
+#e2-personaje { position: absolute; left: 38px; top: 560px; width: 290px; filter: drop-shadow(0 20px 30px rgba(0,60,80,.3)); }
+
+
+/* ============ Pantalla 2: línea de tiempo del Machine Learning ============ */
+.ml-titulo-caja { left: 341px; top: 70px; width: 1451px; height: 137px; display: flex; align-items: center; padding: 0 30px; }
+.ml-titulo { margin: 0; font-family: "Audiowide", "Segoe UI", sans-serif; font-weight: 400; font-size: 84px; line-height: 1; color: #fff;
+  text-shadow: 0 0 18px rgba(255,255,255,.45), 0 4px 12px rgba(0,70,90,.45); }
+.ml-caja { left: 325px; top: 240px; width: 1492px; height: 775px; padding: 38px 0 40px;   /* mismo alto en las dos pantallas */
+  display: flex; flex-direction: column; align-items: center; }
+.ml-caja.vidrio::before { display: none; }
+/* la línea de tiempo cruza las tres columnas y termina en flecha */
+.ml-linea { position: relative; width: 1300px; height: 8px; flex: none; }
+.ml-linea-barra { position: absolute; left: 0; right: 14px; top: 0; height: 8px; border-radius: 4px;
+  background: #3FD9C8; box-shadow: 0 0 14px rgba(63,217,200,.6); transform-origin: 0 50%; }
+.ml-linea-punta { position: absolute; right: -6px; top: -14px; width: 36px; height: 36px; }
+.ml-cols { display: flex; gap: 45px; align-items: stretch; margin-top: -4px; }
+.ml-col { width: 421px; display: flex; flex-direction: column; align-items: center; }
+.ml-col .ml-card { flex: 1; }   /* las cards del mismo alto */
+/* pantalla 3: dos columnas más anchas y separadas, cabecera con el año al lado del subtítulo */
+.ml-cols-dos { gap: 200px; }
+.ml-col-ancha { width: 431px; }
+.ml-cabeza.ml-cabeza-fila { flex-direction: row; gap: 22px; height: 96px; }
+.ml-cabeza-fila .ml-sub { text-align: left; line-height: 27px; }
+.ml-col-ancha .ml-foto { height: 205px; }
+/* punto sobre la línea y palito que baja hasta el año */
+.ml-punto { width: 26px; height: 26px; margin-top: -9px; border-radius: 50%; background: #3FD9C8; box-shadow: 0 0 16px rgba(63,217,200,.8); }
+.ml-palo { width: 5px; height: 42px; background: #3FD9C8; transform-origin: 50% 0; }
+.ml-cabeza { position: relative; width: 100%; height: 120px; border-radius: 20px; border: 2px solid rgba(255,255,255,.75);
+  background: linear-gradient(180deg, rgba(90,220,210,.75), rgba(20,140,140,.6));
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; }
+.ml-anio { font-family: "Audiowide", "Segoe UI", sans-serif; font-size: 40px; line-height: 1; color: #fff; text-shadow: 0 0 12px rgba(255,255,255,.5); }
+.ml-sub { font-family: "ADLaM Display", "Segoe UI", sans-serif; font-size: 22px; color: #fff; }
+.ml-card { position: relative; width: 100%; margin-top: 18px; padding: 26px 30px 30px; border-radius: 20px; border: 2px solid rgba(255,255,255,.7);
+  background: linear-gradient(180deg, rgba(20,110,110,.55), rgba(10,80,85,.45)); display: flex; flex-direction: column; gap: 22px; }
+.ml-card.vidrio::before { display: none; }
+.ml-texto { font-family: "ADLaM Display", "Segoe UI", sans-serif; font-size: 25px; line-height: 34px; color: #fff; text-align: left;
+  text-shadow: 0 2px 6px rgba(0,60,70,.4); }
+.ml-foto { width: 100%; height: 240px; margin-top: auto; border-radius: 14px; background: rgba(255,255,255,.12) center / cover no-repeat;
+  box-shadow: 0 8px 22px rgba(0,50,60,.3); }
+.ml-personaje { position: absolute; left: 26px; top: 585px; width: 280px; z-index: 3; filter: drop-shadow(0 20px 30px rgba(0,60,80,.3)); }
+
+
 /* ============ Juego 2 · clasificar ============ */
 #j2c-titulo-caja { left: 220px; top: 36px; width: 1480px; height: 140px; border-radius: 28px;
   background: linear-gradient(180deg, rgba(120,200,235,.55), rgba(60,150,200,.35)); }
@@ -113,6 +185,54 @@ p  { position: relative; font-size: 38px; color: #e9fdff; margin-top: 18px; text
 .j2e-reconoce img { max-width: 60%; max-height: 62%; }
 .j2e-reconoce span { font-family: "Inter", "Segoe UI", sans-serif; font-weight: 700; font-size: 26px; color: #8BC34A; }
 .j2e-flecha { width: 56px; height: 46px; color: #2C7FB8; flex: none; }
+
+
+/* ============ Juego 2 (gatos y bicicletas) con el estilo de la etapa 2 ============
+   Vidrio verdoso con borde blanco, títulos en Audiowide, textos en ADLaM Display, acentos en verde. */
+.j2 .e2-caja.vidrio::before { display: none; }
+/* intro */
+#j2i-panel { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 40px; }
+#j2i-texto { position: static; text-align: left; font-family: "ADLaM Display", "Segoe UI", sans-serif; font-size: 40px; line-height: 54px; color: #fff;
+  text-shadow: 0 2px 8px rgba(0,60,70,.45); }
+#j2i-panel .j2i-tipo { position: static; }
+#j2i-panel { flex-direction: column; }
+#j2i-tipos { display: flex; gap: 120px; }
+.j2-etiqueta { font-family: "Audiowide", "Segoe UI", sans-serif; font-size: 44px; color: #A6E35B; text-shadow: 0 0 14px rgba(166,227,91,.45); }
+.j2-foto { box-shadow: 0 14px 34px rgba(0,50,60,.35); }
+
+/* clasificar */
+#j2c-titulo { font-family: "Audiowide", "Segoe UI", sans-serif; font-weight: 400; font-size: 84px; top: 50%; transform: translateY(-50%); line-height: 1;
+  text-shadow: 0 0 18px rgba(255,255,255,.45), 0 4px 12px rgba(0,70,90,.45); }
+#j2c-titulo-caja { background: linear-gradient(180deg, rgba(120,225,215,.38), rgba(20,120,120,.28)); }
+#j2c-contador { font-family: "ADLaM Display", "Segoe UI", sans-serif; font-size: 34px; }
+.j2c-zona { border: 3px dashed rgba(255,255,255,.75); background: linear-gradient(180deg, rgba(20,120,120,.30), rgba(10,90,95,.22)); }
+.j2c-pildora { font-family: "Audiowide", "Segoe UI", sans-serif; font-weight: 400; font-size: 38px; border: 2px solid rgba(255,255,255,.8);
+  background: radial-gradient(circle at 50% 30%, rgba(190,240,120,.85), rgba(70,160,90,.9) 70%);
+  box-shadow: 0 0 24px rgba(166,227,91,.45), inset 0 2px 0 rgba(255,255,255,.5); }
+.j2c-solta { font-family: "ADLaM Display", "Segoe UI", sans-serif; color: rgba(255,255,255,.75); }
+.j2c-gesto { font-family: "ADLaM Display", "Segoe UI", sans-serif; color: #fff; }
+.j2c-zona.brilla { box-shadow: 0 0 0 6px rgba(166,227,91,.75), 0 0 40px rgba(166,227,91,.55); }
+.j2c-card { background: rgba(255,255,255,.92); border: 3px solid rgba(255,255,255,.95); box-shadow: 0 20px 50px rgba(0,50,60,.35); }
+#j2c-ayuda { font-family: "ADLaM Display", "Segoe UI", sans-serif; }
+#j2c-ayuda b { color: #A6E35B; }
+#j2c-error, #j2c-bien { font-family: "Audiowide", "Segoe UI", sans-serif; font-weight: 400; font-size: 48px; }
+#j2c-bien { color: #A6E35B; }
+
+/* explicación */
+#j2e-panel { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 40px; padding: 0 90px; }
+#j2e-titulo { position: static; font-family: "Audiowide", "Segoe UI", sans-serif; font-weight: 400; font-size: 60px; color: #fff;
+  text-shadow: 0 0 18px rgba(255,255,255,.45), 0 4px 12px rgba(0,70,90,.45); }
+#j2e-texto { position: static; text-align: left; font-family: "ADLaM Display", "Segoe UI", sans-serif; font-size: 31px; line-height: 46px; color: #fff;
+  text-shadow: 0 2px 8px rgba(0,60,70,.45); }
+#j2e-texto b { color: #A6E35B; font-weight: 400; }
+#j2e-pasos { position: static; align-items: flex-start; }
+#j2e-pasos .j2e-flecha { margin-top: 87px; }   /* a la altura del centro de los recuadros */
+.j2e-paso p { font-family: "ADLaM Display", "Segoe UI", sans-serif; white-space: nowrap; color: #fff; text-shadow: 0 2px 8px rgba(0,60,70,.45); }
+.j2e-paso b { color: #A6E35B; font-weight: 400; }
+.j2e-icono { background: rgba(255,255,255,.92); border: 3px solid rgba(255,255,255,.95); box-shadow: 0 14px 34px rgba(0,50,60,.3); }
+.j2e-patrones span { background: rgba(166,227,91,.25); color: #2F7A3A; font-family: "ADLaM Display", "Segoe UI", sans-serif; }
+.j2e-reconoce span { font-family: "ADLaM Display", "Segoe UI", sans-serif; font-weight: 400; color: #4C9A2A; }
+.j2e-flecha { color: #fff; }
 
 
 /* ============ Juego 2.2 · peces ============ */
@@ -209,6 +329,48 @@ p  { position: relative; font-size: 38px; color: #e9fdff; margin-top: 18px; text
 #j22r-veredicto { margin-top: 30px !important; padding: 24px 28px; border-radius: 20px; background: linear-gradient(180deg, #8FD3FF, #3E9EEA);
   font-family: "Space Grotesk", "Segoe UI", sans-serif; font-weight: 700; font-size: 52px; color: #fff; text-align: center; }
 #j22r-veredicto small { display: block; font-size: 26px; font-weight: 400; opacity: .9; }
+
+/* ============ Juego 2.2 (peces) y fin con el estilo de la etapa 2 ============ */
+.j22-titulo { font-family: "Audiowide", "Segoe UI", sans-serif; font-weight: 400; font-size: 64px;
+  text-shadow: 0 0 18px rgba(255,255,255,.45), 0 4px 12px rgba(0,70,90,.45); }
+.j22-globo { font-family: "ADLaM Display", "Segoe UI", sans-serif; font-weight: 400;
+  background: linear-gradient(180deg, rgba(120,225,215,.55), rgba(20,120,120,.55)); border: 2px solid rgba(255,255,255,.75); }
+/* grilla de peces: vidrio verdoso con celdas claras */
+#j22-grilla { background: linear-gradient(180deg, rgba(20,120,120,.32), rgba(10,90,95,.24)); border: 2px solid rgba(255,255,255,.75);
+  box-shadow: 0 24px 60px rgba(0,50,60,.3); }
+.j22-celda { background: rgba(255,255,255,.92); }
+/* dibujo */
+#j22-marco { box-shadow: 0 0 0 4px rgba(255,255,255,.85), 0 0 0 12px rgba(20,120,120,.35), 0 24px 60px rgba(0,50,60,.3); }
+#j22-tiempo { font-family: "Audiowide", "Segoe UI", sans-serif; font-weight: 400; color: #2F7A3A; }
+#j22-pista { font-family: "ADLaM Display", "Segoe UI", sans-serif; font-weight: 400; border: 2px solid rgba(255,255,255,.8);
+  background: radial-gradient(circle at 50% 30%, rgba(190,240,120,.95), rgba(70,160,90,.95) 70%);
+  box-shadow: 0 0 26px rgba(166,227,91,.5), inset 0 2px 0 rgba(255,255,255,.5); }
+#j22-refs-etq { font-family: "Audiowide", "Segoe UI", sans-serif; font-weight: 400; }
+#j22-refs canvas { border: 2px solid rgba(255,255,255,.85); }
+#j22-colores { font-family: "ADLaM Display", "Segoe UI", sans-serif; }
+.j22-colores-etq, .j22-parte { font-weight: 400; }
+.j22-color.elegido { box-shadow: 0 0 0 6px #fff, 0 0 0 11px #A6E35B, 0 8px 18px rgba(0,60,100,.35); }
+.j22-parte.actual { color: #2F7A3A; }
+.j22-parte.hecha { background: #A6E35B; color: #1F4D25; }
+/* reconocer: la ventana de computadora con barra verdosa */
+#j22r-monitor { box-shadow: 0 0 0 4px rgba(255,255,255,.85), 0 0 0 12px rgba(20,120,120,.35), 0 30px 70px rgba(0,40,60,.45); }
+#j22r-barra { background: linear-gradient(180deg, #CFF5EF, #8FDCD2); }
+#j22r-veredicto { font-family: "Audiowide", "Segoe UI", sans-serif; font-weight: 400; border: 2px solid rgba(255,255,255,.8);
+  background: radial-gradient(circle at 50% 30%, rgba(190,240,120,.95), rgba(70,160,90,.95) 70%); }
+#j22r-veredicto small { font-family: "ADLaM Display", "Segoe UI", sans-serif; }
+/* comparar */
+.j22c-etq { font-family: "Audiowide", "Segoe UI", sans-serif; font-weight: 400; color: #fff; text-shadow: 0 0 14px rgba(255,255,255,.35); }
+#j22c-refs canvas { background: rgba(255,255,255,.92); }
+#j22c-mio { box-shadow: 0 0 0 8px rgba(166,227,91,.8), 0 18px 44px rgba(0,50,60,.35); }
+#j22c-flecha { color: #fff; }
+#j22c-texto { left: 0; right: 0; margin: 0 auto; width: fit-content; max-width: 1300px; text-align: left;
+  font-family: "ADLaM Display", "Segoe UI", sans-serif; color: #fff; text-shadow: 0 2px 8px rgba(0,60,70,.45); }
+#j22c-texto b { color: #A6E35B; font-weight: 400; }
+/* fin del núcleo */
+#j2f-panel #j2f-titulo { font-family: "Audiowide", "Segoe UI", sans-serif; font-weight: 400; font-size: 64px; color: #fff;
+  text-shadow: 0 0 18px rgba(255,255,255,.45), 0 4px 12px rgba(0,70,90,.45); }
+#j2f-panel #j2f-memoria { font-family: "ADLaM Display", "Segoe UI", sans-serif; font-weight: 400; color: #fff; text-shadow: 0 2px 8px rgba(0,60,70,.45); }
+#j2f-panel #j2f-memoria b { color: #A6E35B; font-weight: 400; }
 
 /* manos de los gestos (rojo = derecha / avanzar, azul = izquierda / volver) */
 .j2c-gesto .mano-icono { font-size: 34px; }
