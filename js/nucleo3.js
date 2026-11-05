@@ -950,7 +950,7 @@ function iniciar() {
           .to(s + ".n3-icono", { y: 0, duration: 0.6, ease: "power2.out" }, 0)
           // su sombra baja y pasa a ser la de la card nueva
           .to(s + "#n3-sombra-tarjeta2", { y: 80, x: -30, scaleX: 0.82, duration: 1.1, ease: "power3.inOut" }, 0)
-          // entra la card nueva desde abajo
+          // entra la card nueva desde la derecha
           .to("#n3-tarjeta3", { autoAlpha: 1, x: 0, duration: 0.9, ease: "power3.out" }, 0.4)
           .to(".n3-pregunta", { autoAlpha: 1, x: 0, duration: 0.55, stagger: 0.12, ease: "power2.out" }, "-=0.3")
           .addLabel("tortas", "-=0.2")
@@ -981,11 +981,11 @@ function iniciar() {
       preparar: function () {
         // Copia de la P3 tal como quedó (que a su vez tiene adentro la copia de la P2)
         document.getElementById("n3-copia3").innerHTML = document.getElementById("p3").innerHTML;
-        gsap.set("#n3-tarjeta-usos", { autoAlpha: 0, y: 260 * Infografia.direccion });
-        gsap.set("#n3u2-titulo", { autoAlpha: 0, y: 20 });
+        gsap.set("#n3-tarjeta-usos", { autoAlpha: 0, x: 320 * Infografia.direccion });
+        gsap.set("#n3u2-titulo", { autoAlpha: 0, x: 30 * Infografia.direccion });
         gsap.set("#n3u2-linea", { scaleX: 0 });
         gsap.set(".n3u2-caja", { autoAlpha: 0, scale: 0.5, transformOrigin: "50% 50%" });
-        gsap.set(".n3u2-pct, .n3u2-nombre", { autoAlpha: 0, y: 20 });
+        gsap.set(".n3u2-pct, .n3u2-nombre", { autoAlpha: 0, x: 30 * Infografia.direccion });
         document.querySelectorAll(".n3u2-pct").forEach(function (e) { e.textContent = "%0"; });
       },
 
@@ -995,12 +995,12 @@ function iniciar() {
           // las cards de antes suben y pasan a segundo plano
           .to(s + "#n3-tarjeta3", { y: -270, scale: 0.94, opacity: 0.6, filter: "blur(2px)", duration: 1.1, ease: "power3.inOut" }, 0)
           .to(s + "#n3-copia #n3-tarjeta2", { y: "-=90", opacity: 0.35, duration: 1.1, ease: "power3.inOut" }, 0)
-          // entra la card nueva desde abajo
-          .to("#n3-tarjeta-usos", { autoAlpha: 1, y: 0, duration: 0.9, ease: "power3.out" }, 0.4)
-          .to("#n3u2-titulo", { autoAlpha: 1, y: 0, duration: 0.5, ease: "power2.out" }, "-=0.3")
+          // entra la card nueva desde la derecha
+          .to("#n3-tarjeta-usos", { autoAlpha: 1, x: 0, duration: 0.9, ease: "power3.out" }, 0.4)
+          .to("#n3u2-titulo", { autoAlpha: 1, x: 0, duration: 0.5, ease: "power2.out" }, "-=0.3")
           .to(".n3u2-caja", { autoAlpha: 1, scale: 1, duration: 0.6, stagger: 0.15, ease: "back.out(2)" }, "-=0.1")
           .to("#n3u2-linea", { scaleX: 1, duration: 0.8, ease: "power2.inOut" }, "<")
-          .to(".n3u2-pct, .n3u2-nombre", { autoAlpha: 1, y: 0, duration: 0.45, stagger: 0.08, ease: "power2.out" }, "-=0.4");
+          .to(".n3u2-pct, .n3u2-nombre", { autoAlpha: 1, x: 0, duration: 0.45, stagger: 0.08, ease: "power2.out" }, "-=0.4");
 
         // los porcentajes cuentan desde 0
         document.querySelectorAll(".n3u2-pct").forEach(function (e, i) {
