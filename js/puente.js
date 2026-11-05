@@ -198,7 +198,8 @@
         var estadoFlip = aplicarPoses(destino, !!saliente);
 
         if (saliente) {
-          var nombre = destino.transicion || transicionBase;
+          // transicion puede ser una función (saliente) → nombre, para elegirla según de dónde se viene
+          var nombre = (typeof destino.transicion === "function" ? destino.transicion(saliente) : destino.transicion) || transicionBase;
           var d = destino.duracion || duracionBase;
           if (hayGsap()) {
             var todo = gsap.timeline();
@@ -212,7 +213,9 @@
         }
 
         actual = n;
-        bloqueado = false;   // se puede seguir usando mientras corre la animación interna
+        bloqueado = false;
+        // avisa al contenedor en qué pantalla está (para el panel de pruebas: ir a una pantalla)
+        enviar("pantalla", { ids: pantallas.map(function (p) { return p.el; }), actual: n });   // se puede seguir usando mientras corre la animación interna
         var entrada = destino.entrar ? destino.entrar(els[n]) : null;
         // pantalla automática: el reloj arranca cuando termina su animación de entrada
         if (AUTO[destino.el]) {
@@ -255,6 +258,9 @@
         } else if (accion === "ANTERIOR") {
           if (actual > 0) mostrar(actual - 1, -1);
           else Infografia.volver();
+        } else if (accion === "IR_A_PANTALLA") {   // panel de pruebas: saltar directo a una pantalla
+          var k = datos.indice;
+          if (k >= 0 && k < pantallas.length && k !== actual) mostrar(k, k > actual ? 1 : -1);
         } else if (accion === "INTERACTUAR") {
           var p = pantallas[actual];
           if (p && p.interactuar) p.interactuar((datos && datos.tipo) || "corto", els[actual]);

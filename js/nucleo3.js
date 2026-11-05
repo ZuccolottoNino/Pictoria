@@ -17,7 +17,7 @@ var partidoDif1 = null, partidoDif2 = null, partidoDif3 = null, letrasPrompt = n
 var tipeo = { n: 0, mostradas: 0 };
 var partidoPractica = null, palabrasPractica = null;
 var partidoCierre = null, lineasCierre = null;
-var partidoEncuesta = null, partidoResultados = null;
+var partidoEncuesta = null, partidoResultados = null, partidoFinal = null;
 var miVoto = null;   // lo que votó el visitante en la encuesta final   // avance del prompt que se escribe (pantalla de generación)
 
 /* Ruido gaussiano en vivo sobre una foto (pantallas del modelo de difusión).
@@ -127,6 +127,53 @@ function detener() {
 }
 
 function iniciar() {
+  /* ============ Modelo de difusión: las 3 pantallas comparten título y personaje ============
+     Entre ellas no hay transición: el título y el personaje se quedan quietos y sólo cambia la card. */
+  var DIF = ["n3-dif1", "n3-dif2", "n3-dif3"];
+  function otraDifVisible(el) {   // la pantalla de difusión de la que se viene (todavía visible en preparar)
+    for (var i = 0; i < DIF.length; i++) {
+      var s = document.getElementById(DIF[i]);
+      if (s !== el && !s.hidden) return s;
+    }
+    return null;
+  }
+  // entre pantallas de difusión: sólo se va el contenido de abajo de la card que sale (texto, cuadros, barra);
+  // título, personaje, card y pasos quedan, porque la pantalla nueva los tiene iguales en el mismo lugar
+  Infografia.transiciones.difCambio = function (sale, entra, d, dir) {
+    var cosas = sale.querySelectorAll(".tarjeta .tarjeta, .n3d-cuadro, #n3d-avance, .n3d-avance, #n3d3-flecha");
+    return gsap.timeline()
+      .to(cosas, { autoAlpha: 0, x: -50 * dir, duration: 0.35, stagger: 0.04, ease: "power2.in" })
+      .set(cosas, { x: 0 });   // quedan ocultas pero en su lugar, para la próxima vez que entre esa pantalla
+  };
+  function transicionDif(saliente) { return DIF.indexOf(saliente.id) >= 0 ? "difCambio" : null; }
+  function indiceActivo(sec) {
+    return Array.prototype.indexOf.call(sec.querySelectorAll(".n3d-paso"), sec.querySelector(".n3d-paso.activo"));
+  }
+  // si se viene de otra pantalla de difusión, deja título, personaje, card y pasos como estaban (sin animarlos)
+  // y marca como activo el paso de la pantalla anterior; cambiarPaso() después lo pasa al nuevo con un fundido
+  function continuarDif(el, palabras, caja, personaje, sombra, tarjeta) {
+    var otra = otraDifVisible(el);
+    el._sigue = !!otra;
+    if (!otra) return;
+    var y = gsap.getProperty(otra.querySelector('img[src*="personaje4"]'), "y");
+    gsap.set(palabras, { autoAlpha: 1, x: 0, rotation: 0 });
+    gsap.set(caja, { autoAlpha: 1, x: 0 });
+    gsap.set(personaje, { autoAlpha: 1, scale: 1, x: 0, y: y });
+    gsap.set(sombra, { autoAlpha: 1, scaleX: 1 });
+    gsap.set(tarjeta, { autoAlpha: 1, x: 0 });
+    var pasos = el.querySelectorAll(".n3d-paso");
+    gsap.set(pasos, { autoAlpha: 1, y: 0 });
+    el._activo = indiceActivo(el);
+    el.classList.add("n3d-quieto");
+    pasos.forEach(function (p, i) { p.classList.toggle("activo", i === indiceActivo(otra)); });
+  }
+  function cambiarPaso(el) {
+    if (!el._sigue) return;
+    void el.offsetWidth;   // aplica el estado anterior antes de prender las transiciones
+    el.classList.remove("n3d-quieto");
+    el.querySelectorAll(".n3d-paso").forEach(function (p, i) { p.classList.toggle("activo", i === el._activo); });
+  }
+
   Infografia.presentacion([
 
     /* ============ Intro: felicidades, da paso a los modelos ============ */
@@ -530,7 +577,8 @@ function iniciar() {
        Los cuadros aparecen y el ruido "invade" uno por uno: 0 → 35% → 65% → 100%. */
     {
       el: "#n3-dif1",
-      preparar: function () {
+      transicion: transicionDif,
+      preparar: function (el) {
         var d = Infografia.direccion;
         ruidoGato.preparar();
         partidoDif1 = partidoDif1 || SplitText.create("#n3d-titulo", { type: "words" });
@@ -544,8 +592,10 @@ function iniciar() {
         gsap.set(".n3d-cuadro", { autoAlpha: 0, scale: 0.85 });
         gsap.set("#n3d-avance", { autoAlpha: 0 });
         gsap.set("#n3d-avance-barra", { scaleX: 0 });
+        continuarDif(el, partidoDif1.words, "#n3d-titulo-caja", "#n3d-personaje", "#n3d-sombra-personaje", "#n3d-tarjeta");
       },
-      entrar: function () {
+      entrar: function (el) {
+        cambiarPaso(el);
         var N = ruidoGato.niveles;
         entrada = gsap.timeline()
           .to("#n3d-titulo-caja", { autoAlpha: 1, x: 0, duration: 0.7, ease: "power3.out" })
@@ -580,7 +630,8 @@ function iniciar() {
        (100% → 65% → 35% → 0%) hasta que vuelve a aparecer el gato. */
     {
       el: "#n3-dif2",
-      preparar: function () {
+      transicion: transicionDif,
+      preparar: function (el) {
         var d = Infografia.direccion;
         ruidoGato2.preparar(1);
         partidoDif2 = partidoDif2 || SplitText.create("#n3d2-titulo", { type: "words" });
@@ -594,8 +645,10 @@ function iniciar() {
         gsap.set("#n3-dif2 .n3d-cuadro", { autoAlpha: 0, scale: 0.85 });
         gsap.set("#n3d2-avance", { autoAlpha: 0 });
         gsap.set("#n3d2-avance-barra", { scaleX: 0 });
+        continuarDif(el, partidoDif2.words, "#n3d2-titulo-caja", "#n3d2-personaje", "#n3d2-sombra-personaje", "#n3d2-tarjeta");
       },
-      entrar: function () {
+      entrar: function (el) {
+        cambiarPaso(el);
         var N = ruidoGato2.niveles;
         entrada = gsap.timeline()
           .to("#n3d2-titulo-caja", { autoAlpha: 1, x: 0, duration: 0.7, ease: "power3.out" })
@@ -631,7 +684,8 @@ function iniciar() {
        "se revela" el gato siamés a medida que el ruido baja de 100% a 0%. */
     {
       el: "#n3-dif3",
-      preparar: function () {
+      transicion: transicionDif,
+      preparar: function (el) {
         var d = Infografia.direccion;
         ruidoGato3.preparar(1);
         partidoDif3 = partidoDif3 || SplitText.create("#n3d3-titulo", { type: "words" });
@@ -648,8 +702,10 @@ function iniciar() {
         tipeo.n = 0; tipeo.mostradas = 0;
         gsap.set("#n3-dif3 .n3d-cuadro", { autoAlpha: 0, scale: 0.85 });
         gsap.set("#n3d3-flecha", { autoAlpha: 0, x: -20 });
+        continuarDif(el, partidoDif3.words, "#n3d3-titulo-caja", "#n3d3-personaje", "#n3d3-sombra-personaje", "#n3d3-tarjeta");
       },
-      entrar: function () {
+      entrar: function (el) {
+        cambiarPaso(el);
         var N = ruidoGato3.niveles;
         entrada = gsap.timeline()
           .to("#n3d3-titulo-caja", { autoAlpha: 1, x: 0, duration: 0.7, ease: "power3.out" })
@@ -917,25 +973,101 @@ function iniciar() {
       salir: detener
     },
 
-    /* ============ Encuesta final: se vota con los gestos ============
-       Gesto de AVANZAR = No (izquierda), gesto de VOLVER = Sí (derecha). El voto lo guarda el
-       contenedor (panel de la D: resumen y CSV). Después de votar, sigue solo. */
+          /* ============ Pantalla 3b: la card de las tortas sube y entra la de los usos ============ */
+    {
+      el: "#n3-adobe-usos",
+      transicion: "ninguna",   // arranca igual que el final de la P3
+
+      preparar: function () {
+        // Copia de la P3 tal como quedó (que a su vez tiene adentro la copia de la P2)
+        document.getElementById("n3-copia3").innerHTML = document.getElementById("p3").innerHTML;
+        gsap.set("#n3-tarjeta-usos", { autoAlpha: 0, y: 260 * Infografia.direccion });
+        gsap.set("#n3u2-titulo", { autoAlpha: 0, y: 20 });
+        gsap.set("#n3u2-linea", { scaleX: 0 });
+        gsap.set(".n3u2-caja", { autoAlpha: 0, scale: 0.5, transformOrigin: "50% 50%" });
+        gsap.set(".n3u2-pct, .n3u2-nombre", { autoAlpha: 0, y: 20 });
+        document.querySelectorAll(".n3u2-pct").forEach(function (e) { e.textContent = "%0"; });
+      },
+
+      entrar: function () {
+        var s = "#n3-copia3 ";
+        entrada = gsap.timeline()
+          // las cards de antes suben y pasan a segundo plano
+          .to(s + "#n3-tarjeta3", { y: -270, scale: 0.94, opacity: 0.6, filter: "blur(2px)", duration: 1.1, ease: "power3.inOut" }, 0)
+          .to(s + "#n3-copia #n3-tarjeta2", { y: "-=90", opacity: 0.35, duration: 1.1, ease: "power3.inOut" }, 0)
+          // entra la card nueva desde abajo
+          .to("#n3-tarjeta-usos", { autoAlpha: 1, y: 0, duration: 0.9, ease: "power3.out" }, 0.4)
+          .to("#n3u2-titulo", { autoAlpha: 1, y: 0, duration: 0.5, ease: "power2.out" }, "-=0.3")
+          .to(".n3u2-caja", { autoAlpha: 1, scale: 1, duration: 0.6, stagger: 0.15, ease: "back.out(2)" }, "-=0.1")
+          .to("#n3u2-linea", { scaleX: 1, duration: 0.8, ease: "power2.inOut" }, "<")
+          .to(".n3u2-pct, .n3u2-nombre", { autoAlpha: 1, y: 0, duration: 0.45, stagger: 0.08, ease: "power2.out" }, "-=0.4");
+
+        // los porcentajes cuentan desde 0
+        document.querySelectorAll(".n3u2-pct").forEach(function (e, i) {
+          var c = { v: 0 }, n = +e.getAttribute("data-n");
+          entrada.to(c, { v: n, duration: 1.2, ease: "power2.out",
+            onUpdate: function () { e.textContent = "%" + Math.round(c.v); } }, "-=" + (1.1 - i * 0.1));
+        });
+
+        entrada.add(function () {
+          bucles.push(gsap.to(s + "#n3-copia #n3-personaje2", { y: -20, duration: 1.9, ease: "sine.inOut", yoyo: true, repeat: -1 }));
+          bucles.push(gsap.to(".n3u2-caja", { y: -8, duration: 1.6, ease: "sine.inOut", yoyo: true, repeat: -1, stagger: 0.25 }));
+          bucles.push(gsap.to("#n3u2-linea i", { scale: 1.4, opacity: 0.5, duration: 1.2, ease: "sine.inOut", yoyo: true, repeat: -1, stagger: 0.4 }));
+        });
+        return entrada;
+      },
+
+      salir: detener
+    },
+
+    /* ============ Encuesta final: se vota arrastrando al personaje (como el juego de gatos y bicicletas) ============
+       Mano derecha (roja, avanzar) → el personaje va a la izquierda: Sí.
+       Mano izquierda (azul, volver) → el personaje va a la derecha: No.
+       El voto lo guarda el contenedor (panel de la D: resumen y CSV). Después de votar, sigue solo. */
     (function () {
       var votado = false;
+      var DESPLAZA = 560;   // cuánto se corre el personaje hasta quedar delante de la opción
+      function tutorial() {
+        var mano = document.getElementById("n3v-mano");
+        // una vuelta por mano: aparece en el centro, arrastra al personaje un poco hacia su opción y vuelve
+        function vuelta(tl, lado, dx, opcion) {
+          tl.add(function () { mano.innerHTML = Manos.svg(lado, true, "100%"); })
+            .set(mano, { x: -dx * 0.6, autoAlpha: 0 })
+            .to(mano, { autoAlpha: 1, duration: 0.25 })
+            .add(function () { document.querySelector(opcion).classList.add("brilla"); })
+            .to(mano, { x: dx * 0.6, duration: 0.9, ease: "power2.inOut" })
+            .to("#n3v-personaje", { x: dx * 0.35, rotation: dx > 0 ? 6 : -6, duration: 0.9, ease: "power2.inOut" }, "<")
+            .to("#n3v-sombra-personaje", { x: dx * 0.35, duration: 0.9, ease: "power2.inOut" }, "<")
+            .to(mano, { autoAlpha: 0, duration: 0.25 })
+            .to("#n3v-personaje, #n3v-sombra-personaje", { x: 0, rotation: 0, duration: 0.6, ease: "power2.inOut" }, "<")
+            .add(function () { document.querySelector(opcion).classList.remove("brilla"); });
+        }
+        var tl = gsap.timeline({ repeat: -1, repeatDelay: 0.6 });
+        vuelta(tl, "der", -DESPLAZA, "#n3v-si");   // la derecha (roja) se arrastra hacia la izquierda → Sí
+        tl.to({}, { duration: 0.5 });
+        vuelta(tl, "izq", DESPLAZA, "#n3v-no");    // la izquierda (azul) hacia la derecha → No
+        return tl;
+      }
       function votar(resp) {
         if (votado) return;
         votado = true;
         Infografia.votar("usa-ia-para-imagenes", resp);
         miVoto = resp;   // para marcar "Tu voto" en los resultados
         detener();
+        document.querySelectorAll("#n3-encuesta .brilla").forEach(function (e) { e.classList.remove("brilla"); });
         var elegida = resp === "si" ? "#n3v-si" : "#n3v-no", otra = resp === "si" ? "#n3v-no" : "#n3v-si";
+        var dx = resp === "si" ? -DESPLAZA : DESPLAZA;
         document.querySelector(elegida).classList.add("elegida");
         entrada = gsap.timeline()
-          .to("#n3v-ayuda, #n3v-mano", { autoAlpha: 0, duration: 0.3 })
-          .to(otra, { autoAlpha: 0.25, scale: 0.92, duration: 0.4 }, 0)
-          .to(elegida, { scale: 1.12, duration: 0.5, ease: "back.out(2.5)" }, 0)
-          .fromTo("#n3v-gracias", { autoAlpha: 0, y: 20 }, { autoAlpha: 1, y: 0, duration: 0.5, ease: "back.out(2)" }, 0.3)
-          .to("#n3v-personaje", { y: -40, duration: 0.3, ease: "power2.out", yoyo: true, repeat: 1 }, 0.3)
+          .to("#n3v-ayuda, #n3v-mano", { autoAlpha: 0, duration: 0.3 }, 0)
+          // el personaje se va hasta la opción y se acomoda delante de ella
+          .to("#n3v-personaje", { x: dx, y: -40, scale: 0.8, rotation: dx > 0 ? 8 : -8, duration: 0.7, ease: "power3.inOut" }, 0)
+          .to("#n3v-sombra-personaje", { x: dx, scaleX: 0.7, duration: 0.7, ease: "power3.inOut" }, 0)
+          .to("#n3v-personaje", { rotation: 0, duration: 0.3, ease: "back.out(2)" })
+          .to(otra, { autoAlpha: 0.35, scale: 0.94, duration: 0.4 }, 0.3)
+          .to(elegida, { scale: 1.05, duration: 0.5, ease: "back.out(2.5)" }, 0.5)
+          .fromTo("#n3v-gracias", { autoAlpha: 0, y: 20 }, { autoAlpha: 1, y: 0, duration: 0.5, ease: "back.out(2)" }, 0.7)
+          .to("#n3v-personaje", { y: -90, duration: 0.3, ease: "power2.out", yoyo: true, repeat: 1 }, 1)
           .add(function () { Infografia.avanzar(); }, "+=1.6");   // termina el núcleo
       }
       return {
@@ -943,45 +1075,27 @@ function iniciar() {
         preparar: function () {
           var d = Infografia.direccion;
           votado = false;
-          document.querySelectorAll("#n3-encuesta .elegida").forEach(function (e) { e.classList.remove("elegida"); });
+          document.querySelectorAll("#n3-encuesta .elegida, #n3-encuesta .brilla").forEach(function (e) { e.classList.remove("elegida", "brilla"); });
           partidoEncuesta = partidoEncuesta || SplitText.create("#n3v-titulo", { type: "words" });
           gsap.set(partidoEncuesta.words, { autoAlpha: 0, y: 30 });
-          gsap.set("#n3v-personaje", { autoAlpha: 0, scale: 0.85, x: -70 * d, y: 0, transformOrigin: "50% 100%" });
-          gsap.set("#n3v-sombra-personaje", { autoAlpha: 0, scaleX: 0.4 });
-          gsap.set(".n3v-opcion", { autoAlpha: 0, scale: 0.8, y: 30 });
+          gsap.set("#n3v-personaje", { autoAlpha: 0, scale: 0.85, x: 0, y: 40, rotation: 0, transformOrigin: "50% 100%" });
+          gsap.set("#n3v-sombra-personaje", { autoAlpha: 0, x: 0, scaleX: 0.4 });
+          gsap.set(".n3v-opcion", { autoAlpha: 0, scale: 0.8, x: function (i) { return (i ? 80 : -80) * d; } });
           gsap.set("#n3v-ayuda, #n3v-mano, #n3v-gracias", { autoAlpha: 0 });
         },
         entrar: function () {
           entrada = gsap.timeline()
             .to(partidoEncuesta.words, { autoAlpha: 1, y: 0, duration: 0.6, stagger: 0.08, ease: "back.out(1.8)" })
-            .to("#n3v-personaje", { autoAlpha: 1, scale: 1, x: 0, duration: 0.9, ease: "back.out(1.4)" }, "-=0.3")
-            .to("#n3v-sombra-personaje", { autoAlpha: 1, scaleX: 1, duration: 0.8, ease: "power2.out" }, "<0.1")
-            .to(".n3v-opcion", { autoAlpha: 1, scale: 1, y: 0, duration: 0.6, stagger: 0.15, ease: "back.out(1.8)" }, "-=0.6")
+            .to(".n3v-opcion", { autoAlpha: 1, scale: 1, x: 0, duration: 0.6, stagger: 0.15, ease: "back.out(1.6)" }, "-=0.3")
+            .to("#n3v-personaje", { autoAlpha: 1, scale: 1, y: 0, duration: 0.8, ease: "back.out(1.6)" }, "-=0.4")
+            .to("#n3v-sombra-personaje", { autoAlpha: 1, scaleX: 1, duration: 0.7, ease: "power2.out" }, "<0.1")
             .to("#n3v-ayuda", { autoAlpha: 1, duration: 0.5 })
-            .add(function () {
-              bucles.push(gsap.to("#n3v-personaje", { y: -14, duration: 1.9, ease: "sine.inOut", yoyo: true, repeat: -1 }));
-              bucles.push(gsap.to("#n3v-sombra-personaje", { scaleX: 0.82, opacity: 0.6, duration: 1.9, ease: "sine.inOut", yoyo: true, repeat: -1 }));
-              // tutorial: la mano desliza hacia el No y hacia el Sí, y cada opción se ilumina cuando la mano va hacia ella
-              bucles.push(gsap.timeline({ repeat: -1, repeatDelay: 0.4 })
-                .set("#n3v-mano", { x: 0, rotation: 0 })
-                .add(function () { document.getElementById("n3v-mano").innerHTML = Manos.svg("izq", false, "100%"); })   // Sí: mano izquierda (azul)
-                .to("#n3v-mano", { autoAlpha: 1, duration: 0.25 })
-                .to("#n3v-mano", { x: 220, rotation: 12, duration: 0.8, ease: "power2.inOut" })            // primero Sí
-                .to("#n3v-si .n3v-boton", { scale: 1.08, duration: 0.25, ease: "back.out(3)", yoyo: true, repeat: 1 }, "-=0.2")
-                .to("#n3v-mano", { autoAlpha: 0, duration: 0.25 })
-                .set("#n3v-mano", { x: 0, rotation: 0 })
-                .add(function () { document.getElementById("n3v-mano").innerHTML = Manos.svg("der", false, "100%"); }, "+=0.3")   // No: mano derecha (roja)
-                .to("#n3v-mano", { autoAlpha: 1, duration: 0.25 })
-                .to("#n3v-mano", { x: -220, rotation: -12, duration: 0.8, ease: "power2.inOut" })          // después No
-                .to("#n3v-no .n3v-boton", { scale: 1.08, duration: 0.25, ease: "back.out(3)", yoyo: true, repeat: 1 }, "-=0.2")
-                .to("#n3v-mano", { autoAlpha: 0, duration: 0.25 }));
-            });
+            .add(function () { bucles.push(tutorial()); });
           return entrada;
         },
         // los gestos votan (y no cambian de pantalla: la pantalla avanza sola después de votar)
-        // invertido a pedido: con la cámara, avanzar es deslizar la mano hacia la izquierda (→ No)
-        alSiguiente: function () { votar("no"); return true; },
-        alAnterior: function () { votar("si"); return true; },
+        alSiguiente: function () { votar("si"); return true; },
+        alAnterior: function () { votar("no"); return true; },
         salir: detener
       };
     })(),
@@ -1047,12 +1161,41 @@ function iniciar() {
         alAnterior: function () { return true; },
         salir: detener
       };
-    })()
+    })(),
+
+    /* ============ Final: llegaste al final ============ */
+    {
+      el: "#n3-final",
+      preparar: function () {
+        var d = Infografia.direccion;
+        partidoFinal = partidoFinal || SplitText.create("#n3x-titulo", { type: "words" });
+        gsap.set(partidoFinal.words, { autoAlpha: 0, y: 30 });
+        gsap.set("#n3x-personaje", { autoAlpha: 0, scale: 0.6, y: 80, transformOrigin: "50% 100%" });
+        gsap.set("#n3x-tarjeta", { autoAlpha: 0, y: 60, x: 40 * d });
+      },
+      entrar: function () {
+        entrada = gsap.timeline()
+          .to(partidoFinal.words, { autoAlpha: 1, y: 0, duration: 0.6, stagger: 0.1, ease: "back.out(1.8)" })
+          // el personaje aparece de un salto
+          .to("#n3x-personaje", { autoAlpha: 1, scale: 1, y: 0, duration: 0.9, ease: "back.out(2)" }, "-=0.3")
+          .to("#n3x-tarjeta", { autoAlpha: 1, y: 0, x: 0, duration: 0.7, ease: "power3.out" }, "-=0.4")
+          .add(function () {
+            // salta de alegría una y otra vez
+            bucles.push(gsap.timeline({ repeat: -1, repeatDelay: 0.6 })
+              .to("#n3x-personaje", { y: -40, duration: 0.35, ease: "power2.out" })
+              .to("#n3x-personaje", { y: 0, duration: 0.35, ease: "power2.in" })
+              .to("#n3x-personaje", { scaleY: 0.95, scaleX: 1.04, duration: 0.12, yoyo: true, repeat: 1 }));
+            bucles.push(gsap.to("#n3x-tarjeta", { y: -8, duration: 1.6, ease: "sine.inOut", yoyo: true, repeat: -1 }));
+          });
+        return entrada;
+      },
+      salir: detener
+    }
 
   ], { transicion: "deslizar", duracion: 0.8,
     // pantallas que pasan solas (segundos de lectura después de que termina la entrada)
     auto: { "#n3-intro": 7, "#n3-modelos": 6, "#n3-cifras": 6, "#n3-usos": 8, "#n3-evolucion": 6, "#p4": 7,
-            "#n3-dif1": 5, "#n3-dif2": 5, "#n3-dif3": 6, "#n3-practica": 4, "#n3-cierre": 5, "#n3-resultados": 10 } });
+            "#n3-dif1": 5, "#n3-dif2": 5, "#n3-dif3": 6, "#n3-practica": 4, "#n3-cierre": 5, "#n3-resultados": 10, "#n3-final": 10 } });
 }
 
 // Esperamos a que carguen las tipografías para que SplitText mida bien

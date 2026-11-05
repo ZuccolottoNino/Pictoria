@@ -95,6 +95,10 @@
   #panel button:hover { background: #335767; }
   #panel button:active { background: var(--acento); color: #000; }
   #panel .etq { color: #9fb4bd; font-size: 11px; }
+  #panel { cursor: auto; }
+  #panel select, #panel input[type=text] { font: inherit; color: #fff; background: #26414f; border: 1px solid #ffffff30;
+    border-radius: 6px; padding: 6px 8px; }
+  #panel input[type=text] { width: 150px; }
   #panel #estado { color: var(--acento); min-height: 1.2em; }
 
   @media (prefers-reduced-motion: reduce) {
@@ -127,6 +131,16 @@
   <div class="fila" id="fila-nucleos"></div>
   <div class="etq">Juegos (prueba rápida, sin orden obligatorio)</div>
   <div class="fila" id="fila-juegos"></div>
+  <div class="etq">Ir a una pantalla (arrastrá la barra o escribí el número / id y Enter)</div>
+  <div class="fila">
+    <select id="sel-paso" tabindex="-1"></select>
+    <input id="txt-pantalla" type="text" list="lista-pantallas" placeholder="ej. 12 o n3-dif1" autocomplete="off">
+    <datalist id="lista-pantallas"></datalist>
+  </div>
+  <div class="fila" style="align-items:center">
+    <input id="barra-pantalla" type="range" min="1" max="1" value="1" tabindex="-1" style="flex:1">
+    <span id="lbl-pantalla" style="min-width:150px">—</span>
+  </div>
   <div class="etq">Gesto de mano → pantalla anterior / siguiente</div>
   <div class="fila">
     <button type="button" tabindex="-1" data-accion="ANTERIOR">◀ Anterior</button>
@@ -281,6 +295,9 @@ async function irA(indice, consulta) {
   await esperar(CONFIG.fadeMs);
 
   pasoActual = indice;
+  const selPaso = document.getElementById("sel-paso");   // panel: muestra el paso actual y vacía la lista de pantallas
+  if (selPaso) selPaso.value = indice;
+  pintarPantallas([], -1);
   const paso = pasos[indice];
   if (indice === 0) visitados.clear();   // visitante nuevo
 
@@ -348,6 +365,54 @@ function irAJuego(j) {
   if (!j.pantalla) { avisar(j.nombre + ": todavía no está hecho"); return; }
   const indice = pasos.findIndex(p => p.tipo === "nucleo" && p.nucleo === j.nucleo);
   if (indice !== -1) irA(indice, "inicio=" + j.pantalla);
+}
+
+/* ---------- Panel: ir directo a una pantalla ----------
+   El selector elige el paso (tutorial, núcleo, fin; sin orden obligatorio). La barra y el texto saltan a
+   una pantalla del paso cargado: el núcleo avisa su lista de pantallas con el mensaje "pantalla". */
+let pantallasPaso = [];
+function nombrePaso(p) {
+  if (p.tipo === "tutorial") return "Tutorial";
+  if (p.tipo === "standby") return "Memoria " + (p.nucleo + 1);
+  if (p.tipo === "nucleo") return "Núcleo " + (p.nucleo + 1);
+  return "Fin";
+}
+function pintarPantallas(ids, actual) {
+  pantallasPaso = ids.map(s => s.replace(/^#/, ""));
+  const barra = document.getElementById("barra-pantalla");
+  barra.max = Math.max(1, pantallasPaso.length);
+  barra.value = actual + 1;
+  document.getElementById("lbl-pantalla").textContent = pantallasPaso.length
+    ? (actual + 1) + "/" + pantallasPaso.length + " · " + pantallasPaso[actual] : "—";
+  document.getElementById("lista-pantallas").innerHTML = pantallasPaso.map(id => `<option value="${id}">`).join("");
+}
+function irAPantalla(i) {
+  if (i < 0 || i >= pantallasPaso.length) { avisar("No existe esa pantalla"); return; }
+  emitir("IR_A_PANTALLA", { indice: i });
+}
+function prepararIrAPantalla() {
+  const sel = document.getElementById("sel-paso");
+  sel.innerHTML = pasos.map((p, i) => `<option value="${i}">${nombrePaso(p)}</option>`).join("");
+  sel.addEventListener("change", () => {
+    if (ocupado) return;
+    pantallasPaso = [];
+    document.getElementById("lbl-pantalla").textContent = "—";
+    irA(+sel.value);
+    sel.blur();
+  });
+  const barra = document.getElementById("barra-pantalla"), lbl = document.getElementById("lbl-pantalla");
+  barra.addEventListener("input", () => {   // mientras se arrastra: sólo muestra a cuál va a ir
+    const i = barra.value - 1;
+    lbl.textContent = (i + 1) + "/" + pantallasPaso.length + " · " + (pantallasPaso[i] || "—");
+  });
+  barra.addEventListener("change", () => { irAPantalla(barra.value - 1); barra.blur(); });   // al soltar, va
+  const txt = document.getElementById("txt-pantalla");
+  txt.addEventListener("keydown", (e) => {
+    if (e.key !== "Enter") return;
+    const v = txt.value.trim().replace(/^#/, "");
+    irAPantalla(/^\d+$/.test(v) ? +v - 1 : pantallasPaso.indexOf(v));
+    txt.value = ""; txt.blur();
+  });
 }
 
 /* Muestra "¡Esa no es la memoria correcta!" y qué memoria insertar; se va sola a los pocos segundos */
@@ -484,11 +549,13 @@ function pidePantallaCompleta() {
 }
 
 window.addEventListener("keydown", (e) => {
+  if (e.target.matches && e.target.matches("#panel input")) return;   // escribiendo en el panel
   if (e.repeat) { e.preventDefault(); return; }
   pidePantallaCompleta();
   if (procesarTecla(e.code, true)) e.preventDefault();
 });
 window.addEventListener("keyup", (e) => {
+  if (e.target.matches && e.target.matches("#panel input")) return;
   if (procesarTecla(e.code, false)) e.preventDefault();
 });
 
@@ -499,6 +566,7 @@ window.addEventListener("message", (e) => {
   if (!msg || msg.origen !== "infografia") return;
 
   switch (msg.tipo) {
+    case "pantalla":   pintarPantallas(msg.ids || [], msg.actual); break;
     case "listo":      nucleoListo = true; if (alEstarListo) alEstarListo(); break;
     case "voto":       guardarVoto(msg.pregunta, msg.respuesta); break;
     case "confirmacion": confirmacionActiva = !!msg.activa; break;
@@ -530,6 +598,7 @@ function alternarPanel() {
     b.addEventListener("click", () => emitir("IR_A_NUCLEO", { nucleo: i }));
     fila.appendChild(b);
   });
+  prepararIrAPantalla();
   const filaJuegos = document.getElementById("fila-juegos");
   JUEGOS.forEach(j => {
     const b = document.createElement("button");
@@ -556,7 +625,8 @@ function alternarPanel() {
   pintarOrden();
 
   // Evita que los botones del panel roben el foco y reaccionen a Espacio/Enter
-  panel.addEventListener("mousedown", e => e.preventDefault());
+  // (menos en la barra, el texto y el selector, que necesitan el mouse para funcionar)
+  panel.addEventListener("mousedown", e => { if (!e.target.closest("input, select")) e.preventDefault(); });
 
   if (CONFIG.panelPruebas) alternarPanel();
 })();

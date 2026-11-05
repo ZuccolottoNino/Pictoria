@@ -9,6 +9,10 @@
 <link rel="stylesheet" href="../css/nucleo3.css">
 </head>
 <body>
+<!-- filtro que pinta los íconos de personas de un solo color (#F7CAE9), respetando su forma.
+     Va afuera de las pantallas: si queda dentro de una pantalla oculta, las copias (P3) lo pierden. -->
+<svg width="0" height="0" style="position:absolute"><filter id="n3-rosa" color-interpolation-filters="sRGB">
+  <feFlood flood-color="#F7CAE9"/><feComposite in2="SourceAlpha" operator="in"/></filter></svg>
 
 <div id="escenario">
 
@@ -581,6 +585,32 @@
     </div>
   </section>
 
+    <!-- ===================== PANTALLA 3b: para qué usan la IA ===================== -->
+  <section id="n3-adobe-usos" class="slide">
+    <div id="n3-copia3"></div>   <!-- acá se copia la P3 tal como quedó -->
+
+    <div class="tarjeta" id="n3-tarjeta-usos">
+      <p id="n3u2-titulo">¿Para qué te utilizan los usuarios?</p>
+      <div id="n3u2-linea"><i></i><i></i></div>
+
+      <div class="n3u2-col" id="n3u2-c1">
+        <div class="n3u2-pct" data-n="55">%0</div>
+        <div class="n3u2-caja"><img src="../assets/nucleo3/img/vector1.png" alt=""></div>
+        <div class="n3u2-nombre">Mejorar/<br>editar</div>
+      </div>
+      <div class="n3u2-col" id="n3u2-c2">
+        <div class="n3u2-pct" data-n="52">%0</div>
+        <div class="n3u2-caja"><img src="../assets/nucleo3/img/vector2.png" alt=""></div>
+        <div class="n3u2-nombre">Generar<br>assets</div>
+      </div>
+      <div class="n3u2-col" id="n3u2-c3">
+        <div class="n3u2-pct" data-n="48">%0</div>
+        <div class="n3u2-caja"><img src="../assets/nucleo3/img/vector3.png" alt=""></div>
+        <div class="n3u2-nombre">Ideación</div>
+      </div>
+    </div>
+  </section>
+
     <!-- ===================== PANTALLA 4 ===================== -->
   <section id="p4" class="slide">
     <div class="tarjeta" id="n3-t4-caja">
@@ -618,29 +648,31 @@
   <!-- ===================== ENCUESTA FINAL (se vota con los gestos) ===================== -->
   <!-- No a la izquierda (mano derecha = avanzar), Sí a la derecha (mano izquierda = volver) -->
   <section id="n3-encuesta" class="slide">
+    <!-- Se vota como en el juego de gatos y bicicletas: el gesto "arrastra" al personaje hacia una opción.
+         La mano derecha (roja) lo lleva a la izquierda (Sí); la izquierda (azul) a la derecha (No). -->
     <h1 class="titulo" id="n3v-titulo">¿Usás IA para generar imágenes?</h1>
 
-    <div class="sombra-ovalo" id="n3v-sombra-personaje"></div>
-    <img id="n3v-personaje" src="../assets/nucleo3/img/personaje1.png" alt="">
-
-    <div class="n3v-opcion" id="n3v-no">
-      <div class="tarjeta n3v-boton"><span>No</span></div>
+    <div class="n3v-opcion" id="n3v-si" data-mano-color="der">
+      <span class="n3v-nombre">Sí</span>
       <p class="n3v-gesto"><span data-mano="der"></span>mano derecha</p>
     </div>
-    <div class="n3v-opcion" id="n3v-si">
-      <div class="tarjeta n3v-boton"><span>Sí</span></div>
+    <div class="n3v-opcion" id="n3v-no" data-mano-color="izq">
+      <span class="n3v-nombre">No</span>
       <p class="n3v-gesto">mano izquierda<span data-mano="izq"></span></p>
     </div>
 
-    <!-- tutorial: cómo votar + una mano fantasma que "desliza" hacia cada lado -->
-    <p id="n3v-ayuda">Para votar, arrastrá hacia vos la <b class="mano-izq-txt">mano izquierda</b> para <b>Sí</b> o la <b class="mano-der-txt">mano derecha</b> para <b>No</b></p>
-    <div id="n3v-mano"><svg viewBox="0 0 64 64"><path d="M22 34V14a4 4 0 0 1 8 0v16V10a4 4 0 0 1 8 0v20V13a4 4 0 0 1 8 0v19V20a4 4 0 0 1 8 0v20c0 10-7 18-17 18h-3c-6 0-10-3-13-8l-8-13a4 4 0 0 1 7-4z" fill="#fff" stroke="#7A5AF5" stroke-width="3" stroke-linejoin="round"/></svg></div>
+    <div class="sombra-ovalo" id="n3v-sombra-personaje"></div>
+    <img id="n3v-personaje" src="../assets/nucleo3/img/personaje6.png" alt="">
+
+    <!-- tutorial: la mano de cada color "arrastra" al personaje hacia su opción -->
+    <p id="n3v-ayuda">Arrastrá para posicionarte: <b class="mano-der-txt">mano derecha</b> para <b>Sí</b>, <b class="mano-izq-txt">mano izquierda</b> para <b>No</b></p>
+    <div id="n3v-mano"></div>
 
     <p id="n3v-gracias">¡Gracias por votar!</p>
   </section>
 
   <!-- ===================== RESULTADOS DE LA ENCUESTA ===================== -->
-  <!-- Mismo orden que la encuesta: No a la izquierda, Sí a la derecha -->
+  <!-- Mismo orden que la encuesta: Sí a la izquierda, No a la derecha (el Sí se reordena por CSS) -->
   <section id="n3-resultados" class="slide">
     <h1 class="titulo" id="n3r-titulo">¿Qué respondió la gente?</h1>
     <p id="n3r-sub">¿Usás IA para generar imágenes? · Ya votaron <b id="n3r-total">0</b> personas</p>
@@ -663,6 +695,15 @@
         <div class="n3r-nombre">Sí</div>
         <div class="n3r-cant"><span>0</span> personas</div>
       </div>
+    </div>
+  </section>
+
+  <!-- ===================== FINAL: llegaste al final ===================== -->
+  <section id="n3-final" class="slide">
+    <h1 class="titulo" id="n3x-titulo">Llegaste al final</h1>
+    <img id="n3x-personaje" src="../assets/nucleo3/img/personaje7.png" alt="">
+    <div class="tarjeta" id="n3x-tarjeta">
+      <p id="n3x-texto">¡Felicitaciones, te convertiste en una<br>IA de <span>última generación</span>!</p>
     </div>
   </section>
 

@@ -27,7 +27,8 @@
 #n3-etiqueta { position: absolute; left: 41px; top: 165px; white-space: nowrap; }
 
 #n3-iconos { position: absolute; left: 37px; top: 234px; display: flex; gap: 6px; }
-.n3-icono { width: 82px; height: 82px; }
+/* íconos de personas: todos del mismo color (filtro #n3-rosa en el html) */
+.n3-icono { width: 82px; height: 82px; filter: url(#n3-rosa); }
 
 #n3-divisor { position: absolute; left: 689px; top: 47px; width: 2px; height: 328px;
   background: linear-gradient(to bottom, rgba(95, 111, 183, .25), rgba(95, 111, 183, .8), rgba(95, 111, 183, .25)); }
@@ -83,6 +84,30 @@
 #n3-torta1 .n3-no { left: 183px; top: 78px; }   #n3-torta1 .n3-si { left: 126px; top: 176px; }
 #n3-torta2 .n3-no { left: 167px; top: 60px; }   #n3-torta2 .n3-si { left: 133px; top: 179px; }
 #n3-torta3 .n3-no { left: 191px; top: 102px; }  #n3-torta3 .n3-si { left: 106px; top: 172px; }
+
+/* ---------- Pantalla 3b: para qué usan la IA (la card de las tortas sube y entra esta) ---------- */
+#n3-copia3 { position: absolute; inset: 0; }
+#n3-tarjeta-usos { left: 476px; top: 545px; width: 1350px; height: 445px; }
+#n3u2-titulo { position: absolute; left: 0; right: 0; top: 34px; margin: 0; text-align: center;
+  font-family: "Space Grotesk", system-ui, sans-serif; font-weight: 700; font-size: 36px; color: var(--tinta); }
+/* línea que une las tres cajas, con dos brillos rosas entre ellas */
+#n3u2-linea { position: absolute; left: 336px; width: 681px; top: 279px; height: 4px; border-radius: 2px;
+  background: linear-gradient(90deg, #B5E7FA, #F5C9E6, #B5E7FA, #F5C9E6); transform-origin: 0 50%; }
+#n3u2-linea i { position: absolute; top: 50%; width: 40px; height: 40px; margin: -20px 0 0 -20px; border-radius: 50%;
+  background: radial-gradient(circle, rgba(245,201,230,.95), rgba(245,201,230,0) 70%); }
+#n3u2-linea i:nth-child(1) { left: 25%; }
+#n3u2-linea i:nth-child(2) { left: 75%; }
+.n3u2-col { position: absolute; top: 120px; width: 260px; margin-left: -130px;
+  display: flex; flex-direction: column; align-items: center; gap: 22px; }
+#n3u2-c1 { left: 336px; }  #n3u2-c2 { left: 676px; }  #n3u2-c3 { left: 1017px; }
+.n3u2-pct { padding: 10px 22px; border-radius: 22px; background: rgba(247, 248, 253, .9);
+  box-shadow: 0 0 22px rgba(120, 110, 200, .18), inset 0 0 0 3px rgba(181, 231, 250, .5);
+  font-family: "Space Grotesk", system-ui, sans-serif; font-weight: 700; font-size: 34px; color: var(--tinta); }
+.n3u2-caja { width: 136px; height: 136px; border-radius: 30px; background: #fff; display: flex; align-items: center; justify-content: center;
+  box-shadow: 0 0 26px rgba(120, 110, 200, .18), inset 0 0 0 3px rgba(181, 231, 250, .45); }
+.n3u2-caja img { width: 81px; height: 81px; }
+.n3u2-nombre { padding: 12px 26px; border-radius: 22px; background: rgba(247, 248, 253, .9); box-shadow: 0 0 22px rgba(120, 110, 200, .12);
+  text-align: center; font-family: "Inter", system-ui, sans-serif; font-weight: 600; font-size: 24px; line-height: 29px; color: var(--tinta); }
 
 /* ---------- Pantalla 4 ---------- */
 .n3-azul { font-weight: 700; color: #5F6FB8; }
@@ -304,8 +329,15 @@
   font-family: "Inter", system-ui, sans-serif; font-size: 72px; color: #fff;
   background: radial-gradient(circle at 35% 30%, #F9DDF0, #F3C3E6 70%); box-shadow: 0 8px 20px rgba(200, 120, 190, .25); }
 .n3d-paso p { font-family: "Inter", system-ui, sans-serif; font-weight: 600; font-size: 34px; color: var(--tinta); white-space: nowrap; }
-.n3d-paso.activo .n3d-num { background: radial-gradient(circle at 35% 30%, #D2F3FE, #A9E6FB 70%); box-shadow: 0 8px 22px rgba(90, 170, 220, .35); }
+/* el paso activo: el degradé celeste va en una capa encima que aparece/desaparece, así el cambio de color es suave */
+.n3d-num { position: relative; isolation: isolate; transition: box-shadow .6s ease; }
+.n3d-num::before { content: ""; position: absolute; inset: 0; z-index: -1; border-radius: 50%; opacity: 0; transition: opacity .6s ease;
+  background: radial-gradient(circle at 35% 30%, #D2F3FE, #A9E6FB 70%); }
+.n3d-paso p { transition: color .6s ease; }
+.n3d-paso.activo .n3d-num { box-shadow: 0 8px 22px rgba(90, 170, 220, .35); }
+.n3d-paso.activo .n3d-num::before { opacity: 1; }
 .n3d-paso.activo p { color: #5F6FB7; }
+.n3d-quieto .n3d-num, .n3d-quieto .n3d-num::before, .n3d-quieto p { transition: none !important; }
 
 #n3d-explica, .n3d-explica { left: 122px; top: 232px; width: 940px; height: 150px; display: flex; align-items: center; justify-content: center;
   box-shadow: 0 4px 30px rgba(120, 110, 200, .10); }
@@ -354,30 +386,32 @@
 .n3k-resalte { color: #5F6FB7; font-weight: 600; }
 
 
-/* ---------- Encuesta final ---------- */
-#n3v-titulo { position: absolute; left: 0; top: 230px; width: 1920px; text-align: center; }
-#n3v-personaje { position: absolute; left: 150px; top: 420px; width: 380px; }
-#n3v-sombra-personaje { left: 190px; top: 925px; width: 300px; height: 62px; }
+/* ---------- Encuesta final: el personaje se arrastra hacia Sí o No ---------- */
+#n3v-titulo { position: absolute; left: 0; top: 140px; width: 1920px; text-align: center; }
+#n3v-personaje { position: absolute; left: 960px; top: 450px; width: 330px; margin-left: -165px; z-index: 3; }
+#n3v-sombra-personaje { left: 830px; top: 905px; width: 260px; height: 52px; }
 
-.n3v-opcion { position: absolute; top: 445px; width: 360px; display: flex; flex-direction: column; align-items: center; gap: 24px; }
-#n3v-no { left: 640px; }
-#n3v-si { left: 1100px; }
-.n3v-boton { position: relative; width: 300px; height: 190px; display: flex; align-items: center; justify-content: center;
+.n3v-opcion { position: absolute; top: 300px; width: 495px; height: 495px; border-radius: 45px; background: #fff;
+  box-shadow: 0 12px 56px rgba(120, 110, 200, .14); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 40px;
   transition: box-shadow .3s; }
-.n3v-boton span { font-family: "Space Grotesk", system-ui, sans-serif; font-weight: 700; font-size: 110px; color: #5F6FB7; }
-.n3v-gesto { display: flex; align-items: center; gap: 12px; font-family: "Inter", system-ui, sans-serif; font-size: 28px; color: #8A90AE; }
-.n3v-gesto svg { width: 40px; height: 34px; color: #BD72FF; }
-/* la opción elegida */
-.n3v-opcion.elegida .n3v-boton { box-shadow: 0 0 0 8px rgba(189,114,255,.55), 0 20px 60px rgba(120,110,200,.35); }
+#n3v-si { left: 150px; --mano: #FF4554; --mano-suave: rgba(255, 69, 84, .35); }
+#n3v-no { left: 1275px; --mano: #00C3E3; --mano-suave: rgba(0, 195, 227, .35); }
+.n3v-opcion::before { content: ""; position: absolute; inset: 0; border-radius: inherit; border: 5px solid var(--mano); opacity: .35; }
+.n3v-nombre { font-family: "Space Grotesk", system-ui, sans-serif; font-weight: 700; font-size: 140px; line-height: 1; color: #5F6FB7; }
+.n3v-gesto { display: flex; align-items: center; gap: 12px; padding: 12px 26px; border-radius: 999px; background: var(--mano-suave);
+  font-family: "Inter", system-ui, sans-serif; font-weight: 600; font-size: 28px; color: var(--tinta); }
+.n3v-gesto .mano-icono { font-size: 34px; }
+/* la opción hacia la que va el personaje / la elegida */
+.n3v-opcion.brilla, .n3v-opcion.elegida { box-shadow: 0 0 0 8px var(--mano-suave), 0 0 50px var(--mano-suave); }
 
-#n3v-ayuda { position: absolute; left: 0; top: 790px; width: 1920px; text-align: center;
-  font-family: "Inter", system-ui, sans-serif; font-size: 34px; line-height: 44px; color: var(--tinta); }
-#n3v-ayuda b { font-weight: 700; color: var(--violeta); }
-#n3v-mano { position: absolute; left: 960px; top: 870px; width: 90px; height: 90px; margin-left: -45px;
+#n3v-ayuda { position: absolute; left: 0; top: 930px; width: 1920px; text-align: center;
+  font-family: "Space Grotesk", system-ui, sans-serif; font-weight: 700; font-size: 42px; color: var(--tinta); }
+#n3v-ayuda b { font-weight: 700; }
+#n3v-mano { position: absolute; left: 960px; top: 770px; width: 150px; height: 100px; margin-left: -75px; z-index: 5;
   filter: drop-shadow(0 8px 14px rgba(80,50,160,.3)); }
 #n3v-mano svg { width: 100%; height: 100%; }
 
-#n3v-gracias { position: absolute; left: 0; top: 780px; width: 1920px; text-align: center;
+#n3v-gracias { position: absolute; left: 0; top: 930px; width: 1920px; text-align: center;
   font-family: "Space Grotesk", system-ui, sans-serif; font-weight: 700; font-size: 64px; color: var(--violeta); }
 
 
@@ -394,6 +428,7 @@
 .n3r-tu { visibility: hidden; padding: 8px 22px; border-radius: 999px; background: linear-gradient(90deg, #9B6BF2, #D07FD8);
   color: #fff; font-family: "Inter", system-ui, sans-serif; font-weight: 700; font-size: 24px; }
 .n3r-col.mio .n3r-tu { visibility: visible; }
+#n3r-si { order: -1; }   /* mismo orden que la encuesta: Sí a la izquierda */
 .n3r-pct { margin-top: 10px; font-family: "Space Grotesk", system-ui, sans-serif; font-weight: 700; font-size: 72px; line-height: 80px; color: #5F6FB7; }
 /* la barra crece desde abajo dentro de una "pista" fija */
 .n3r-pista { position: relative; width: 200px; height: 400px; margin-top: 10px; border-radius: 30px; background: #EEEDF8; overflow: hidden; }
@@ -403,11 +438,17 @@
 .n3r-nombre { margin-top: 18px; font-family: "Space Grotesk", system-ui, sans-serif; font-weight: 700; font-size: 56px; color: var(--tinta); }
 .n3r-cant { font-family: "Inter", system-ui, sans-serif; font-size: 26px; color: #8A90AE; }
 
+/* ---------- Final: llegaste al final ---------- */
+#n3x-titulo { position: absolute; left: 0; top: 50px; width: 1920px; text-align: center; }
+#n3x-personaje { position: absolute; left: 702px; top: 218px; width: 492px; }
+#n3x-tarjeta { left: 323px; top: 777px; width: 1250px; height: 200px; border-radius: 45px; z-index: 2;
+  display: flex; align-items: center; padding: 0 45px; }
+#n3x-texto { margin: 0; font-family: "Space Grotesk", system-ui, sans-serif; font-weight: 700; font-size: 54px; line-height: 78px; color: var(--tinta); }
+#n3x-texto span { color: #5F6FB7; }
+
 /* manos de los gestos (rojo = derecha / avanzar, azul = izquierda / volver) */
-.n3v-gesto .mano-icono { font-size: 30px; }
 .mano-der-txt { color: #FF4554 !important; }
 .mano-izq-txt { color: #00A9C7 !important; }
-#n3v-mano { width: 140px; height: 90px; margin-left: -70px; }
 
 /* color del relojito de las pantallas automáticas (lo dibuja puente.js) */
 :root { --auto-color: #BD72FF; }
