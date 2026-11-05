@@ -1,9 +1,50 @@
+/* tutorial.css: tutorial de los gestos (boceto), estilo "Switch Sports": fondo claro, persona gris,
+   mano derecha roja y mano izquierda azul (colores de los Joy-Con). */
+:root { --rojo: #FF4554; --azul: #00C3E3; --tinta: #2A2F3A; --gris: #8A909C; --auto-color: #2A2F3A; }
+
 * { box-sizing: border-box; margin: 0; padding: 0; }
-html, body { height: 100%; overflow: hidden; background: #0b0d1a; cursor: none; }
-#escenario { font-family: "Segoe UI", system-ui, sans-serif; background: #111; }
-.slide { display: flex; flex-direction: column; justify-content: center; padding: 0 140px; gap: 24px; }
+html, body { height: 100%; overflow: hidden; background: #EEF0F3; cursor: none; }
+#escenario { font-family: "Space Grotesk", "Segoe UI", system-ui, sans-serif; color: var(--tinta);
+  background: radial-gradient(ellipse at 30% 40%, #FFFFFF 0%, #EEF0F3 55%, #DDE1E7 100%); }
+.slide { background: transparent; }
 .slide[hidden] { display: none; }
-#p1 { background: #f4f1ec; }
-#p2 { background: #e3eef3; }
-h1 { font-size: 84px; color: #1b2b34; max-width: 1200px; }
-p  { font-size: 38px; color: #4a5b64; max-width: 1200px; }
+
+.rojo { color: var(--rojo); }
+.azul { color: var(--azul); }
+
+/* la persona, a la izquierda */
+.figura { position: absolute; left: 150px; top: 120px; width: 620px; height: 880px; }
+.figura svg { width: 100%; height: 100%; overflow: visible; }
+
+/* el texto, a la derecha */
+.t-texto { position: absolute; left: 860px; top: 0; bottom: 0; width: 960px;
+  display: flex; flex-direction: column; justify-content: center; gap: 28px; }
+.t-texto h1 { font-size: 76px; line-height: 88px; font-weight: 700; }
+.t-texto p { font-family: "Inter", "Segoe UI", sans-serif; font-size: 40px; line-height: 54px; color: #4A505C; }
+.t-texto b { color: var(--tinta); }
+.t-paso { font-family: "Space Grotesk", sans-serif !important; font-weight: 700; font-size: 30px !important;
+  letter-spacing: .12em; text-transform: uppercase; color: var(--gris) !important; }
+
+/* muestras grandes del cartel de gesto y del relojito, donde va la persona */
+.t-muestra { position: absolute; left: 150px; top: 120px; width: 620px; height: 880px;
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 60px; }
+.m-ok { display: flex; align-items: center; gap: 28px; padding: 28px 56px; border-radius: 999px;
+  background: #fff; box-shadow: 0 24px 60px rgba(0,0,0,.18); }
+.m-ok-mano { font-size: 110px; line-height: 0; }
+.m-ok-tilde { width: 110px; height: 110px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
+  background: #3FB56A; color: #fff; font: 700 70px/1 "Segoe UI", sans-serif; }
+.m-reloj { position: relative; width: 280px; height: 280px; display: flex; align-items: center; justify-content: center; }
+.m-reloj svg { position: absolute; inset: 0; width: 100%; height: 100%; transform: rotate(-90deg); }
+.m-reloj circle.aro { stroke: #fff; }
+.m-reloj span { position: relative; font: 700 110px/1 system-ui, sans-serif; color: #fff; }
+
+.t-reiniciar { font-size: 30px !important; color: var(--gris) !important; }
+
+/* práctica: 5 puntos que se llenan con cada movimiento */
+.t-estado { min-height: 54px; }
+.t-estado.bien { color: #2E9E5B !important; font-weight: 700; }
+.t-estado.mal { color: #D9364A !important; font-weight: 700; }
+.t-puntos { display: flex; gap: 22px; margin-top: 6px; opacity: 0; }
+.t-puntos i { width: 54px; height: 54px; border-radius: 50%; border: 5px solid #C9CDD5; background: #fff; }
+.t-practica[data-mano="der"] .t-puntos i.ok { background: var(--rojo); border-color: var(--rojo); box-shadow: 0 0 18px rgba(255,69,84,.6); }
+.t-practica[data-mano="izq"] .t-puntos i.ok { background: var(--azul); border-color: var(--azul); box-shadow: 0 0 18px rgba(0,195,227,.6); }

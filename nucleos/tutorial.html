@@ -3,16 +3,108 @@
 <head>
 <meta charset="UTF-8">
 <title>Tutorial</title>
+<link rel="stylesheet" href="../libs/fuentes.css">
 <link rel="stylesheet" href="../css/tutorial.css">
 </head>
 <body>
+<!-- Tutorial de los gestos (boceto). Estilo "Switch Sports": una persona gris, vista DE FRENTE
+     (como un espejo: su derecha queda a la izquierda de la pantalla), con la mano derecha roja y la izquierda azul.
+     Las figuras <div class="figura"> las dibuja tutorial.js. -->
 <div id="escenario">
-  <section id="p1" class="slide"><h1>Bienvenido/a a la infografía</h1><p>Primero aprenderemos a navegar por esta.</p></section>
-  <section id="p2" class="slide"><h1>Tutorial</h1><p>Siguiente en esta pantalla termina el tutorial.</p></section>
+
+  <!-- 0. El relojito de las pantallas automáticas (imita al #auto-reloj de puente.js, en grande) -->
+  <section id="t-reloj" class="slide">
+    <div class="t-muestra">
+      <div class="m-reloj">
+        <svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="44" fill="rgba(0,0,0,.55)" stroke="rgba(255,255,255,.25)" stroke-width="8"/>
+          <circle class="aro" cx="50" cy="50" r="44" fill="none" stroke="var(--tinta)" stroke-width="8" stroke-linecap="round" stroke-dasharray="276.5" stroke-dashoffset="0"/></svg>
+        <span>9</span>
+      </div>
+    </div>
+    <div class="t-texto">
+      <h1>¿Ves este relojito?</h1>
+      <p>Cuando lo ves abajo a la derecha, la pantalla <b>avanza sola</b> cuando se termina.</p>
+    </div>
+  </section>
+
+  <!-- 1. Bienvenida -->
+  <section id="t1" class="slide">
+    <div class="figura" id="t1-fig"></div>
+    <div class="t-texto">
+      <h1>¡Bienvenido/a!</h1>
+      <p>Esta infografía se maneja <b>con tus manos</b>.<br>Primero vamos a practicar los movimientos.</p>
+    </div>
+  </section>
+
+  <!-- 2. La mano derecha es la roja -->
+  <section id="t2" class="slide">
+    <div class="figura" id="t2-fig"></div>
+    <div class="t-texto">
+      <p class="t-paso">Paso 1</p>
+      <h1>Tu mano <span class="rojo">derecha</span><br>es la <span class="rojo">roja</span></h1>
+      <p>Con ella vas a <b>avanzar</b>.</p>
+    </div>
+  </section>
+
+  <!-- 3. La mano izquierda es la azul -->
+  <section id="t3" class="slide">
+    <div class="figura" id="t3-fig"></div>
+    <div class="t-texto">
+      <p class="t-paso">Paso 2</p>
+      <h1>Tu mano <span class="azul">izquierda</span><br>es la <span class="azul">azul</span></h1>
+      <p>Con ella vas a <b>volver</b>.</p>
+    </div>
+  </section>
+
+  <!-- 3b. El cartel de gesto detectado (imita al #gesto-ok del contenedor, en grande) -->
+  <section id="t-ok" class="slide">
+    <div class="t-muestra">
+      <div class="m-ok"><span class="m-ok-mano" data-mano="der"></span><span class="m-ok-tilde">✓</span></div>
+      <div class="m-ok"><span class="m-ok-mano" data-mano="izq"></span><span class="m-ok-tilde">✓</span></div>
+    </div>
+    <div class="t-texto">
+      <h1>¿Cómo sé que<br>me entendió?</h1>
+      <p>Cada vez que hacés un gesto, abajo aparece <b>uno de estos carteles</b>, con la mano que usaste.</p>
+      <p>Si lo ves, <b>ya está</b>: el movimiento se detectó y no hace falta repetirlo.</p>
+    </div>
+  </section>
+
+  <!-- 4. Practicar la derecha -->
+  <section id="t4" class="slide t-practica" data-mano="der">
+    <div class="figura" id="t4-fig"></div>
+    <div class="t-texto">
+      <p class="t-paso">Paso 3</p>
+      <h1>Traé la mano <span class="rojo">derecha</span><br>desde el costado hacia el centro</h1>
+      <p class="t-estado">Hacé el movimiento como la persona de la izquierda.</p>
+      <div class="t-puntos"><i></i><i></i><i></i><i></i><i></i></div>
+    </div>
+  </section>
+
+  <!-- 5. Practicar la izquierda -->
+  <section id="t5" class="slide t-practica" data-mano="izq">
+    <div class="figura" id="t5-fig"></div>
+    <div class="t-texto">
+      <p class="t-paso">Paso 4</p>
+      <h1>Ahora la mano <span class="azul">izquierda</span><br>desde el costado hacia el centro</h1>
+      <p class="t-estado">Hacé el movimiento como la persona de la izquierda.</p>
+      <div class="t-puntos"><i></i><i></i><i></i><i></i><i></i></div>
+    </div>
+  </section>
+
+  <!-- 6. Listo -->
+  <section id="t6" class="slide">
+    <div class="figura" id="t6-fig"></div>
+    <div class="t-texto">
+      <h1>¡Listo!</h1>
+      <p><span class="rojo"><b>Derecha</b></span> para avanzar · <span class="azul"><b>izquierda</b></span> para volver.<br>¡Empecemos!</p>
+      <p class="t-reiniciar">¿Querés repetir el tutorial? Usá la mano <span class="azul"><b>izquierda</b></span>.</p>
+    </div>
+  </section>
 </div>
 
 <script src="../libs/gsap.min.js"></script>
 <script src="../js/puente.js"></script>
+<script src="../js/manos.js"></script>
 <script src="../js/tutorial.js"></script>
 </body>
 </html>

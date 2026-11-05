@@ -236,6 +236,11 @@
         if (actual < pantallas.length - 1) mostrar(actual + 1);
         else Infografia.terminar();
       };
+      // Ir a una pantalla por su selector (ej. reiniciar el tutorial con irA("#t1")). Entra como "volviendo".
+      Infografia.irA = function (sel) {
+        if (bloqueado) return;
+        for (var k = 0; k < pantallas.length; k++) if (pantallas[k].el === sel) return mostrar(k, -1);
+      };
 
       Infografia.alAccion(function (accion, datos) {
         if (bloqueado) return;
