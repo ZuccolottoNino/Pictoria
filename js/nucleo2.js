@@ -4,6 +4,19 @@ FondoAero.iniciar("#fondo-aero");
 var bucles = [];   // animaciones en bucle de la pantalla actual
 function pararBucles() { bucles.forEach(function (t) { t.kill(); }); bucles = []; }
 
+/* ---------- Redes antagónicas (dos pantallas con el mismo título) ----------
+   Entre ellas el título queda quieto: sólo se va el resto de la pantalla que sale. */
+var GAN = ["j2-gan", "j2-gan2", "j2-gan3"];
+Infografia.transiciones.ganCambio = function (sale, entra, d, dir) {
+  var resto = Array.prototype.filter.call(sale.children, function (e) { return !e.classList.contains("gan-titulo-caja"); });
+  return gsap.timeline().to(resto, { autoAlpha: 0, x: -60 * dir, duration: 0.4, stagger: 0.05, ease: "power2.in" });
+};
+function transicionGAN(saliente) { return GAN.indexOf(saliente.id) >= 0 ? "ganCambio" : null; }
+function tituloGAN(el, d) {   // si se viene de la otra pantalla de redes antagónicas, el título ya está
+  var otra = GAN.filter(function (id) { var s = document.getElementById(id); return s !== el && !s.hidden; }).length > 0;
+  gsap.set(el.querySelector(".gan-titulo-caja"), otra ? { autoAlpha: 1, x: 0 } : { autoAlpha: 0, x: 80 * d });
+}
+
 /* ---------- Línea de tiempo del Machine Learning (pantallas 2 y 3) ----------
    Las dos pantallas tienen el mismo título, caja, línea y personaje en el mismo lugar.
    Entre ellas no se mueve la pantalla: sólo se van las columnas viejas y entran las nuevas. */
@@ -298,6 +311,128 @@ Infografia.presentacion([
           bucles.push(gsap.to(".j2e-icono", { scale: 1.12, duration: 0.35, ease: "sine.inOut", yoyo: true, repeat: 1,
             stagger: { each: 0.5, repeat: -1, repeatDelay: 1.2 } }));
           bucles.push(gsap.to(".j2e-flecha", { x: 8, duration: 0.6, ease: "sine.inOut", yoyo: true, repeat: -1 }));
+        });
+    },
+    salir: pararBucles
+  },
+
+  /* ============ Redes antagónicas (GANs): analizaste miles de imágenes ============
+     Se dibuja la línea hasta 2014 y los gatos van apareciendo de a uno, en desorden. */
+  {
+    el: "#j2-gan",
+    transicion: transicionGAN,
+    preparar: function (el) {
+      var d = Infografia.direccion;
+      tituloGAN(el, d);
+      gsap.set("#gan-caja", { autoAlpha: 0, x: 80 * d });
+      gsap.set("#gan-linea .ml-linea-barra", { scaleX: 0 });
+      gsap.set("#gan-linea .ml-linea-punta", { autoAlpha: 0, x: -20 });
+      gsap.set("#gan-hito .ml-punto", { scale: 0 });
+      gsap.set("#gan-hito .ml-palo", { scaleY: 0 });
+      gsap.set("#gan-hito .ml-cabeza", { autoAlpha: 0, y: -20 });
+      gsap.set("#gan-galeria", { autoAlpha: 0, y: 30 });
+      gsap.set(".gan-gato", { autoAlpha: 0, scale: 0.4, transformOrigin: "50% 80%" });
+      gsap.set("#gan-globo", { autoAlpha: 0, scale: 0.8, transformOrigin: "50% 100%" });
+      gsap.set("#gan-personaje", { autoAlpha: 0, scale: 0.85, x: -70 * d, transformOrigin: "50% 100%" });
+    },
+    entrar: function () {
+      return gsap.timeline()
+        .to("#gan-titulo-caja", { autoAlpha: 1, x: 0, duration: 0.7, ease: "power3.out" })
+        .to("#gan-caja", { autoAlpha: 1, x: 0, duration: 0.7, ease: "power3.out" }, 0.25)
+        .to("#gan-personaje", { autoAlpha: 1, scale: 1, x: 0, duration: 0.9, ease: "back.out(1.5)" }, "-=0.5")
+        .to("#gan-linea .ml-linea-barra", { scaleX: 1, duration: 1.2, ease: "power1.inOut" }, "-=0.4")
+        .to("#gan-linea .ml-linea-punta", { autoAlpha: 1, x: 0, duration: 0.3 }, "-=0.2")
+        .to("#gan-hito .ml-punto", { scale: 1, duration: 0.4, ease: "back.out(3)" }, "-=1")
+        .to("#gan-hito .ml-palo", { scaleY: 1, duration: 0.25, ease: "power2.out" }, ">-0.1")
+        .to("#gan-hito .ml-cabeza", { autoAlpha: 1, y: 0, duration: 0.45, ease: "back.out(1.8)" }, ">-0.05")
+        .to("#gan-galeria", { autoAlpha: 1, y: 0, duration: 0.5, ease: "power3.out" })
+        // los gatos aparecen en desorden, como si los fuera "analizando" de a uno
+        .to(".gan-gato", { autoAlpha: 1, scale: 1, duration: 0.45, ease: "back.out(2)", stagger: { each: 0.12, from: "random" } })
+        .to("#gan-globo", { autoAlpha: 1, scale: 1, duration: 0.5, ease: "back.out(2)" }, "-=0.8")
+        .add(function () {
+          bucles.push(gsap.to("#gan-personaje", { y: -16, duration: 1.9, ease: "sine.inOut", yoyo: true, repeat: -1 }));
+          bucles.push(gsap.to(".gan-gato", { y: -8, duration: 1.4, ease: "sine.inOut", yoyo: true, repeat: -1,
+            stagger: { each: 0.2, from: "random" } }));
+        });
+    },
+    salir: pararBucles
+  },
+
+  /* ============ Redes antagónicas · estructura interna de una imagen ============
+     Las partes del gato aparecen de a una debajo de su descripción. */
+  {
+    el: "#j2-gan2",
+    transicion: transicionGAN,
+    preparar: function (el) {
+      var d = Infografia.direccion;
+      tituloGAN(el, d);
+      gsap.set("#gan2-caja", { autoAlpha: 0, x: 80 * d });
+      gsap.set(".gan2-cabeza", { autoAlpha: 0, y: -20 });
+      gsap.set("#gan2-galeria", { autoAlpha: 0, y: 30 });
+      gsap.set(".gan2-parte", { autoAlpha: 0, scale: 0.5, transformOrigin: "50% 60%" });
+      gsap.set("#gan2-globo", { autoAlpha: 0, scale: 0.8, transformOrigin: "50% 100%" });
+      gsap.set("#gan2-personaje", { autoAlpha: 0, scale: 0.85, x: -70 * d, transformOrigin: "50% 100%" });
+    },
+    entrar: function () {
+      var tl = gsap.timeline()
+        .to("#gan2-titulo-caja", { autoAlpha: 1, x: 0, duration: 0.7, ease: "power3.out" })
+        .to("#gan2-caja", { autoAlpha: 1, x: 0, duration: 0.7, ease: "power3.out" }, 0.25)
+        .to("#gan2-personaje", { autoAlpha: 1, scale: 1, x: 0, duration: 0.9, ease: "back.out(1.5)" }, 0.35)
+        .to("#gan2-galeria", { autoAlpha: 1, y: 0, duration: 0.5, ease: "power3.out" }, 0.7);
+      // cabeza, torso y cola: primero su descripción y después la parte
+      document.querySelectorAll(".gan2-cabeza").forEach(function (c, i) {
+        tl.to(c, { autoAlpha: 1, y: 0, duration: 0.45, ease: "back.out(1.8)" }, 1 + i * 0.6)
+          .to(document.querySelectorAll(".gan2-parte")[i], { autoAlpha: 1, scale: 1, duration: 0.55, ease: "back.out(2)" }, ">-0.1");
+      });
+      return tl
+        .to("#gan2-globo", { autoAlpha: 1, scale: 1, duration: 0.5, ease: "back.out(2)" }, "-=0.2")
+        .add(function () {
+          bucles.push(gsap.to("#gan2-personaje", { y: -16, duration: 1.9, ease: "sine.inOut", yoyo: true, repeat: -1 }));
+          bucles.push(gsap.to(".gan2-parte", { y: -10, duration: 1.4, ease: "sine.inOut", yoyo: true, repeat: -1, stagger: 0.35 }));
+        });
+    },
+    salir: pararBucles
+  },
+
+  /* ============ Redes antagónicas · ahora podés… ============
+     Izquierda: la cara, el cuerpo y la cola llegan desde lados distintos y se combinan en un gato.
+     Derecha: al gato le falta la cola: sólo está la guía punteada de lo que hay que reconstruir. */
+  {
+    el: "#j2-gan3",
+    transicion: transicionGAN,
+    preparar: function (el) {
+      var d = Infografia.direccion;
+      tituloGAN(el, d);
+      gsap.set("#gan3-caja", { autoAlpha: 0, x: 80 * d });
+      gsap.set(".gan3-cabeza", { autoAlpha: 0, y: -20 });
+      gsap.set("#gan3-galeria", { autoAlpha: 0, y: 30 });
+      gsap.set("#gan3-combina .g3-cara", { autoAlpha: 0, x: -160, y: -60, rotation: -20 });
+      gsap.set("#gan3-combina .g3-cuerpo", { autoAlpha: 0, y: 140 });
+      gsap.set("#gan3-combina .g3-cola", { autoAlpha: 0, x: 160, rotation: 25 });
+      gsap.set("#gan3-reconstruye > *", { autoAlpha: 0 });
+      gsap.set("#gan3-globo", { autoAlpha: 0, scale: 0.8, transformOrigin: "50% 100%" });
+      gsap.set("#gan3-personaje", { autoAlpha: 0, scale: 0.85, x: -70 * d, transformOrigin: "50% 100%" });
+    },
+    entrar: function () {
+      return gsap.timeline()
+        .to("#gan3-titulo-caja", { autoAlpha: 1, x: 0, duration: 0.7, ease: "power3.out" })
+        .to("#gan3-caja", { autoAlpha: 1, x: 0, duration: 0.7, ease: "power3.out" }, 0.25)
+        .to("#gan3-personaje", { autoAlpha: 1, scale: 1, x: 0, duration: 0.9, ease: "back.out(1.5)" }, 0.35)
+        .to("#gan3-globo", { autoAlpha: 1, scale: 1, duration: 0.5, ease: "back.out(2)" }, 0.8)
+        .to("#gan3-galeria", { autoAlpha: 1, y: 0, duration: 0.5, ease: "power3.out" }, 0.7)
+        // combinar patrones: las tres partes se juntan
+        .to(".gan3-cabeza", { autoAlpha: 1, y: 0, duration: 0.45, ease: "back.out(1.8)" }, 1.1)
+        .to("#gan3-combina .g3-cuerpo", { autoAlpha: 1, y: 0, duration: 0.6, ease: "back.out(1.6)" }, 1.4)
+        .to("#gan3-combina .g3-cara", { autoAlpha: 1, x: 0, y: 0, rotation: 0, duration: 0.6, ease: "back.out(1.6)" }, 1.6)
+        .to("#gan3-combina .g3-cola", { autoAlpha: 1, x: 0, rotation: 0, duration: 0.6, ease: "back.out(1.6)" }, 1.8)
+        // reconstruir: aparece el gato sin cola y la guía punteada
+        .to("#gan3-reconstruye .g3-cuerpo, #gan3-reconstruye .g3-cara", { autoAlpha: 1, duration: 0.5 }, 1.6)
+        .to("#gan3-reconstruye .g3-cola-guia", { autoAlpha: 1, duration: 0.5 }, 2.1)
+        .add(function () {
+          bucles.push(gsap.to("#gan3-personaje", { y: -16, duration: 1.9, ease: "sine.inOut", yoyo: true, repeat: -1 }));
+          // la cola que falta queda sólo como guía punteada, que late suave
+          bucles.push(gsap.to("#gan3-reconstruye .g3-cola-guia", { opacity: 0.45, duration: 0.9, ease: "sine.inOut", yoyo: true, repeat: -1 }));
+          bucles.push(gsap.to("#gan3-combina", { y: -8, duration: 1.5, ease: "sine.inOut", yoyo: true, repeat: -1 }));
         });
     },
     salir: pararBucles

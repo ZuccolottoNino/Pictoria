@@ -330,6 +330,63 @@ p  { position: relative; font-size: 38px; color: #e9fdff; margin-top: 18px; text
   font-family: "Space Grotesk", "Segoe UI", sans-serif; font-weight: 700; font-size: 52px; color: #fff; text-align: center; }
 #j22r-veredicto small { display: block; font-size: 26px; font-weight: 400; opacity: .9; }
 
+/* ============ Redes antagónicas (GANs) ============ */
+.gan-titulo-caja { left: 174px; top: 27px; width: 1482px; height: 135px; display: flex; align-items: center; padding: 0 34px; }
+#gan-caja { left: 401px; top: 206px; width: 1395px; height: 811px; }
+#gan-caja.vidrio::before, #gan-galeria.vidrio::before, #gan-globo.vidrio::before { display: none; }
+#gan-linea { position: absolute; left: 52px; top: 87px; width: 1190px; }
+/* el hito cuelga de la línea, con el punto sobre ella */
+#gan-hito { position: absolute; left: 55px; top: 87px; width: 433px; margin-top: -4px; }
+#gan-hito .ml-cabeza { height: 118px; }
+#gan-galeria { left: 36px; top: 310px; width: 1332px; height: 483px; padding: 30px 40px;
+  display: flex; flex-wrap: wrap; align-content: center; justify-content: center; align-items: center; gap: 28px 44px;
+  background: linear-gradient(180deg, rgba(220,250,250,.35), rgba(150,225,225,.25)); }
+.gan-gato { height: 170px; max-width: 200px; object-fit: contain; filter: drop-shadow(0 8px 12px rgba(0,50,60,.18)); }
+#gan-globo { left: 64px; top: 534px; width: 308px; height: 158px; display: flex; align-items: center; padding: 0 22px; border-radius: 26px; }
+#gan-globo p { font-family: "ADLaM Display", "Segoe UI", sans-serif; font-size: 32px; line-height: 44px; white-space: nowrap; color: #fff; text-align: left;
+  text-shadow: 0 2px 8px rgba(0,60,70,.45); }
+#gan-personaje { position: absolute; left: 68px; top: 712px; width: 250px; filter: drop-shadow(0 20px 30px rgba(0,60,80,.3)); }
+
+
+/* ============ Redes antagónicas · estructura interna de una imagen ============ */
+#gan2-caja { left: 458px; top: 335px; width: 1397px; height: 679px; padding: 30px 36px 36px;
+  display: flex; flex-direction: column; gap: 30px; }
+#gan2-caja.vidrio::before, #gan2-galeria.vidrio::before, #gan2-globo.vidrio::before { display: none; }
+/* las cabeceras y las partes del gato comparten columnas: cada parte queda debajo de su texto */
+.gan2-fila { display: grid; grid-template-columns: repeat(3, 1fr); gap: 30px; justify-items: center; align-items: center; }
+.gan2-cabeza { position: relative; width: 410px; height: 118px; padding: 0 22px; flex-direction: row; justify-content: flex-start; }
+.gan2-cabeza p { font-family: "ADLaM Display", "Segoe UI", sans-serif; font-size: 25px; line-height: 34px; color: #fff; text-align: left; }
+#gan2-galeria { position: relative; flex: 1; border-radius: 26px; padding: 30px;
+  background: linear-gradient(180deg, rgba(220,250,250,.35), rgba(150,225,225,.25)); }
+.gan2-parte { max-width: 300px; max-height: 280px; object-fit: contain; filter: drop-shadow(0 10px 16px rgba(0,50,60,.2)); }
+#gan2-globo { left: 18px; top: 533px; width: 412px; height: 156px; display: flex; align-items: center; padding: 0 22px; border-radius: 26px; }
+#gan2-globo p { font-family: "ADLaM Display", "Segoe UI", sans-serif; font-size: 30px; line-height: 42px; color: #fff; text-align: left;
+  white-space: nowrap; text-shadow: 0 2px 8px rgba(0,60,70,.45); }
+#gan2-personaje { position: absolute; left: 30px; top: 700px; width: 270px; filter: drop-shadow(0 20px 30px rgba(0,60,80,.3)); }
+
+
+/* ============ Redes antagónicas · ahora podés… ============ */
+#gan3-caja { left: 391px; top: 215px; width: 1396px; height: 815px; padding: 40px 120px;
+  display: flex; flex-direction: column; justify-content: center; gap: 30px; }
+#gan3-caja.vidrio::before, #gan3-galeria.vidrio::before, #gan3-globo.vidrio::before { display: none; }
+.gan3-fila { display: grid; grid-template-columns: repeat(2, 1fr); gap: 60px; justify-items: center; align-items: center; }
+.gan3-cabeza { width: 440px; height: 140px; }
+.gan3-cabeza p { font-size: 28px; line-height: 38px; }
+#gan3-galeria { position: relative; flex: 1; border-radius: 26px; padding: 30px;
+  background: linear-gradient(180deg, rgba(220,250,250,.35), rgba(150,225,225,.25)); }
+/* gato armado con las partes: cara arriba, cuerpo abajo y cola al costado */
+.g3-gato { position: relative; width: 330px; height: 400px; }
+.g3-gato > * { position: absolute; filter: drop-shadow(0 10px 14px rgba(0,50,60,.18)); }
+.g3-cuerpo { left: 50px; top: 175px; width: 190px; }
+.g3-cara { left: 18px; top: 0; width: 235px; }
+.g3-cola { left: 205px; top: 120px; width: 105px; height: 206px; }
+.g3-cola-guia { filter: none; }
+#gan3-globo { left: 64px; top: 546px; width: 260px; height: 110px; display: flex; align-items: center; padding: 0 26px; border-radius: 26px; }
+#gan3-globo p { font-family: "ADLaM Display", "Segoe UI", sans-serif; font-size: 34px; color: #fff; white-space: nowrap;
+  text-shadow: 0 2px 8px rgba(0,60,70,.45); }
+#gan3-personaje { position: absolute; left: 60px; top: 720px; width: 270px; filter: drop-shadow(0 20px 30px rgba(0,60,80,.3)); }
+
+
 /* ============ Juego 2.2 (peces) y fin con el estilo de la etapa 2 ============ */
 .j22-titulo { font-family: "Audiowide", "Segoe UI", sans-serif; font-weight: 400; font-size: 64px;
   text-shadow: 0 0 18px rgba(255,255,255,.45), 0 4px 12px rgba(0,70,90,.45); }
@@ -367,6 +424,9 @@ p  { position: relative; font-size: 38px; color: #e9fdff; margin-top: 18px; text
   font-family: "ADLaM Display", "Segoe UI", sans-serif; color: #fff; text-shadow: 0 2px 8px rgba(0,60,70,.45); }
 #j22c-texto b { color: #A6E35B; font-weight: 400; }
 /* fin del núcleo */
+#j2f-panel { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 56px; }
+#j2f-panel.vidrio::before { display: none; }
+#j2f-panel #j2f-titulo, #j2f-panel #j2f-memoria { position: static; }
 #j2f-panel #j2f-titulo { font-family: "Audiowide", "Segoe UI", sans-serif; font-weight: 400; font-size: 64px; color: #fff;
   text-shadow: 0 0 18px rgba(255,255,255,.45), 0 4px 12px rgba(0,70,90,.45); }
 #j2f-panel #j2f-memoria { font-family: "ADLaM Display", "Segoe UI", sans-serif; font-weight: 400; color: #fff; text-shadow: 0 2px 8px rgba(0,60,70,.45); }
