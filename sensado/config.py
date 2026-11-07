@@ -63,3 +63,12 @@ MENSAJE_ADELANTE = 'siguiente'
 # (Estos valores se leen DESPUÉS de aplicar INVERTIR_X.)
 DIR_MENSAJE_ATRAS = +1        # mano izquierda
 DIR_MENSAJE_ADELANTE = -1     # mano derecha
+
+# ---------------------------------------------------------------------------
+# Cara del visitante (caraUsuario) — cara.py
+# ---------------------------------------------------------------------------
+CARA = True                   # False = no detecta caras (sólo gestos)
+CARA_INTERVALO = 0.25         # cada cuánto se analiza la cara (s); más bajo = más CPU
+CARA_OLVIDO = 1.5             # s sin ver la cara para avisar 'cara:nadie'
+CARA_ALTURA_PELO = 0.12       # dónde se toma el color de pelo: fracción del alto de la cara arriba de la frente
+CARA_UMBRAL_PELADO = 45       # si el "pelo" se parece a la piel menos que esto, se toma como pelado

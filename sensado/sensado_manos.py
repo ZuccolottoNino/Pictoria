@@ -99,6 +99,8 @@ def main():
     from gestos import GESTOS
     from manos import Rastreador, dibujar
     from servidor_ws import ServidorWebSocket
+    if config.CARA:
+        from cara import DetectorCara, dibujar_cara
 
     print('=' * 68)
     print('  Sensado de manos  ->  ws://%s:%s' % (config.WS_HOST, config.WS_PORT))
@@ -117,12 +119,14 @@ def main():
 
     cap = abrir_camara(config.CAMARA)
     rastreador = Rastreador()
+    detector_cara = DetectorCara() if config.CARA else None   # caraUsuario
 
     historial = []          # últimas líneas de log para la ventana
     fps = 0.0
     t_fps = time.time()
     frames = 0
     ultimo_status = 0.0
+    cara_vista = False      # para avisar en el log cuando llega o se va alguien
 
     def log(txt):
         historial.append(time.strftime('%H:%M:%S') + '  ' + txt)
@@ -151,6 +155,17 @@ def main():
                     log('  -> %-12s %s   (%s)' % (g.nombre, m, g.lado
                                                    if hasattr(g, 'lado') else 'ambas'))
 
+            # --- cara del visitante (caraUsuario) -------------------------------
+            if detector_cara:
+                m = detector_cara.procesar(frame, ahora)
+                if m:
+                    srv.send(m)
+                    # en el log sólo cuando llega o se va alguien (los rasgos se mandan seguido)
+                    hay = m != 'cara:nadie'
+                    if hay != cara_vista:
+                        cara_vista = hay
+                        log('  -> cara        %s' % ('llegó alguien' if hay else 'se fue'))
+
             # --- fps -----------------------------------------------------------
             frames += 1
             if ahora - t_fps >= 1.0:
@@ -161,6 +176,8 @@ def main():
             # --- dibujar -------------------------------------------------------
             if mostrar:
                 dibujar(frame, manos, config.MOSTRAR_ESQUELETO)
+                if detector_cara:
+                    dibujar_cara(frame, detector_cara)
                 _overlay(frame, manos, srv, fps, historial)
                 cv2.imshow('sensado de manos (ESC para salir)', frame)
                 if cv2.waitKey(1) & 0xFF in (27, ord('q')):
@@ -184,6 +201,8 @@ def main():
         except Exception:
             pass
         rastreador.cerrar()
+        if detector_cara:
+            detector_cara.cerrar()
         srv.stop()
         if mostrar:
             try:

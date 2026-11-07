@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Prueba caraUsuario</title>
+<link rel="stylesheet" href="../libs/fuentes.css">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { min-height: 100vh; display: flex; align-items: center; justify-content: center; gap: 48px; padding: 32px;
+    background: radial-gradient(ellipse at 40% 40%, #2fb7b0, #0b5e63); font-family: "Inter", "Segoe UI", sans-serif; color: #fff; }
+  #lienzo { width: 560px; height: 560px; border-radius: 32px; background: rgba(255,255,255,.12); border: 2px solid rgba(255,255,255,.6); }
+  #controles { display: flex; flex-direction: column; gap: 22px; max-width: 420px; }
+  h1 { font-family: "Space Grotesk", sans-serif; font-size: 34px; }
+  h2 { font-size: 16px; font-weight: 600; opacity: .8; margin-bottom: 8px; }
+  .fila { display: flex; flex-wrap: wrap; gap: 8px; }
+  button { font: inherit; font-size: 15px; padding: 8px 14px; border-radius: 999px; border: 2px solid rgba(255,255,255,.7);
+    background: rgba(255,255,255,.15); color: #fff; cursor: pointer; }
+  button.elegido { background: #fff; color: #0b5e63; }
+  .muestra { width: 40px; height: 40px; padding: 0; }
+  .muestra.elegido { outline: 4px solid #fff; outline-offset: 2px; }
+  p.nota { font-size: 14px; opacity: .75; line-height: 1.4; }
+  #detectado { opacity: 1; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+  #detectado i { display: inline-block; width: 22px; height: 22px; border-radius: 50%; border: 2px solid #fff; vertical-align: middle; }
+  #lienzo { transition: opacity .4s, transform .4s; }
+  #lienzo.sin-nadie { opacity: .35; transform: scale(.96); }
+</style>
+</head>
+<body>
+<!-- Prueba de caraUsuario: arma el personaje del visitante apilando las piezas de assets/carausuario.
+     Las piezas tienen lienzos de distinto tamaño, así que cada una se ubica sobre el cuerpo con PIEZAS (abajo).
+     Las partes blancas (piel, pelo) se tiñen con el color elegido; las líneas negras quedan negras. -->
+<canvas id="lienzo" width="1100" height="1100"></canvas>
+<div id="controles">
+  <h1>caraUsuario · prueba</h1>
+  <div><h2>Pelo</h2><div class="fila" id="c-pelo"></div></div>
+  <div><h2>Color de pelo</h2><div class="fila" id="c-colorPelo"></div></div>
+  <div><h2>Color de piel</h2><div class="fila" id="c-piel"></div></div>
+  <div><h2>Cejas</h2><div class="fila" id="c-cejas"></div></div>
+  <div><h2>Boca</h2><div class="fila" id="c-boca"></div></div>
+  <div><h2>Ojos (achinados ↔ redondos)</h2>
+    <input id="c-apertura" type="range" min="35" max="100" value="100" style="width:100%"></div>
+  <div><h2>Cámara</h2>
+    <p id="estado-cam" class="nota">⚪ buscando el sensado (python sensado_manos.py)…</p>
+    <p id="detectado" class="nota"></p>
+  </div>
+  <p class="nota">Con la cámara, la piel, el color de pelo y si sos pelado se detectan solos (se elige el tono más
+    parecido de la paleta). El largo del pelo todavía se elige a mano.</p>
+</div>
+
+<script>
+var RUTA = "../assets/carausuario/";
+/* Cada pieza: recorte útil del png (x, y, ancho, alto, medido en el archivo) y dónde va su centro sobre el cuerpo
+   (coordenadas del cuerpo, 2048x2048), con qué ancho. */
+var PIEZAS = {
+  cuerpo: { src: "cuerpobase.png", recorte: [511, 319, 1026, 1584], centro: [1024, 1111], ancho: 1026 },
+  ojos:   { src: "ojos1.png",      recorte: [163, 394, 2074, 963],  centro: [1000, 790],  ancho: 520 },
+  cejas:  { src: "cejas1.png",     recorte: [183, 705, 2033, 321],  centro: [1000, 610],  ancho: 500 },
+  pelo1:  { src: "pelo1.png",      recorte: [576, 191, 1249, 937],  centro: [1000, 520],  ancho: 1120 },
+  pelo10: { src: "pelo10.png",     recorte: [462, 65, 1487, 1647],  centro: [990, 880],   ancho: 1330 }
+};
+var OPCIONES = {
+  pelo: ["pelo1", "pelo10", "ninguno"],
+  colorPelo: ["#2b1d14", "#6b4226", "#c28a4a", "#e8c76a", "#9a9a9a", "#b8452d"],
+  piel: ["#ffe3cf", "#f5c9a5", "#d9a074", "#a8704a", "#6e4630", "#9fe3c9"],
+  cejas: ["si", "no"],
+  boca: ["neutra", "sonrisa"]
+};
+var estado = { pelo: "pelo1", colorPelo: "#2b1d14", piel: "#f5c9a5", cejas: "si", boca: "neutra", apertura: 1 };
+
+var lienzo = document.getElementById("lienzo"), ctx = lienzo.getContext("2d");
+var imgs = {}, faltan = Object.keys(PIEZAS).length;
+Object.keys(PIEZAS).forEach(function (k) {
+  var im = new Image();
+  im.onload = function () { if (--faltan === 0) dibujar(); };
+  im.src = RUTA + PIEZAS[k].src;
+  imgs[k] = im;
+});
+
+// Pinta una pieza teñida: lo blanco toma el color, lo negro queda negro (multiplicar) y se respeta la transparencia
+var aux = document.createElement("canvas");
+function pieza(k, color) {
+  var p = PIEZAS[k], r = p.recorte, esc = p.ancho / r[2], w = p.ancho, h = r[3] * esc;
+  // el cuerpo mide 2048: lo llevamos al lienzo de 1100 dejando aire alrededor
+  var E = 1100 / 2048, x = (p.centro[0] - w / 2) * E, y = (p.centro[1] - h / 2) * E;
+  if (!color) { ctx.drawImage(imgs[k], r[0], r[1], r[2], r[3], x, y, w * E, h * E); return; }
+  aux.width = Math.ceil(w * E); aux.height = Math.ceil(h * E);
+  var a = aux.getContext("2d");
+  a.drawImage(imgs[k], r[0], r[1], r[2], r[3], 0, 0, aux.width, aux.height);
+  a.globalCompositeOperation = "multiply";
+  a.fillStyle = color; a.fillRect(0, 0, aux.width, aux.height);
+  a.globalCompositeOperation = "destination-in";
+  a.drawImage(imgs[k], r[0], r[1], r[2], r[3], 0, 0, aux.width, aux.height);
+  a.globalCompositeOperation = "source-over";
+  ctx.drawImage(aux, x, y);
+}
+
+/* Boca dibujada con código (todavía no hay pieza de boca): neutra = curvita, sonrisa = boca abierta.
+   Centro sobre el cuerpo (coordenadas 2048) debajo de los ojos. */
+var BOCA = { centro: [1000, 975], ancho: 150 };
+function boca() {
+  var E = 1100 / 2048, cx = BOCA.centro[0] * E, cy = BOCA.centro[1] * E, w = BOCA.ancho * E;
+  ctx.save();
+  ctx.lineWidth = 7; ctx.lineCap = "round"; ctx.lineJoin = "round"; ctx.strokeStyle = "#000";
+  if (estado.boca === "sonrisa") {
+    // boca abierta: arriba recta, abajo redondeada, con lengua
+    ctx.beginPath();
+    ctx.moveTo(cx - w / 2, cy - w * 0.12);
+    ctx.quadraticCurveTo(cx, cy - w * 0.2, cx + w / 2, cy - w * 0.12);
+    ctx.quadraticCurveTo(cx + w * 0.45, cy + w * 0.6, cx, cy + w * 0.62);
+    ctx.quadraticCurveTo(cx - w * 0.45, cy + w * 0.6, cx - w / 2, cy - w * 0.12);
+    ctx.closePath();
+    ctx.fillStyle = "#5a1a22"; ctx.fill();
+    ctx.save(); ctx.clip();
+    ctx.beginPath(); ctx.ellipse(cx, cy + w * 0.55, w * 0.3, w * 0.22, 0, 0, Math.PI * 2);
+    ctx.fillStyle = "#e86a7a"; ctx.fill();
+    ctx.restore();
+    ctx.stroke();
+  } else {
+    ctx.beginPath();
+    ctx.moveTo(cx - w * 0.32, cy);
+    ctx.quadraticCurveTo(cx, cy + w * 0.22, cx + w * 0.32, cy);
+    ctx.stroke();
+  }
+  ctx.restore();
+}
+
+/* Párpados: tapan parte de cada ojo redondo con el color de la piel para achinarlo.
+   apertura 1 = ojos redondos (sin párpados) … 0.35 = bien achinados.
+   Centro y radio de cada ojo sobre el cuerpo (coordenadas 2048), medidos en ojos1.png. */
+var OJOS = [{ x: 861, y: 790 }, { x: 1139, y: 790 }], RADIO_OJO = 124;
+function parpados() {
+  var a = estado.apertura;
+  if (a >= 0.99) return;
+  var E = 1100 / 2048;
+  OJOS.forEach(function (o) {
+    var cx = o.x * E, cy = o.y * E, r = RADIO_OJO * E;
+    // altura del párpado de arriba y del de abajo (el de arriba baja más)
+    var arriba = cy - r + (1 - a) * r * 1.3, abajo = cy + r - (1 - a) * r * 0.5;
+    ctx.save();
+    ctx.beginPath(); ctx.arc(cx, cy, r + 3, 0, Math.PI * 2); ctx.clip();
+    ctx.fillStyle = estado.piel;
+    // párpado de arriba: borde un poco curvo hacia abajo en el medio
+    ctx.beginPath();
+    ctx.moveTo(cx - r - 4, cy - r - 4); ctx.lineTo(cx + r + 4, cy - r - 4);
+    ctx.lineTo(cx + r + 4, arriba); ctx.quadraticCurveTo(cx, arriba + r * 0.18, cx - r - 4, arriba);
+    ctx.closePath(); ctx.fill();
+    // párpado de abajo: borde curvo hacia arriba
+    ctx.beginPath();
+    ctx.moveTo(cx - r - 4, cy + r + 4); ctx.lineTo(cx + r + 4, cy + r + 4);
+    ctx.lineTo(cx + r + 4, abajo); ctx.quadraticCurveTo(cx, abajo - r * 0.12, cx - r - 4, abajo);
+    ctx.closePath(); ctx.fill();
+    // líneas de los párpados (la de arriba más gruesa, como pestañas)
+    ctx.strokeStyle = "#000"; ctx.lineCap = "round";
+    ctx.lineWidth = 6;
+    ctx.beginPath(); ctx.moveTo(cx - r - 4, arriba); ctx.quadraticCurveTo(cx, arriba + r * 0.18, cx + r + 4, arriba); ctx.stroke();
+    ctx.lineWidth = 3;
+    ctx.beginPath(); ctx.moveTo(cx - r - 4, abajo); ctx.quadraticCurveTo(cx, abajo - r * 0.12, cx + r + 4, abajo); ctx.stroke();
+    ctx.restore();
+  });
+}
+
+function dibujar() {
+  ctx.clearRect(0, 0, lienzo.width, lienzo.height);
+  pieza("cuerpo", estado.piel);
+  pieza("ojos");
+  parpados();
+  boca();
+  if (estado.cejas === "si") pieza("cejas", estado.colorPelo === "#e8c76a" ? "#8a6a3a" : null);
+  if (estado.pelo !== "ninguno") pieza(estado.pelo, estado.colorPelo);
+}
+
+// ---------- Cámara: rasgos que manda sensado/cara.py por el WebSocket ----------
+// Mensajes: cara:{"piel":"#..","pelo":"#..","pelado":false,"sonrisa":0.1,"x":0.5}  y  cara:nadie
+function rgb(h) { return [1, 3, 5].map(function (i) { return parseInt(h.substr(i, 2), 16); }); }
+function masParecido(color, paleta) {   // el tono de la paleta más cercano al color detectado
+  var c = rgb(color), mejor = paleta[0], dMin = Infinity;
+  paleta.forEach(function (p) {
+    var q = rgb(p), d = Math.pow(c[0] - q[0], 2) + Math.pow(c[1] - q[1], 2) + Math.pow(c[2] - q[2], 2);
+    if (d < dMin) { dMin = d; mejor = p; }
+  });
+  return mejor;
+}
+function marcar(clave) {
+  document.querySelectorAll("#c-" + clave + " button").forEach(function (b, i) {
+    b.classList.toggle("elegido", OPCIONES[clave][i] === estado[clave]);
+  });
+}
+var largoElegido = estado.pelo;
+var OJOS_ACHINADOS = 0.18, OJOS_REDONDOS = 0.30;   // calibrar con lo que muestra la ventana de la cámara   // el largo lo elige la persona; la cámara sólo dice si es pelado
+function recibirCara(datos) {
+  var cam = document.getElementById("detectado");
+  if (datos === "nadie") {
+    lienzo.classList.add("sin-nadie");
+    cam.textContent = "Nadie frente a la cámara. Sentate para que te vea.";
+    return;
+  }
+  var r = JSON.parse(datos);
+  lienzo.classList.remove("sin-nadie");
+  estado.piel = masParecido(r.piel, OPCIONES.piel.slice(0, 5));   // sin el verde de fantasía
+  estado.colorPelo = masParecido(r.pelo, OPCIONES.colorPelo);
+  estado.pelo = r.pelado ? "ninguno" : largoElegido;
+  estado.boca = r.sonrisa > 0.4 ? "sonrisa" : "neutra";
+  // ojos: alto/ancho medido (0.18 achinados … 0.30 redondos) → apertura del dibujo (0.35 … 1)
+  if (typeof r.ojos === "number") {
+    var t = Math.max(0, Math.min(1, (r.ojos - OJOS_ACHINADOS) / (OJOS_REDONDOS - OJOS_ACHINADOS)));
+    estado.apertura = 0.35 + t * 0.65;
+    document.getElementById("c-apertura").value = Math.round(estado.apertura * 100);
+  }
+  ["piel", "colorPelo", "pelo", "boca"].forEach(marcar);
+  cam.innerHTML = "Detectado: piel <i style='background:" + r.piel + "'></i> pelo <i style='background:" + r.pelo + "'></i>" +
+    (r.pelado ? " · pelado" : "") + (r.sonrisa > 0.4 ? " · ¡sonriendo!" : "") +
+    (typeof r.ojos === "number" ? " · ojos " + r.ojos.toFixed(2) : "");
+  dibujar();
+}
+(function conectar() {
+  var est = document.getElementById("estado-cam"), ws;
+  try { ws = new WebSocket("ws://localhost:9980"); } catch (e) { setTimeout(conectar, 2000); return; }
+  ws.onopen = function () { est.textContent = "🟢 cámara conectada"; };
+  ws.onmessage = function (e) {
+    if (typeof e.data === "string" && e.data.indexOf("cara:") === 0) recibirCara(e.data.slice(5));
+  };
+  ws.onclose = function () { est.textContent = "🔴 sin cámara (¿corre python sensado_manos.py?)"; setTimeout(conectar, 2000); };
+})();
+
+// controles
+document.getElementById("c-apertura").addEventListener("input", function (e) {
+  estado.apertura = e.target.value / 100; dibujar();
+});
+Object.keys(OPCIONES).forEach(function (clave) {
+  var fila = document.getElementById("c-" + clave);
+  OPCIONES[clave].forEach(function (v) {
+    var b = document.createElement("button");
+    if (v.charAt(0) === "#") { b.className = "muestra"; b.style.background = v; }
+    else b.textContent = { ninguno: "Pelado", si: "Con", no: "Sin", pelo1: "Corto", pelo10: "Largo", neutra: "Neutra", sonrisa: "Sonriendo" }[v];
+    b.addEventListener("click", function () {
+      estado[clave] = v;
+      if (clave === "pelo" && v !== "ninguno") largoElegido = v;
+      fila.querySelectorAll("button").forEach(function (o) { o.classList.toggle("elegido", o === b); });
+      dibujar();
+    });
+    if (estado[clave] === v) b.classList.add("elegido");
+    fila.appendChild(b);
+  });
+});
+</script>
+</body>
+</html>
