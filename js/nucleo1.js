@@ -3,82 +3,13 @@ Infografia.escalar("#escenario", 1920, 1080);
 var bucles = [];
 function pararBucles() { bucles.forEach(function (b) { b.kill(); }); bucles = []; }
 
-/* ============================================================
-   RECORDATORIO DEL GESTO DE AVANZAR (solo en el núcleo 1)
-   Para seguir enseñando el gesto después del tutorial:
-   - en las primeras pantallas (hasta la mitad del núcleo) aparece cuando terminan las animaciones de entrada;
-   - en los juegos, en vez del de avanzar aparece "Dibujá sobre la tableta" (y se va al apoyar el lápiz),
-     y se apaga la burbuja de "gesto detectado" del contenedor;
-   - en el resto, aparece solo si la persona pasa un rato sin avanzar.
-   No aparece en las pantallas que ya tienen sus propias indicaciones (inicio, juegos, memoria DOS).
-   ============================================================ */
+/* Recordatorio del gesto abajo a la derecha (js/pista.js): qué pantallas lo muestran y cómo */
 var PISTA = {
   enseñar: ["#p3", "#p4", "#p5"],                      // primeras pantallas manuales: aparece enseguida
   nunca: ["#p1", "#p15",                               // ya indican qué hacer por su cuenta
           "#p2", "#p6", "#p9", "#p11", "#p12", "#p13", "#p14"],   // pasan solas (tienen su relojito)
-  dibujar: ["#p7", "#p8", "#p10"],                     // juegos: cartel de "Dibujá" (sin burbuja de gesto)
-  demoraEnseñar: 0.4,                                  // segundos después de que terminan las animaciones de entrada
-  inactividad: 20                                      // en el resto: segundos sin avanzar
+  dibujar: ["#p7", "#p8", "#p10"]                      // juegos: cartel de "Dibujá" (sin burbuja de gesto)
 };
-var pistaAvance = (function () {
-  var el = document.createElement("div"), espera = null, latido = null, modo = "";
-  // lápiz pixelado (el mismo del cursor de los juegos)
-  var LAPIZ = '<svg viewBox="0 0 16 16" shape-rendering="crispEdges" style="width:1.6em;height:1.6em;vertical-align:middle">' +
-    '<path fill="#fff" d="M11 0H13V1H14V2H15V3H16V5H15V6H14V7H13V8H12V9H11V10H10V11H9V12H8V13H7V14H5V15H3V16H0V13H1V11H2V9H3V8H4V7H5V6H6V5H7V4H8V3H9V2H10V1H11Z"/>' +
-    '<path fill="#c6ff34" d="M11 1H13V2H14V3H15V5H14V6H13V7H12V8H11V9H10V10H9V11H8V12H7V13H6V12H5V11H4V10H3V9H4V8H5V7H6V6H7V5H8V4H9V3H10V2H11Z"/>' +
-    '<path fill="#8a38f5" d="M11 1H13V2H14V3H15V5H14V6H13V5H12V4H11V3H10V2H11Z"/></svg>';
-  var CONTENIDO = {
-    avanzar: '<span class="pista-mano">' + Manos.svg("der") + '</span> Traé la mano derecha hacia el centro para avanzar',
-    dibujar: '<span class="pista-mano">' + LAPIZ + '</span> Dibujá sobre la tableta con el lápiz'
-  };
-  el.id = "pista-avance";
-  document.getElementById("escenario").appendChild(el);
-  gsap.set(el, { autoAlpha: 0 });
-  function mostrar() {
-    gsap.fromTo(el, { autoAlpha: 0, y: 30, scale: 0.85 }, { autoAlpha: 1, y: 0, scale: 1, duration: 0.5, ease: "back.out(2.2)" });
-    // avanzar: la mano "arrastra" hacia el centro; dibujar: el lápiz hace un garabato
-    latido = modo === "dibujar"
-      ? gsap.fromTo(el.querySelector(".pista-mano"), { x: 0, y: 0 }, { keyframes: [{ x: 6, y: -4 }, { x: -4, y: 3 }, { x: 0, y: 0 }], duration: 0.8, repeat: -1, repeatDelay: 0.3 })
-      : gsap.fromTo(el.querySelector(".pista-mano"), { x: 0 }, { x: -14, duration: 0.45, ease: "power2.inOut", yoyo: true, repeat: -1, repeatDelay: 0.4 });
-  }
-  // en los juegos, el cartel de "Dibujá" se va cuando la persona apoya el lápiz
-  document.getElementById("escenario").addEventListener("pointerdown", function () {
-    if (modo === "dibujar") pistaAvance.ocultar();
-  });
-  return {
-    programar: function (selector) {
-      this.ocultar();
-      if (PISTA.nunca.indexOf(selector) !== -1) return;
-      modo = PISTA.dibujar.indexOf(selector) !== -1 ? "dibujar" : "avanzar";
-      el.innerHTML = CONTENIDO[modo];
-      var seg = modo === "dibujar" || PISTA.enseñar.indexOf(selector) !== -1 ? PISTA.demoraEnseñar : PISTA.inactividad;
-      espera = gsap.delayedCall(seg, mostrar);
-    },
-    ocultar: function () {
-      if (espera) { espera.kill(); espera = null; }
-      if (latido) { latido.kill(); latido = null; }
-      gsap.to(el, { autoAlpha: 0, duration: 0.2 });
-    }
-  };
-})();
-// envuelve cada pantalla: al terminar su entrada se programa el recordatorio; al salir, se oculta
-function conPistaDeAvance(pantallas) {
-  return pantallas.map(function (p) {
-    var entrar = p.entrar, salir = p.salir;
-    p.entrar = function (el) {
-      Infografia.confirmarGestos(PISTA.dibujar.indexOf(p.el) === -1);
-      var r = entrar ? entrar(el) : null;
-      // se programa cuando terminan las animaciones de entrada de la pantalla
-      if (r && typeof r.eventCallback === "function") {
-        var fin = r.eventCallback("onComplete");
-        r.eventCallback("onComplete", function () { if (fin) fin(); pistaAvance.programar(p.el); });
-      } else pistaAvance.programar(p.el);
-      return r;
-    };
-    p.salir = function (el) { pistaAvance.ocultar(); if (salir) return salir(el); };
-    return p;
-  });
-}
 
 /* Parte el texto de un elemento en <span class="letra"> (una por carácter) para escribirlo
    letra por letra. Respeta los <span> de color y los <br>. Solo lo hace una vez. */
@@ -396,7 +327,7 @@ function comparacion(cfg) {
 }
 
 function iniciar() {
-  Infografia.presentacion(conPistaDeAvance([
+  Infografia.presentacion(Pista.envolver([
 
     /* ============ Pantalla 1: Pictoria cargando ============ */
     {
@@ -1010,8 +941,8 @@ function iniciar() {
       salir: pararBucles
     }
 
-  ]), { transicion: "deslizar", duracion: 0.8,
+  ], PISTA), { transicion: "deslizar", duracion: 0.8,
     // pantallas que pasan solas (segundos de lectura después de que termina la entrada)
-    auto: { "#p1": 12, "#p2": 7, "#p6": 7, "#p9": 6, "#p11": 6, "#p12": 9, "#p13": 6, "#p14": 6 } });
+    auto: { "#p1": 13, "#p2": 13, "#p6": 13, "#p9": 13, "#p11": 13, "#p12": 13, "#p13": 13, "#p14": 13 } });   // las de información: mínimo 13 s
 }
 (document.fonts && document.fonts.ready ? document.fonts.ready : Promise.resolve()).then(iniciar);

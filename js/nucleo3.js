@@ -174,7 +174,17 @@ function iniciar() {
     el.querySelectorAll(".n3d-paso").forEach(function (p, i) { p.classList.toggle("activo", i === el._activo); });
   }
 
-  Infografia.presentacion([
+  /* Recordatorio del gesto abajo a la derecha (js/pista.js). Las que pasan solas no lo muestran. */
+  var PISTA = {
+    enseñar: ["#n3-comparacion", "#n3-agua"],         // primeras pantallas manuales: aparece enseguida
+    nunca: ["#n3-encuesta"],                          // tiene su propio tutorial (votar con las manos)
+    dibujar: ["#d1", "#d2", "#d3"]                    // juego de difusión: cartel de "Dibujá"
+  };
+  // las de información: mínimo 13 s; las que sólo dan paso al juego o lo cierran, más cortas
+  var AUTO3 = { "#n3-intro": 13, "#n3-modelos": 13, "#n3-cifras": 13, "#n3-usos": 13, "#n3-evolucion": 13, "#p4": 13,
+                "#n3-dif1": 13, "#n3-dif2": 13, "#n3-dif3": 13, "#n3-practica": 4, "#n3-cierre": 5, "#n3-resultados": 13, "#n3-final": 13 };
+
+  Infografia.presentacion(Pista.envolver([
 
     /* ============ Intro: felicidades, da paso a los modelos ============ */
     {
@@ -1192,10 +1202,9 @@ function iniciar() {
       salir: detener
     }
 
-  ], { transicion: "deslizar", duracion: 0.8,
+  ], Object.assign({ auto: AUTO3 }, PISTA)), { transicion: "deslizar", duracion: 0.8,
     // pantallas que pasan solas (segundos de lectura después de que termina la entrada)
-    auto: { "#n3-intro": 7, "#n3-modelos": 6, "#n3-cifras": 6, "#n3-usos": 8, "#n3-evolucion": 6, "#p4": 7,
-            "#n3-dif1": 5, "#n3-dif2": 5, "#n3-dif3": 6, "#n3-practica": 4, "#n3-cierre": 5, "#n3-resultados": 10, "#n3-final": 10 } });
+    auto: AUTO3 });
 }
 
 // Esperamos a que carguen las tipografías para que SplitText mida bien

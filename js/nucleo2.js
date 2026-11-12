@@ -84,7 +84,15 @@ function entrarML(el) {
   });
 }
 
-Infografia.presentacion([
+/* Recordatorio del gesto abajo a la derecha (js/pista.js). Las que pasan solas no lo muestran. */
+var PISTA = {
+  enseñar: ["#p2", "#p3"],                    // primeras pantallas manuales: aparece enseguida
+  nunca: ["#j2-clasificar", "#j2-fin"],       // tienen sus propias indicaciones (el juego, insertar la memoria)
+  dibujar: ["#j22-dibuja"]                    // juego de los peces: cartel de "Dibujá"
+};
+var AUTO2 = { "#p1": 13, "#j2-intro": 6, "#j22-observa": 6, "#j22-reconoce": 5 };   // información: mínimo 13 s; las del juego, más cortas
+
+Infografia.presentacion(Pista.envolver([
   /* ============ Pantalla 1: bienvenida a la etapa 2 (Machine Learning) ============ */
   {
     el: "#p1",
@@ -469,6 +477,6 @@ Infografia.presentacion([
     },
     salir: pararBucles
   }
-], { transicion: "deslizar", duracion: 0.8,
+], Object.assign({ auto: AUTO2 }, PISTA)), { transicion: "deslizar", duracion: 0.8,
   // pantallas que pasan solas (segundos de lectura después de que termina la entrada)
-  auto: { "#p1": 12, "#j2-intro": 6, "#j22-observa": 6, "#j22-reconoce": 5 } });
+  auto: AUTO2 });
