@@ -540,6 +540,16 @@ html, body { height: 100%; overflow: hidden; background: #000; cursor: none; }
 .cuenta-auto { flex-basis: 100%; margin: 6px 0 0; text-align: center; font-size: 22px; color: #1b1b1b; }
 #p1-aviso .mano-icono, #p7-cartel .mano-icono { font-size: 1em; margin-right: 8px; }
 
+/* ============ Núcleo 1 · antes del juego: ahora te toca a vos ============ */
+#n1-toca { background: #0a0a0a; }
+#n1t-titulo { position: absolute; left: 0; top: 200px; width: 1920px; text-align: center;
+  font-size: 72px; line-height: 80px; font-weight: normal; color: #fff; }
+.n1t-linea { display: inline-block; }
+#n1t-caja { position: absolute; left: 254px; top: 400px; width: 1412px; height: 360px; border: 10px solid #fff; background: #0a0a0a; }
+#n1t-profe { position: absolute; left: 18px; top: 132px; width: 210px; image-rendering: pixelated; }
+#n1t-placa { position: absolute; left: 0; bottom: 0; width: 230px; height: 56px; background: #fff; }
+#n1t-dialogo { position: absolute; left: 330px; top: 60px; font-size: 40px; line-height: 76px; color: #fff; }
+
 /* Recordatorio del gesto de avanzar (abajo a la derecha, con la mano derecha roja) */
 #pista-avance { position: absolute; right: 34px; bottom: 28px; z-index: 50; display: flex; align-items: center; gap: 14px;
   padding: 14px 24px; background: #000; border: 5px solid #fff; color: #fff;
