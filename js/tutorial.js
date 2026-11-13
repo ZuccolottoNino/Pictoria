@@ -169,6 +169,26 @@ function practica(id, lado) {
 
 /* ---------- Pantallas ---------- */
 Infografia.presentacion([
+  // Inicio: los personajes de los núcleos "viven" hasta que alguien hace el gesto (provisorio hasta la animación)
+  { el: "#t-inicio",
+    preparar: function () {
+      gsap.set(".ti-pj", { autoAlpha: 0, y: 60 });
+      gsap.set("#ti-texto > *, #ti-empezar", { autoAlpha: 0, y: 20 });
+    },
+    entrar: function () {
+      var pj = document.querySelectorAll(".ti-pj");
+      bucles.push(gsap.to(pj[0], { rotation: -4, duration: 1.2, ease: "sine.inOut", yoyo: true, repeat: -1, transformOrigin: "50% 100%" }));
+      bucles.push(gsap.to(pj[1], { y: -24, duration: 0.9, ease: "sine.inOut", yoyo: true, repeat: -1, delay: 1 }));
+      bucles.push(gsap.to(pj[2], { y: -14, rotation: 3, duration: 1.6, ease: "sine.inOut", yoyo: true, repeat: -1, transformOrigin: "50% 100%", delay: 1 }));
+      bucles.push(gsap.to("#ti-empezar .mano-icono", { x: -14, duration: 0.45, ease: "power2.inOut", yoyo: true, repeat: -1, repeatDelay: 0.4, delay: 1.6 }));
+      return gsap.timeline()
+        .to("#ti-texto > *", { autoAlpha: 1, y: 0, duration: 0.6, stagger: 0.15, ease: "back.out(1.6)" })
+        .to(pj, { autoAlpha: 1, y: 0, duration: 0.7, stagger: 0.15, ease: "back.out(1.6)" }, "-=0.3")
+        .to("#ti-empezar", { autoAlpha: 1, y: 0, duration: 0.5 });
+    },
+    // en el inicio no se puede volver para atrás
+    alAnterior: function () { return true; },
+    salir: pararBucles },
   // el relojito grande dura lo mismo que el de verdad y arranca a la vez (cuando termina la entrada)
   { el: "#t-reloj",
     preparar: function (e) {

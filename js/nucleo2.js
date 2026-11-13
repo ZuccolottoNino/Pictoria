@@ -87,6 +87,28 @@ function prepararML(el, d) {
     gsap.set(q(".ml-personaje"), { autoAlpha: 0, scale: 0.85, x: -70 * d, y: 0, transformOrigin: "50% 100%" });
   }
 }
+// las fechas de la línea (punto → palito → cabecera) se ven todas; las tarjetas (texto y foto) de a una
+function fechaML(col) {
+  var c = function (s) { return col.querySelector(s); };
+  return gsap.timeline()
+    .to(c(".ml-punto"), { scale: 1, duration: 0.4, ease: "back.out(3)" })
+    .to(c(".ml-palo"), { scaleY: 1, duration: 0.25, ease: "power2.out" }, ">-0.1")
+    .to(c(".ml-cabeza"), { autoAlpha: 1, y: 0, duration: 0.45, ease: "back.out(1.8)" }, ">-0.05");
+}
+function mostrarAnioML(col) {
+  var c = function (s) { return col.querySelector(s); };
+  col.classList.add("actual");   // la fecha que se está leyendo se resalta
+  return gsap.timeline()
+    .to(c(".ml-card"), { autoAlpha: 1, y: 0, duration: 0.5, ease: "power3.out" })
+    .to(c(".ml-foto"), { autoAlpha: 1, scale: 1, duration: 0.5, ease: "power2.out" }, ">-0.2");
+}
+function ocultarAnioML(col) {
+  var c = function (s) { return col.querySelector(s); };
+  col.classList.remove("actual");
+  gsap.killTweensOf([c(".ml-card"), c(".ml-foto")]);
+  gsap.to(c(".ml-card"), { autoAlpha: 0, y: 30, duration: 0.25, ease: "power2.in" });
+  gsap.to(c(".ml-foto"), { autoAlpha: 0, scale: 0.92, duration: 0.25 });
+}
 function entrarML(el) {
   var q = function (s) { return el.querySelectorAll(s); };
   var tl = gsap.timeline(), inicio = 0.1;
@@ -98,24 +120,16 @@ function entrarML(el) {
       .to(q(".ml-linea-punta"), { autoAlpha: 1, x: 0, duration: 0.3 }, "-=0.2");
     inicio = 1.7;   // cada hito aparece cuando la línea pasa por su año
   }
-  q(".ml-col").forEach(function (col, i) {
-    var c = function (s) { return col.querySelector(s); };
-    tl.to(c(".ml-punto"), { scale: 1, duration: 0.4, ease: "back.out(3)" }, inicio + i * 0.5)
-      .to(c(".ml-palo"), { scaleY: 1, duration: 0.25, ease: "power2.out" }, ">-0.1")
-      .to(c(".ml-cabeza"), { autoAlpha: 1, y: 0, duration: 0.45, ease: "back.out(1.8)" }, ">-0.05")
-      .to(c(".ml-card"), { autoAlpha: 1, y: 0, duration: 0.5, ease: "power3.out" }, ">-0.15")
-      .to(c(".ml-foto"), { autoAlpha: 1, scale: 1, duration: 0.5, ease: "power2.out" }, ">-0.2");
-  });
+  // todas las fechas, y sólo la tarjeta del primer año: las demás se ven de a una con el gesto (Recorrido)
+  q(".ml-col").forEach(function (col, i) { col.classList.remove("actual"); tl.add(fechaML(col), inicio + i * 0.3); });
+  tl.add(mostrarAnioML(q(".ml-col")[0]), ">-0.1");
   return tl.add(function () {
     bucles.push(gsap.to(q(".ml-personaje"), { y: -16, duration: 1.9, ease: "sine.inOut", yoyo: true, repeat: -1 }));
-    bucles.push(gsap.to(q(".ml-punto"), { scale: 1.3, duration: 0.5, ease: "sine.inOut", yoyo: true, repeat: 1,
-      stagger: { each: 0.5, repeat: -1, repeatDelay: 1.5 } }));
   });
 }
 
 /* Recordatorio del gesto abajo a la derecha (js/pista.js). Las que pasan solas no lo muestran. */
 var PISTA = {
-  enseñar: ["#p2", "#p3"],                    // primeras pantallas manuales: aparece enseguida
   nunca: ["#j2-clasificar", "#j2-fin"],       // tienen sus propias indicaciones (el juego, insertar la memoria)
   dibujar: ["#j22-dibuja"]                    // juego de los peces: cartel de "Dibujá"
 };
@@ -159,17 +173,18 @@ Infografia.presentacion(Pista.envolver([
   },
   /* ============ Pantalla 2: línea de tiempo del Machine Learning ============
      La línea se dibuja y en cada año baja un hito: año → texto → foto. */
-  {
+  Recorrido.pantalla({
     el: "#p2",
     transicion: transicionML,
     preparar: function (el) { prepararML(el, Infografia.direccion); },
     entrar: function (el) { return entrarML(el); },
     salir: pararBucles
-  },
+  }, { revelar: true, unoPorVez: true, items: ".ml-col", puntos: ".ml-puntos", que: "año",
+      mostrar: function (k, items) { gsap.delayedCall(0.25, function () { mostrarAnioML(items[k]); }); }, ocultar: function (k, items) { ocultarAnioML(items[k]); } }),
   /* ============ Pantalla 3: línea de tiempo, segunda parte (2012 y 2014) ============
      Viniendo de la pantalla 2 (o volviendo a ella) título, caja, línea y personaje quedan quietos:
      sólo se van las columnas viejas y entran las nuevas (ver transiciones.mlCambio). */
-  {
+  Recorrido.pantalla({
     el: "#p3",
     transicion: transicionML,
     preparar: function (el) {
@@ -178,7 +193,8 @@ Infografia.presentacion(Pista.envolver([
     },
     entrar: function (el) { return entrarML(el); },
     salir: pararBucles
-  },
+  }, { revelar: true, unoPorVez: true, items: ".ml-col", puntos: ".ml-puntos", que: "año",
+      mostrar: function (k, items) { gsap.delayedCall(0.25, function () { mostrarAnioML(items[k]); }); }, ocultar: function (k, items) { ocultarAnioML(items[k]); } }),
 
   /* ============ Antes del juego: ahora te toca a vos ============ */
   ahoraTeToca("#j2-toca"),
@@ -227,6 +243,7 @@ Infografia.presentacion(Pista.envolver([
 
     function arrancarTutorial() {
       if (tutorial) return;
+      // en este juego el gesto se enseña en el centro: la mano de cada color sale hacia su zona
       gsap.set("#j2c-ayuda", { autoAlpha: 1 });
       tutorial = gsap.timeline({ repeat: -1, repeatDelay: 0.4 })
         .set("#j2c-mano", { x: 0, rotation: 0 })

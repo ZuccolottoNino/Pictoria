@@ -42,7 +42,7 @@
     predTexto: "Lo que el modelo predice y resta.",
     promptEtiqueta: "Prompt",
     prompt: "Dibujá una montaña y un sol.",
-    avisoSiguiente: "Arrastrá con la mano derecha para continuar",
+    avisoSiguiente: "Traé la mano derecha hacia el centro para continuar",
     // [cobertura mínima, mensaje, estado de la mascota]
     mensajes1: [
       [0,    "Apoyá el lápiz y pintá",  "neutral"],
@@ -64,7 +64,7 @@
     etiquetaReconstruida: "Reconstruida",
     msgGenMontaña: "1. Dibujá la silueta de la montaña",
     msgGenSol: "2. Ahora dibujá el sol",
-    msgGenListo: "¡Listo! Arrastrá con la mano derecha para generar",
+    msgGenListo: "¡Listo! Ya podés generar tu paisaje",
     pistaMontaña: "Dibujá la montaña",
     pistaSol: "¡Ahora dibujá un sol!",
     pistaListo: "¡Listo! Mano derecha para generar",
@@ -211,19 +211,20 @@
     ya(idBarra).style.width = (nivel * 100).toFixed(1) + "%";
   }
 
-  function mostrarAviso(id) { gsap.to("#" + id, { autoAlpha: 1, duration: 0.5 }); }
+  // los avisos de gesto salen del cartel unificado de abajo a la derecha (js/pista.js)
+  function mostrarAviso(id) { Pista.avisar(TEXTOS.avisoSiguiente); }
 
   /* Al terminar una etapa que se puede reintentar (mano izquierda), se esperan unos segundos
      y se pasa sola a la siguiente. Devuelve el tween para poder cancelarlo al reintentar o salir. */
   function autoAvance(idAviso) {
-    var el = ya(idAviso), base = Manos.svg("der") + " " + TEXTOS.avisoSiguiente, cuenta = { t: CFG.segundosAuto };
+    var cuenta = { t: CFG.segundosAuto };
     return gsap.to(cuenta, { t: 0, duration: CFG.segundosAuto, ease: "none",
-      onUpdate: function () { el.innerHTML = base + " · seguimos solos en " + Math.ceil(cuenta.t) + " s"; },
-      onComplete: function () { el.innerHTML = base; Infografia.avanzar(); } });
+      onUpdate: function () { Pista.avisar(TEXTOS.avisoSiguiente, " · seguimos solos en " + Math.ceil(cuenta.t) + " s"); },
+      onComplete: function () { Infografia.avanzar(); } });
   }
   function frenarAuto(t, idAviso) {
     if (t) t.kill();
-    var el = ya(idAviso); if (el) el.innerHTML = Manos.svg("der") + " " + TEXTOS.avisoSiguiente;
+    Pista.avisar(TEXTOS.avisoSiguiente);
     return null;
   }
 
@@ -303,7 +304,7 @@
     function reiniciarJuego() {
       if (auto) { auto.kill(); auto = null; }
       m.fill(0); estado.g = 0; estado.cerrando = false; estado.completo = false;
-      gsap.set("#d1-aviso", { autoAlpha: 0 });
+      gsap.set("#d1-aviso", { autoAlpha: 0 }); Pista.quitar();
       pintarMascara(M.ctx);
     }
 
@@ -553,7 +554,7 @@
       ya("d2-tiempo").classList.remove("apurado");
       gsap.set("#d2-comparar", { autoAlpha: 0 });
       auto2 = frenarAuto(auto2, "d2-aviso");
-      gsap.set("#d2-aviso", { autoAlpha: 0 });
+      gsap.set("#d2-aviso", { autoAlpha: 0 }); Pista.quitar();
       dibujarGuias(); pintar();
       if (intervalo) arrancarDemo();   // al reintentar, vuelve la demo
     }
@@ -690,6 +691,13 @@
       // cartel grande sobre la imagen: cambia con un salto para que se note el nuevo paso
       var pista = fase === "montaña" ? TEXTOS.pistaMontaña : fase === "sol" ? TEXTOS.pistaSol : TEXTOS.pistaListo;
       var el = ya("d3-pista");
+      if (fase === "listo") {   // el gesto para generar va en el cartel unificado, con la mano animada
+        if (latido) { latido.kill(); latido = null; }
+        gsap.to(el, { autoAlpha: 0, duration: 0.2 }); el.textContent = "";
+        Pista.avisar("Traé la mano derecha hacia el centro para generar");
+        pararDemo();
+        return;
+      }
       if (el.textContent !== pista) {
         el.textContent = pista;
         gsap.fromTo(el, { autoAlpha: 0, scale: 0.6 }, { autoAlpha: 1, scale: 1, duration: 0.5, ease: "back.out(2.5)" });
@@ -866,7 +874,7 @@
       pintarUniforme(M.ctx, 1);
       setNumero("d3-num", "d3-barra", 1);
       gsap.set("#d3-tiempo", { autoAlpha: 0, scale: 0 }); ya("d3-tiempo").classList.remove("apurado");
-      gsap.set("#d3-final, #d3-aviso", { autoAlpha: 0 });
+      gsap.set("#d3-final, #d3-aviso", { autoAlpha: 0 }); Pista.quitar();
       auto3 = frenarAuto(auto3, "d3-aviso");
       pararDemo();
       if (latido) { latido.kill(); latido = null; }

@@ -48,3 +48,14 @@ html, body { height: 100%; overflow: hidden; background: #EEF0F3; cursor: none; 
 .t-puntos i { width: 54px; height: 54px; border-radius: 50%; border: 5px solid #C9CDD5; background: #fff; }
 .t-practica[data-mano="der"] .t-puntos i.ok { background: var(--rojo); border-color: var(--rojo); box-shadow: 0 0 18px rgba(255,69,84,.6); }
 .t-practica[data-mano="izq"] .t-puntos i.ok { background: var(--azul); border-color: var(--azul); box-shadow: 0 0 18px rgba(0,195,227,.6); }
+
+/* ---------- Inicio (provisorio hasta la animación de standby_mii) ---------- */
+#ti-personajes { position: absolute; left: 0; right: 0; top: 300px; display: flex; justify-content: center; align-items: flex-end; gap: 120px; }
+.ti-pj { height: 420px; filter: drop-shadow(0 18px 24px rgba(0,0,0,.18)); }
+.ti-pixel { image-rendering: pixelated; }
+#ti-texto { position: absolute; left: 0; right: 0; top: 80px; text-align: center; }
+#ti-texto h1 { font-size: 110px; line-height: 1; font-weight: 700; letter-spacing: .02em; }
+#ti-nota { margin-top: 18px; font-family: "Inter", "Segoe UI", sans-serif; font-size: 28px; color: var(--gris); }
+#ti-empezar { position: absolute; left: 0; right: 0; top: 880px; display: flex; justify-content: center; align-items: center; gap: 16px;
+  font-family: "Inter", "Segoe UI", sans-serif; font-size: 40px; color: #4A505C; }
+#ti-empezar .mano-icono { font-size: 44px; }

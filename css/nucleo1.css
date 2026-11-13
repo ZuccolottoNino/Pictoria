@@ -452,13 +452,14 @@ html, body { height: 100%; overflow: hidden; background: #000; cursor: none; }
 #p13-1990  { left: 1308px; width: 448px; }
 .p13-card h2 { font-family: "VT323", monospace; font-size: 56px; line-height: 56px; font-weight: normal; color: #fff; }
 .p13-card p  { font-family: "VT323", monospace; font-size: 34px; line-height: 36px; color: #fff; margin-top: 14px; }
-#p13-1980 p, #p13-1990 p { margin-top: 50px; text-align: left; }
+#p13-1980 p, #p13-1990 p { margin-top: 14px; text-align: left; }   /* debajo de "AARON v2/v3" */
 .p13-card .guiones-n1 { width: 100%; margin: 28px 0; }
 #p13-aaron .guiones-n1 { margin: 22px 0 18px; }
 .p13-obras { display: flex; gap: 20px; align-items: center; margin-top: 18px; }
 #p13-aaron .p13-obras img { width: 270px; height: 180px; object-fit: cover; }
 #p13-1980 .p13-obras img,
-#p13-1990 .p13-obras img  { width: 350px; height: 247px; object-fit: cover; }
+#p13-1990 .p13-obras img  { width: 350px; height: 230px; object-fit: cover; }
+#p13-1980 .guiones-n1, #p13-1990 .guiones-n1 { margin: 20px 0; }   /* lugar para el título "AARON v2/v3" sin bajar la foto */
 
 /* ============ Núcleo 1 · Pantalla 14: gráfico de memoria ============ */
 #p14 { background: #0a0a0a; }
@@ -552,9 +553,26 @@ html, body { height: 100%; overflow: hidden; background: #000; cursor: none; }
 
 /* Recordatorio del gesto de avanzar (abajo a la derecha, con la mano derecha roja) */
 #pista-avance { position: absolute; right: 34px; bottom: 28px; z-index: 50; display: flex; align-items: center; gap: 14px;
-  padding: 14px 24px; background: #000; border: 5px solid #fff; color: #fff;
-  font-family: "Press Start 2P", monospace; font-size: 20px; line-height: 1.4; pointer-events: none; }
-#pista-avance .pista-mano { display: inline-block; font-size: 30px; }
+  padding: 10px 18px; background: #000; border: 5px solid #fff; color: #fff;
+  font-family: "Press Start 2P", monospace; font-size: 16px; line-height: 1.4; pointer-events: none; }   /* más chico: no tapa contenido */
+#pista-avance .pista-mano { display: inline-block; font-size: 26px; }
 
 /* color del relojito de las pantallas automáticas (lo dibuja puente.js) */
 :root { --auto-color: #c6ff34; }
+
+/* Las indicaciones de gestos salen todas del cartel de abajo a la derecha (js/pista.js):
+   estos carteles propios ya no se muestran */
+#p1-aviso, #p7-cartel, .p8-opcion, .cuenta-auto { display: none !important; }
+
+/* juego de los 4 puntos: guía punteada del recorrido (las rayitas avanzan hacia el punto siguiente) */
+#p10-guia { position: absolute; left: 0; top: 0; width: 1428px; height: 656px; pointer-events: none; }
+#p10-guia polyline { fill: none; stroke: #1b1b1b; stroke-opacity: .3; stroke-width: 6; stroke-dasharray: 14 18; stroke-linecap: square; }
+
+/* línea de tiempo de AARON: se recorre con los gestos (js/recorrido.js); los puntitos marcan la etapa */
+:root { --recorrido-color: #c6ff34; }
+#p13-puntos { position: absolute; left: 130px; top: 150px; }
+#p13-puntos .recorrido-puntos i { border-radius: 0; }   /* cuadraditos, como los píxeles del núcleo */
+
+/* línea de AARON: las fechas se ven todas; la de la tarjeta que se está leyendo resalta */
+.p13-hito .p3-etiqueta { transition: filter .3s; }
+.p13-hito.tenue .p3-etiqueta { filter: opacity(.45); }

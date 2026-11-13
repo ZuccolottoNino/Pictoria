@@ -325,6 +325,8 @@
     <div id="p10-lienzo" class="lienzo">
       <canvas id="p10-canvas" width="1428" height="656"></canvas>
       <div id="p10-tiempo" class="tiempo-juego">20</div>
+      <!-- guía punteada del recorrido 1 → 2 → 3 → 4 (tutorial) -->
+      <svg id="p10-guia" viewBox="0 0 1428 656"><polyline points="156,330 280,572 872,106 1247,330"/></svg>
       <div class="p10-punto punto-num fondo-rojo"     style="left: 156px; top: 330px">1</div>
       <div class="p10-punto punto-num fondo-azul"     style="left: 280px; top: 572px">2</div>
       <div class="p10-punto punto-num fondo-verde"    style="left: 872px; top: 106px">3</div>
@@ -405,6 +407,7 @@
     <img id="p13-reloj" src="../assets/nucleo1/img/ico-reloj.svg" alt="">
     <div id="p13-guiones-der" class="p3-guiones"></div>
     <div id="p13-linea"></div>
+    <div id="p13-puntos"></div>
 
     <!-- Hitos: cada uno es una columna centrada en su "left" -->
     <div class="p13-hito" style="left: 111px">
@@ -439,11 +442,13 @@
       </div>
     </div>
     <div id="p13-1980" class="p13-card">
+      <h2>AARON v2</h2>
       <p>Figuras y plantas esquemáticas a color</p>
       <div class="guiones-n1"></div>
       <div class="p13-obras"><img src="../assets/nucleo1/img/obras-3.png" alt=""></div>
     </div>
     <div id="p13-1990" class="p13-card">
+      <h2>AARON v3</h2>
       <p>Pinturas coloridas con plantas y personas</p>
       <div class="guiones-n1"></div>
       <div class="p13-obras"><img src="../assets/nucleo1/img/obras-2.png" alt=""></div>
@@ -509,6 +514,7 @@
 <script src="../js/puente.js"></script>
 <script src="../js/manos.js"></script>
 <script src="../js/pista.js"></script>
+<script src="../js/recorrido.js"></script>
 <script src="../js/nucleo1.js"></script>
 </body>
 </html>

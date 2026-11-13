@@ -225,7 +225,8 @@ CONFIG.nucleos.forEach((n, i) => {
   if ((i > 0 && !n.sinStandby) || n.standby) pasos.push({ tipo: "standby", nucleo: i });
   pasos.push({ tipo: "nucleo", nucleo: i });
 });
-pasos.push({ tipo: "fin" });
+// sin pantalla final: al terminar el núcleo 3 se vuelve al principio (la espera del tutorial)
+// pasos.push({ tipo: "fin" });
 
 /* ============================================================
    ORQUESTADOR
@@ -341,14 +342,20 @@ async function irA(indice, consulta) {
   reiniciarInactividad();
 }
 
+/* Con los gestos (o las flechas) no se pasa a otro núcleo: a un núcleo se entra sólo con la tecla
+   de su memoria (irANucleo). Así el visitante tiene que insertar la memoria que corresponde. */
+function esNucleo(i) { return pasos[i] && pasos[i].tipo === "nucleo"; }
+
 function avanzarPaso() {
   if (ocupado) return;
   const siguiente = pasoActual + 1;
+  if (esNucleo(siguiente)) { avisar("Para seguir, insertá la memoria"); return; }
   irA(siguiente < pasos.length ? siguiente : 0);
 }
 
 function retrocederPaso() {
   if (ocupado || pasoActual === 0) return;
+  if (esNucleo(pasoActual - 1)) return;
   irA(pasoActual - 1);
 }
 

@@ -116,9 +116,10 @@ function armarVasos() {
 }   // SplitText de las dos pantallas nuevas (se parten una sola vez)
 function pintar3(i) {
 var t = document.querySelectorAll(".n3-torta")[i], p = cont3[i].p, d = datos3[i];
-t.querySelector(".n3-disco").style.setProperty("--a", d.no * 3.6 * p);
-t.querySelector(".n3-no-n").textContent = "%" + Math.round(d.no * p);
-t.querySelector(".n3-si-n").textContent = "%" + Math.round(d.si * p);
+t.querySelector(".n3-disco").style.setProperty("--s", d.si * 3.6 * p);   // el Sí crece en sentido horario
+var col = t.parentNode;
+col.querySelector(".n3-no-n").textContent = Math.round(d.no * p) + "%";
+t.querySelector(".n3-si-n").textContent = Math.round(d.si * p) + "%";
 }
 
 function detener() {
@@ -176,12 +177,11 @@ function iniciar() {
 
   /* Recordatorio del gesto abajo a la derecha (js/pista.js). Las que pasan solas no lo muestran. */
   var PISTA = {
-    enseñar: ["#n3-comparacion", "#n3-agua"],         // primeras pantallas manuales: aparece enseguida
     nunca: ["#n3-encuesta"],                          // tiene su propio tutorial (votar con las manos)
     dibujar: ["#d1", "#d2", "#d3"]                    // juego de difusión: cartel de "Dibujá"
   };
   // las de información: mínimo 13 s; las que sólo dan paso al juego o lo cierran, más cortas
-  var AUTO3 = { "#n3-intro": 13, "#n3-modelos": 13, "#n3-cifras": 13, "#n3-usos": 13, "#n3-evolucion": 13, "#p4": 13,
+  var AUTO3 = { "#n3-intro": 13, "#n3-modelos": 13, "#n3-cifras": 13, "#n3-usos": 13, "#p4": 13,
                 "#n3-dif1": 13, "#n3-dif2": 13, "#n3-dif3": 13, "#n3-practica": 7, "#n3-toca": 7, "#n3-cierre": 5, "#n3-resultados": 13, "#n3-final": 13 };
 
   Infografia.presentacion(Pista.envolver([
@@ -296,13 +296,6 @@ function iniciar() {
           .add(function () {
             bucles.push(gsap.to("#n3c-personaje", { y: -14, duration: 1.9, ease: "sine.inOut", yoyo: true, repeat: -1 }));
             bucles.push(gsap.to("#n3c-sombra-personaje", { scaleX: 0.82, opacity: 0.6, duration: 1.9, ease: "sine.inOut", yoyo: true, repeat: -1 }));
-            // foco que recorre las filas de a una: refuerza que cada dato es de ese modelo
-            var foco = gsap.timeline({ repeat: -1 });
-            filas.forEach(function (f) {
-              foco.to(f, { scale: 1.015, boxShadow: "0 18px 70px rgba(120, 110, 200, .28)", duration: 0.5, ease: "power2.out" })
-                  .to(f, { scale: 1, boxShadow: "0 12px 56px rgba(120, 110, 200, .12)", duration: 0.5, ease: "power2.in" }, "+=1.6");
-            });
-            bucles.push(foco);
           });
         return entrada;
       },
@@ -321,9 +314,10 @@ function iniciar() {
         gsap.set("#n3f-cifra", { autoAlpha: 0, scale: 0.8 });
         gsap.set("#n3f-personaje", { autoAlpha: 0, scale: 0.85, x: -70 * d, transformOrigin: "50% 100%" });
         gsap.set("#n3f-sombra-personaje", { autoAlpha: 0, scaleX: 0.4 });
-        gsap.set(".n3f-logo", { autoAlpha: 0, scale: 0.8 });
-        gsap.set(".n3f-union", { scaleX: 0 });
-        gsap.set(".n3f-dato", { autoAlpha: 0, x: 60 * d });
+        gsap.set(".n3f-escalon", { scaleY: 0 });
+        gsap.set(".n3f-lugar .n3f-logo", { autoAlpha: 0, y: -40 });
+        gsap.set(".n3f-valor", { autoAlpha: 0 });
+        document.querySelectorAll(".n3f-num").forEach(function (e) { e.textContent = "0"; });
       },
       entrar: function () {
         var num = document.getElementById("n3f-num");
@@ -335,19 +329,23 @@ function iniciar() {
           .to(cifra15, { n: 15000, duration: 2, ease: "power2.out", onUpdate: function () { num.textContent = miles(cifra15.n); } }, "<")
           .to("#n3f-personaje", { autoAlpha: 1, scale: 1, x: 0, duration: 0.9, ease: "back.out(1.4)" }, "-=1.6")
           .to("#n3f-sombra-personaje", { autoAlpha: 1, scaleX: 1, duration: 0.8, ease: "power2.out" }, "<0.1");
-        // cada modelo: logo → se dibuja la unión → aparece su dato
-        gsap.utils.toArray("#n3-cifras .n3f-fila").forEach(function (f, i) {
+        // podio: suben los escalones del 3.º al 1.º; en cada uno cae el logo y su cifra cuenta
+        [3, 2, 1].forEach(function (puesto, i) {
+          var l = "#n3f-lugar" + puesto + " ", num = document.querySelector(l + ".n3f-num"), c = { v: 0 }, n = +num.getAttribute("data-n");
           entrada
-            .to(f.querySelector(".n3f-logo"), { autoAlpha: 1, scale: 1, duration: 0.5, ease: "back.out(2)" }, i ? "-=0.2" : "-=0.6")
-            .to(f.querySelector(".n3f-union"), { scaleX: 1, duration: 0.35, ease: "steps(6)" })
-            .to(f.querySelector(".n3f-dato"), { autoAlpha: 1, x: 0, duration: 0.5, ease: "power3.out" });
+            .to(l + ".n3f-escalon", { scaleY: 1, duration: puesto === 1 ? 0.9 : 0.6, ease: "back.out(1.4)" }, i ? "-=0.1" : "-=0.6")
+            .to(l + ".n3f-logo", { autoAlpha: 1, y: 0, duration: 0.5, ease: "bounce.out" }, "-=0.2")
+            .to(l + ".n3f-valor", { autoAlpha: 1, duration: 0.3 }, "<")
+            .to(c, { v: n, duration: 1, ease: "power2.out", onUpdate: function () { num.textContent = miles(c.v); } }, "<");
         });
         entrada.add(function () {
           bucles.push(gsap.to("#n3f-personaje", { y: -18, duration: 1.9, ease: "sine.inOut", yoyo: true, repeat: -1 }));
           bucles.push(gsap.to("#n3f-sombra-personaje", { scaleX: 0.82, opacity: 0.6, duration: 1.9, ease: "sine.inOut", yoyo: true, repeat: -1 }));
           // la cifra late suave y los logos flotan
           bucles.push(gsap.to("#n3f-cifra", { scale: 1.03, duration: 1.2, ease: "sine.inOut", yoyo: true, repeat: -1 }));
-          bucles.push(gsap.to(".n3f-logo", { y: -8, duration: 2.2, ease: "sine.inOut", yoyo: true, repeat: -1, stagger: 0.5 }));
+          // el ganador late: su logo flota y su escalón brilla
+          bucles.push(gsap.to("#n3f-lugar1 .n3f-logo", { y: -10, duration: 1.4, ease: "sine.inOut", yoyo: true, repeat: -1 }));
+          bucles.push(gsap.to("#n3f-lugar1 .n3f-escalon", { boxShadow: "0 0 50px rgba(142,91,234,.55)", duration: 1.2, ease: "sine.inOut", yoyo: true, repeat: -1 }));
         });
         return entrada;
       },
@@ -469,7 +467,7 @@ function iniciar() {
     /* ============ Evolución de la cantidad de imágenes (gráfico) ============
        La línea se dibuja de izquierda a derecha, el área la acompaña y cada punto aparece
        justo cuando la línea llega a él; al final la etiqueta cuenta hasta 16.000 millones. */
-    {
+    Recorrido.pantalla({
       el: "#n3-evolucion",
       preparar: function () {
         var d = Infografia.direccion;
@@ -483,7 +481,7 @@ function iniciar() {
         gsap.set("#n3e-revela-rect", { attr: { width: 0 } });
         // en SVG, GSAP escala desde la esquina si no se le dice el centro
         gsap.set(".n3e-punto", { scale: 0, transformOrigin: "50% 50%" });
-        gsap.set("#n3e-etiqueta", { autoAlpha: 0, scale: 0.6, y: 10, transformOrigin: "50% 100%" });
+        gsap.set("#n3e-etiqueta", { autoAlpha: 0, scale: 0.6, transformOrigin: "50% 100%" });   // la posición la pone el recorrido (primera fecha)
         gsap.set("#n3e-pie", { autoAlpha: 0, y: 20 });
         gsap.set("#n3e-personaje", { autoAlpha: 0, scale: 0.85, x: -60 * d, transformOrigin: "50% 100%" });
         gsap.set("#n3e-sombra-personaje", { autoAlpha: 0, scaleX: 0.4 });
@@ -513,20 +511,29 @@ function iniciar() {
           entrada.to(p, { scale: 1, duration: 0.35, ease: "back.out(3)" }, INICIO + DURA * recorrido / largo - 0.05);
         });
         entrada
-          .to("#n3e-etiqueta", { autoAlpha: 1, scale: 1, y: 0, duration: 0.5, ease: "back.out(2.2)" }, INICIO + DURA)
-          .to(valorEvolucion, { v: 16000, duration: 1.4, ease: "power2.out", onUpdate: function () { valor.textContent = miles(valorEvolucion.v); } }, "<")
+          .to("#n3e-etiqueta", { autoAlpha: 1, scale: 1, duration: 0.5, ease: "back.out(2.2)" }, INICIO + DURA)
           .to("#n3e-pie", { autoAlpha: 1, y: 0, duration: 0.6, ease: "power3.out" }, "-=0.6")
           .add(function () {
             bucles.push(gsap.to("#n3e-personaje", { y: -14, duration: 1.9, ease: "sine.inOut", yoyo: true, repeat: -1 }));
             bucles.push(gsap.to("#n3e-sombra-personaje", { scaleX: 0.82, opacity: 0.6, duration: 1.9, ease: "sine.inOut", yoyo: true, repeat: -1 }));
             // el último punto late: "y sigue creciendo"
             bucles.push(gsap.to("#n3e-ultimo", { scale: 1.2, opacity: 0.8, duration: 1.2, ease: "sine.inOut", yoyo: true, repeat: -1 }));
-            bucles.push(gsap.to("#n3e-etiqueta", { y: -6, duration: 1.2, ease: "sine.inOut", yoyo: true, repeat: -1 }));
+            bucles.push(gsap.to("#n3e-etiqueta", { y: "-=6", duration: 1.2, ease: "sine.inOut", yoyo: true, repeat: -1 }));
           });
         return entrada;
       },
       salir: detener
-    },
+    }, { items: ".n3e-punto", puntos: "#n3e-puntos", que: "momento", escala: 1.5, inicio: 0,   // arranca en la primera fecha
+      // la etiqueta va hasta el punto elegido y muestra su valor (leído del gráfico)
+      marcar: function (i, items, el, animar) {
+        var VALORES = ["≈1.000", "≈3.000", "≈6.500", "≈13.000", null];
+        var et = document.getElementById("n3e-etiqueta"), ult = document.getElementById("n3e-ultimo");
+        var p = i < 0 ? ult : items[i];
+        gsap.killTweensOf(et, "x,y");
+        gsap.to(et, { x: +p.getAttribute("cx") - 1190, y: +p.getAttribute("cy") - 173.6, duration: animar ? 0.45 : 0, ease: "power3.out" });
+        var v = i < 0 ? null : VALORES[i];
+        et.querySelector("text").innerHTML = v ? v + " millones" : '&gt;<tspan id="n3e-valor">16.000</tspan> millones';
+      } }),
 
     /* ============ ¿Qué sos ahora? (antes "Pantalla 4") ============ */
     {
@@ -993,10 +1000,10 @@ function iniciar() {
         document.getElementById("n3-copia3").innerHTML = document.getElementById("p3").innerHTML;
         gsap.set("#n3-tarjeta-usos", { autoAlpha: 0, x: 320 * Infografia.direccion });
         gsap.set("#n3u2-titulo", { autoAlpha: 0, x: 30 * Infografia.direccion });
-        gsap.set("#n3u2-linea", { scaleX: 0 });
+        gsap.set(".n3u2-barra", { scaleX: 0 });
         gsap.set(".n3u2-caja", { autoAlpha: 0, scale: 0.5, transformOrigin: "50% 50%" });
         gsap.set(".n3u2-pct, .n3u2-nombre", { autoAlpha: 0, x: 30 * Infografia.direccion });
-        document.querySelectorAll(".n3u2-pct").forEach(function (e) { e.textContent = "%0"; });
+        document.querySelectorAll(".n3u2-pct").forEach(function (e) { e.textContent = "0%"; });
       },
 
       entrar: function () {
@@ -1009,20 +1016,19 @@ function iniciar() {
           .to("#n3-tarjeta-usos", { autoAlpha: 1, x: 0, duration: 0.9, ease: "power3.out" }, 0.4)
           .to("#n3u2-titulo", { autoAlpha: 1, x: 0, duration: 0.5, ease: "power2.out" }, "-=0.3")
           .to(".n3u2-caja", { autoAlpha: 1, scale: 1, duration: 0.6, stagger: 0.15, ease: "back.out(2)" }, "-=0.1")
-          .to("#n3u2-linea", { scaleX: 1, duration: 0.8, ease: "power2.inOut" }, "<")
+          .to(".n3u2-barra", { scaleX: 1, duration: 1.2, stagger: 0.15, ease: "power2.out" }, "<0.2")
           .to(".n3u2-pct, .n3u2-nombre", { autoAlpha: 1, x: 0, duration: 0.45, stagger: 0.08, ease: "power2.out" }, "-=0.4");
 
         // los porcentajes cuentan desde 0
         document.querySelectorAll(".n3u2-pct").forEach(function (e, i) {
           var c = { v: 0 }, n = +e.getAttribute("data-n");
           entrada.to(c, { v: n, duration: 1.2, ease: "power2.out",
-            onUpdate: function () { e.textContent = "%" + Math.round(c.v); } }, "-=" + (1.1 - i * 0.1));
+            onUpdate: function () { e.textContent = Math.round(c.v) + "%"; } }, "-=" + (1.1 - i * 0.1));
         });
 
         entrada.add(function () {
           bucles.push(gsap.to(s + "#n3-copia #n3-personaje2", { y: -20, duration: 1.9, ease: "sine.inOut", yoyo: true, repeat: -1 }));
-          bucles.push(gsap.to(".n3u2-caja", { y: -8, duration: 1.6, ease: "sine.inOut", yoyo: true, repeat: -1, stagger: 0.25 }));
-          bucles.push(gsap.to("#n3u2-linea i", { scale: 1.4, opacity: 0.5, duration: 1.2, ease: "sine.inOut", yoyo: true, repeat: -1, stagger: 0.4 }));
+          bucles.push(gsap.to(".n3u2-caja", { y: -4, duration: 1.6, ease: "sine.inOut", yoyo: true, repeat: -1, stagger: 0.25 }));
         });
         return entrada;
       },
@@ -1095,6 +1101,7 @@ function iniciar() {
         if (votado) return;
         votado = true;
         Infografia.votar("usa-ia-para-imagenes", resp);
+        Pista.quitar();
         miVoto = resp;   // para marcar "Tu voto" en los resultados
         detener();
         document.querySelectorAll("#n3-encuesta .brilla").forEach(function (e) { e.classList.remove("brilla"); });
@@ -1132,6 +1139,7 @@ function iniciar() {
             .to(".n3v-opcion", { autoAlpha: 1, scale: 1, x: 0, duration: 0.6, stagger: 0.15, ease: "back.out(1.6)" }, "-=0.3")
             .to("#n3v-personaje", { autoAlpha: 1, scale: 1, y: 0, duration: 0.8, ease: "back.out(1.6)" }, "-=0.4")
             .to("#n3v-sombra-personaje", { autoAlpha: 1, scaleX: 1, duration: 0.7, ease: "power2.out" }, "<0.1")
+            // en la votación el gesto se enseña en el centro: la mano de cada color lleva al personaje a su opción
             .to("#n3v-ayuda", { autoAlpha: 1, duration: 0.5 })
             .add(function () { bucles.push(tutorial()); });
           return entrada;
