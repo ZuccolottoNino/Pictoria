@@ -17,7 +17,7 @@ var partidoDif1 = null, partidoDif2 = null, partidoDif3 = null, letrasPrompt = n
 var tipeo = { n: 0, mostradas: 0 };
 var partidoPractica = null, palabrasPractica = null;
 var partidoCierre = null, lineasCierre = null;
-var partidoEncuesta = null, partidoResultados = null, partidoFinal = null;
+var partidoEncuesta = null, partidoResultados = null, partidoFinal = null, partidoToca = null, palabrasToca = null;
 var miVoto = null;   // lo que votó el visitante en la encuesta final   // avance del prompt que se escribe (pantalla de generación)
 
 /* Ruido gaussiano en vivo sobre una foto (pantallas del modelo de difusión).
@@ -182,7 +182,7 @@ function iniciar() {
   };
   // las de información: mínimo 13 s; las que sólo dan paso al juego o lo cierran, más cortas
   var AUTO3 = { "#n3-intro": 13, "#n3-modelos": 13, "#n3-cifras": 13, "#n3-usos": 13, "#n3-evolucion": 13, "#p4": 13,
-                "#n3-dif1": 13, "#n3-dif2": 13, "#n3-dif3": 13, "#n3-practica": 4, "#n3-cierre": 5, "#n3-resultados": 13, "#n3-final": 13 };
+                "#n3-dif1": 13, "#n3-dif2": 13, "#n3-dif3": 13, "#n3-practica": 7, "#n3-toca": 7, "#n3-cierre": 5, "#n3-resultados": 13, "#n3-final": 13 };
 
   Infografia.presentacion(Pista.envolver([
 
@@ -1027,6 +1027,39 @@ function iniciar() {
         return entrada;
       },
 
+      salir: detener
+    },
+
+    /* ============ Antes de la encuesta: ahora te toca a vos (misma animación que "A la práctica") ============ */
+    {
+      el: "#n3-toca",
+      preparar: function () {
+        var d = Infografia.direccion;
+        partidoToca = partidoToca || SplitText.create("#n3t-titulo", { type: "words" });
+        palabrasToca = palabrasToca || SplitText.create("#n3t-texto", { type: "words" });
+        gsap.set(partidoToca.words, { autoAlpha: 0, x: 60 * d, rotation: 3 });
+        gsap.set("#n3t-personaje", { autoAlpha: 0, scale: 0.85, x: -70 * d, transformOrigin: "50% 100%" });
+        gsap.set("#n3t-sombra-personaje", { autoAlpha: 0, scaleX: 0.4 });
+        gsap.set("#n3t-tarjeta", { autoAlpha: 0, x: 80 * d });
+        gsap.set("#n3t-sombra-tarjeta", { autoAlpha: 0, scaleX: 0.5 });
+        gsap.set(palabrasToca.words, { autoAlpha: 0, y: 24 });
+      },
+      entrar: function () {
+        entrada = gsap.timeline()
+          .to(partidoToca.words, { autoAlpha: 1, x: 0, rotation: 0, duration: 0.7, stagger: 0.08, ease: "back.out(1.5)" })
+          .to("#n3t-personaje", { autoAlpha: 1, scale: 1, x: 0, duration: 0.9, ease: "back.out(1.4)" }, "-=0.4")
+          .to("#n3t-sombra-personaje", { autoAlpha: 1, scaleX: 1, duration: 0.8, ease: "power2.out" }, "<0.1")
+          .to("#n3t-tarjeta", { autoAlpha: 1, x: 0, duration: 0.8, ease: "power3.out" }, "-=0.6")
+          .to("#n3t-sombra-tarjeta", { autoAlpha: 1, scaleX: 1, duration: 0.8, ease: "power2.out" }, "<0.1")
+          .to(palabrasToca.words, { autoAlpha: 1, y: 0, duration: 0.5, stagger: 0.07, ease: "back.out(2)" }, "-=0.3")
+          .add(function () {
+            bucles.push(gsap.to("#n3t-personaje", { y: -16, duration: 1.9, ease: "sine.inOut", yoyo: true, repeat: -1 }));
+            bucles.push(gsap.to("#n3t-sombra-personaje", { scaleX: 0.82, opacity: 0.6, duration: 1.9, ease: "sine.inOut", yoyo: true, repeat: -1 }));
+            bucles.push(gsap.to("#n3t-sombra-tarjeta", { scaleX: 0.92, opacity: 0.7, duration: 2.4, ease: "sine.inOut", yoyo: true, repeat: -1 }));
+            bucles.push(gsap.to("#n3t-texto .n3p-resalte", { scale: 1.08, duration: 0.7, ease: "sine.inOut", yoyo: true, repeat: -1, transformOrigin: "50% 60%" }));
+          });
+        return entrada;
+      },
       salir: detener
     },
 

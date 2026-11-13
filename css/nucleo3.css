@@ -366,12 +366,21 @@
 #n3d3-cursor { color: #BD72FF; font-weight: 300; margin-left: 2px; }
 
 /* ---------- A la práctica (da paso al juego) ---------- */
+/* antes de la encuesta: misma composición que "A la práctica" */
+#n3t-titulo { position: absolute; left: 150px; top: 30px; white-space: nowrap; }
+#n3t-personaje { position: absolute; left: 180px; top: 320px; width: 400px; }
+#n3t-sombra-personaje { left: 220px; top: 815px; width: 320px; height: 62px; }
+#n3t-tarjeta { left: 613px; top: 270px; width: 1149px; height: 512px; display: flex; align-items: center; justify-content: center; }
+#n3t-sombra-tarjeta { left: 760px; top: 800px; width: 860px; height: 70px; }
+#n3t-texto { text-align: left; font-family: "Inter", system-ui, sans-serif; font-size: 52px; line-height: 64px; color: var(--tinta); }
+
 #n3p-titulo { position: absolute; left: 150px; top: 30px; white-space: nowrap; }
 #n3p-personaje { position: absolute; left: 180px; top: 320px; width: 400px; }
 #n3p-sombra-personaje { left: 220px; top: 815px; width: 320px; height: 62px; }
 #n3p-tarjeta { left: 613px; top: 270px; width: 1149px; height: 512px; display: flex; align-items: center; justify-content: center; }
 #n3p-sombra-tarjeta { left: 760px; top: 800px; width: 860px; height: 70px; }
-#n3p-texto { text-align: center; font-family: "Inter", system-ui, sans-serif; font-size: 52px; line-height: 64px; color: var(--tinta); }
+#n3p-texto { text-align: left; font-family: "Inter", system-ui, sans-serif; font-size: 52px; line-height: 64px; color: var(--tinta); }
+.n3-violeta-titulo { color: var(--violeta); }
 .n3p-resalte { display: inline-block; font-weight: 700; color: var(--violeta); }
 
 

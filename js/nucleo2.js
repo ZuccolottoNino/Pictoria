@@ -4,6 +4,35 @@ FondoAero.iniciar("#fondo-aero");
 var bucles = [];   // animaciones en bucle de la pantalla actual
 function pararBucles() { bucles.forEach(function (t) { t.kill(); }); bucles = []; }
 
+/* ---------- "¡Ahora te toca a vos!" antes de cada juego (misma pantalla, distinto texto) ---------- */
+function ahoraTeToca(sel) {
+  var q = function (s) { return document.querySelector(sel + " " + s); };
+  return {
+    el: sel,
+    preparar: function () {
+      var d = Infografia.direccion;
+      gsap.set(q(".n2t-caja"), { autoAlpha: 0, x: 80 * d });
+      gsap.set(q(".n2t-titulo"), { autoAlpha: 0, y: -20 });
+      gsap.set(q(".n2t-texto"), { autoAlpha: 0, y: 20 });
+      gsap.set(q(".n2t-personaje"), { autoAlpha: 0, scale: 0.85, x: -70 * d, y: 0, transformOrigin: "50% 100%" });
+    },
+    entrar: function () {
+      return gsap.timeline()
+        .to(q(".n2t-caja"), { autoAlpha: 1, x: 0, duration: 0.7, ease: "power3.out" })
+        .to(q(".n2t-personaje"), { autoAlpha: 1, scale: 1, x: 0, duration: 0.9, ease: "back.out(1.5)" }, "-=0.5")
+        .to(q(".n2t-titulo"), { autoAlpha: 1, y: 0, duration: 0.6, ease: "back.out(1.8)" }, "-=0.5")
+        .to(q(".n2t-texto"), { autoAlpha: 1, y: 0, duration: 0.6, ease: "power3.out" }, "-=0.2")
+        .add(function () {
+          bucles.push(gsap.to(q(".n2t-personaje"), { y: -16, duration: 1.9, ease: "sine.inOut", yoyo: true, repeat: -1 }));
+          // "a vos" late para anticipar el juego
+          bucles.push(gsap.to(q(".n2t-titulo .e2-verde"), { scale: 1.06, duration: 0.7, ease: "sine.inOut", yoyo: true, repeat: -1,
+            transformOrigin: "50% 60%", display: "inline-block" }));
+        });
+    },
+    salir: pararBucles
+  };
+}
+
 /* ---------- Redes antagónicas (dos pantallas con el mismo título) ----------
    Entre ellas el título queda quieto: sólo se va el resto de la pantalla que sale. */
 var GAN = ["j2-gan", "j2-gan2", "j2-gan3"];
@@ -90,7 +119,7 @@ var PISTA = {
   nunca: ["#j2-clasificar", "#j2-fin"],       // tienen sus propias indicaciones (el juego, insertar la memoria)
   dibujar: ["#j22-dibuja"]                    // juego de los peces: cartel de "Dibujá"
 };
-var AUTO2 = { "#p1": 13, "#j2-intro": 6, "#j22-observa": 6, "#j22-reconoce": 5 };   // información: mínimo 13 s; las del juego, más cortas
+var AUTO2 = { "#j2-toca": 7, "#j22-toca": 7, "#p1": 13, "#j2-intro": 6, "#j22-observa": 6, "#j22-reconoce": 5 };   // información: mínimo 13 s; las del juego, más cortas
 
 Infografia.presentacion(Pista.envolver([
   /* ============ Pantalla 1: bienvenida a la etapa 2 (Machine Learning) ============ */
@@ -150,6 +179,9 @@ Infografia.presentacion(Pista.envolver([
     entrar: function (el) { return entrarML(el); },
     salir: pararBucles
   },
+
+  /* ============ Antes del juego: ahora te toca a vos ============ */
+  ahoraTeToca("#j2-toca"),
 
   /* ============ Juego 2 · intro: dos tipos de datos (gatos y bicicletas) ============ */
   {
@@ -447,6 +479,8 @@ Infografia.presentacion(Pista.envolver([
   },
 
   /* ============ Juego 2.2: observá los peces y dibujá uno nuevo (js/juego-peces.js) ============ */
+  /* ============ Antes del juego: ahora te toca a vos ============ */
+  ahoraTeToca("#j22-toca"),
   ...JuegoPeces.pantallas(),
 
   /* ============ Fin del núcleo 2: insertar la memoria TRES ============

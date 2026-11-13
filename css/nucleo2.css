@@ -330,6 +330,18 @@ p  { position: relative; font-size: 38px; color: #e9fdff; margin-top: 18px; text
   font-family: "Space Grotesk", "Segoe UI", sans-serif; font-weight: 700; font-size: 52px; color: #fff; text-align: center; }
 #j22r-veredicto small { display: block; font-size: 26px; font-weight: 400; opacity: .9; }
 
+/* ============ Antes de cada juego: ahora te toca a vos ============ */
+.n2t-caja { left: 460px; top: 300px; width: 1200px; height: 480px;
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 44px; }
+.n2t-caja.vidrio::before { display: none; }
+.n2t-titulo { margin: 0; font-family: "Audiowide", "Segoe UI", sans-serif; font-weight: 400; font-size: 76px; color: #fff;
+  text-shadow: 0 0 18px rgba(255,255,255,.45), 0 4px 12px rgba(0,70,90,.45); }
+.n2t-titulo .e2-verde { text-shadow: 0 0 22px rgba(166,227,91,.6), 0 4px 12px rgba(0,70,90,.45); }
+.n2t-texto { font-family: "ADLaM Display", "Segoe UI", sans-serif; font-size: 40px; line-height: 56px; color: #fff; text-align: left;
+  text-shadow: 0 2px 8px rgba(0,60,70,.45); }
+.n2t-personaje { position: absolute; left: 90px; top: 560px; width: 320px; filter: drop-shadow(0 20px 30px rgba(0,60,80,.3)); }
+
+
 /* ============ Redes antagónicas (GANs) ============ */
 .gan-titulo-caja { left: 174px; top: 27px; width: 1482px; height: 135px; display: flex; align-items: center; padding: 0 34px; }
 #gan-caja { left: 401px; top: 206px; width: 1395px; height: 811px; }

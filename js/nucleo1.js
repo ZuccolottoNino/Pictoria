@@ -6,7 +6,7 @@ function pararBucles() { bucles.forEach(function (b) { b.kill(); }); bucles = []
 /* Recordatorio del gesto abajo a la derecha (js/pista.js): qué pantallas lo muestran y cómo */
 var PISTA = {
   enseñar: ["#p3", "#p4", "#p5"],                      // primeras pantallas manuales: aparece enseguida
-  nunca: ["#p1", "#p15",                               // ya indican qué hacer por su cuenta
+  nunca: ["#p1", "#p15", "#n1-toca",                   // ya indican qué hacer por su cuenta
           "#p2", "#p6", "#p9", "#p11", "#p12", "#p13", "#p14"],   // pasan solas (tienen su relojito)
   dibujar: ["#p7", "#p8", "#p10"]                      // juegos: cartel de "Dibujá" (sin burbuja de gesto)
 };
@@ -633,6 +633,32 @@ function iniciar() {
     },
 
     /* ============ Pantalla 7: probar la tableta (intro al juego) ============ */
+    /* ============ Antes del juego: ahora te toca a vos ============ */
+    {
+      el: "#n1-toca",
+      preparar: function () {
+        var d = Infografia.direccion;
+        letrasDe("#n1t-dialogo");
+        gsap.set(".n1t-linea", { autoAlpha: 0, x: 80 * d });
+        gsap.set("#n1t-caja", { autoAlpha: 0, x: 120 * d });
+        gsap.set("#n1t-profe", { autoAlpha: 0, x: -60 * d, rotation: -6, transformOrigin: "50% 100%" });
+        gsap.set("#n1t-dialogo .letra", { autoAlpha: 0 });
+      },
+      entrar: function () {
+        return gsap.timeline()
+          .to(".n1t-linea", { autoAlpha: 1, x: 0, duration: 0.5, ease: "back.out(2)", stagger: 0.2 })
+          .to("#n1t-caja", { autoAlpha: 1, x: 0, duration: 0.6, ease: "power3.out" }, "-=0.1")
+          .to("#n1t-profe", { autoAlpha: 1, x: 0, rotation: 0, duration: 0.7, ease: "back.out(1.8)" }, "-=0.2")
+          .to("#n1t-dialogo .letra", { autoAlpha: 1, duration: 0.01, stagger: 0.02 }, "-=0.2")
+          .add(function () {
+            bucles.push(gsap.to("#n1t-profe", { y: -6, duration: 0.9, ease: "sine.inOut", yoyo: true, repeat: -1 }));
+            // "a vos" titila, como un logro de videojuego
+            bucles.push(gsap.to(".n1t-linea.verde", { opacity: 0.3, duration: 0.5, ease: "steps(1)", yoyo: true, repeat: -1, repeatDelay: 0.4 }));
+          });
+      },
+      salir: pararBucles
+    },
+
     {
       el: "#p7",
       preparar: function () {
@@ -943,6 +969,6 @@ function iniciar() {
 
   ], PISTA), { transicion: "deslizar", duracion: 0.8,
     // pantallas que pasan solas (segundos de lectura después de que termina la entrada)
-    auto: { "#p1": 13, "#p2": 13, "#p6": 13, "#p9": 13, "#p11": 13, "#p12": 13, "#p13": 13, "#p14": 13 } });   // las de información: mínimo 13 s
+    auto: { "#n1-toca": 7, "#p1": 13, "#p2": 13, "#p6": 13, "#p9": 13, "#p11": 13, "#p12": 13, "#p13": 13, "#p14": 13 } });   // las de información: mínimo 13 s
 }
 (document.fonts && document.fonts.ready ? document.fonts.ready : Promise.resolve()).then(iniciar);
