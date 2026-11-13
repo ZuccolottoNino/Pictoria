@@ -7,10 +7,42 @@
 <link rel="stylesheet" href="../css/tutorial.css">
 </head>
 <body>
-<!-- Tutorial de los gestos (boceto). Estilo "Switch Sports": una persona gris, vista DE FRENTE
-     (como un espejo: su derecha queda a la izquierda de la pantalla), con la mano derecha roja y la izquierda azul.
-     Las figuras <div class="figura"> las dibuja tutorial.js. -->
+<!-- Tutorial de los gestos. Empieza en espera: cuando la cámara ve una cara unos segundos, se arma el personaje
+     del visitante (caraUsuario, js/personaje.js) y ese personaje es el que enseña los gestos, con la mano derecha
+     roja y la izquierda azul flotando a los costados. Visto DE FRENTE, como un espejo: su derecha queda a la
+     izquierda de la pantalla. Las figuras <div class="figura"> las dibuja tutorial.js. -->
 <div id="escenario">
+
+  <!-- A. Espera: los personajes de los núcleos hasta que alguien se sienta frente a la cámara
+       (provisorio: después va el video de standby_mii) -->
+  <section id="t-espera" class="slide">
+    <div id="te-personajes">
+      <img src="../assets/nucleo1/img/profesor-puntero.png" alt="" class="te-pj te-pixel">
+      <img src="../assets/nucleo2/img/personaje1.png" alt="" class="te-pj">
+      <img src="../assets/nucleo3/img/personaje1.png" alt="" class="te-pj">
+    </div>
+    <div id="te-texto">
+      <h1>Pictoria</h1>
+      <p id="te-pide">Sentate frente a la cámara para empezar</p>
+      <div id="te-viendo">
+        <svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="44" fill="none" stroke="rgba(42,47,58,.15)" stroke-width="9"/>
+          <circle class="aro" cx="50" cy="50" r="44" fill="none" stroke="#2A2F3A" stroke-width="9" stroke-linecap="round"
+            stroke-dasharray="276.5" stroke-dashoffset="276.5" transform="rotate(-90 50 50)"/></svg>
+        <span>Te estoy viendo…</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- B. Construcción del personaje del visitante -->
+  <section id="t-crea" class="slide">
+    <canvas id="tc-lienzo" width="700" height="900"></canvas>
+    <div id="tc-escaneo"></div>
+    <div class="t-texto" id="tc-texto">
+      <h1 id="tc-titulo">Creando tu IA…</h1>
+      <p id="tc-paso">Analizando tu cara</p>
+      <div id="tc-barra"><i></i></div>
+    </div>
+  </section>
 
   <!-- 0. El relojito de las pantallas automáticas (imita al #auto-reloj de puente.js, en grande) -->
   <section id="t-reloj" class="slide">
@@ -75,7 +107,7 @@
     <div class="t-texto">
       <p class="t-paso">Paso 3</p>
       <h1>Traé la mano <span class="rojo">derecha</span><br>desde el costado hacia el centro</h1>
-      <p class="t-estado">Hacé el movimiento como la persona de la izquierda.</p>
+      <p class="t-estado">Hacé el movimiento como tu IA de la izquierda.</p>
       <div class="t-puntos"><i></i><i></i><i></i><i></i><i></i></div>
     </div>
   </section>
@@ -86,7 +118,7 @@
     <div class="t-texto">
       <p class="t-paso">Paso 4</p>
       <h1>Ahora la mano <span class="azul">izquierda</span><br>desde el costado hacia el centro</h1>
-      <p class="t-estado">Hacé el movimiento como la persona de la izquierda.</p>
+      <p class="t-estado">Hacé el movimiento como tu IA de la izquierda.</p>
       <div class="t-puntos"><i></i><i></i><i></i><i></i><i></i></div>
     </div>
   </section>
@@ -102,9 +134,13 @@
   </section>
 </div>
 
+<!-- para calibrar caraUsuario: lo que detecta la cámara en vivo (sacar cuando esté calibrado) -->
+<p id="t-datos"></p>
+
 <script src="../libs/gsap.min.js"></script>
 <script src="../js/puente.js"></script>
 <script src="../js/manos.js"></script>
+<script src="../js/personaje.js"></script>
 <script src="../js/tutorial.js"></script>
 </body>
 </html>

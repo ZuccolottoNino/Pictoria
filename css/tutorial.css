@@ -48,3 +48,29 @@ html, body { height: 100%; overflow: hidden; background: #EEF0F3; cursor: none; 
 .t-puntos i { width: 54px; height: 54px; border-radius: 50%; border: 5px solid #C9CDD5; background: #fff; }
 .t-practica[data-mano="der"] .t-puntos i.ok { background: var(--rojo); border-color: var(--rojo); box-shadow: 0 0 18px rgba(255,69,84,.6); }
 .t-practica[data-mano="izq"] .t-puntos i.ok { background: var(--azul); border-color: var(--azul); box-shadow: 0 0 18px rgba(0,195,227,.6); }
+
+/* el personaje del visitante (canvas) con las manos flotantes encima (svg) */
+.figura canvas, .figura svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+
+/* ---------- Espera: los personajes de los núcleos ---------- */
+#te-personajes { position: absolute; left: 0; right: 0; top: 300px; display: flex; justify-content: center; align-items: flex-end; gap: 120px; }
+.te-pj { height: 420px; filter: drop-shadow(0 18px 24px rgba(0,0,0,.18)); }
+.te-pixel { image-rendering: pixelated; }
+#te-texto { position: absolute; left: 0; right: 0; top: 80px; text-align: center; }
+#te-texto h1 { font-size: 110px; line-height: 1; font-weight: 700; letter-spacing: .02em; }
+#te-pide { position: absolute; left: 0; right: 0; top: 880px; font-family: "Inter", "Segoe UI", sans-serif; font-size: 44px; color: #4A505C; }
+#te-viendo { position: absolute; left: 50%; top: 860px; transform: translateX(-50%); display: flex; align-items: center; gap: 22px;
+  font-family: "Inter", "Segoe UI", sans-serif; font-size: 44px; font-weight: 600; color: var(--tinta); opacity: 0; white-space: nowrap; }
+#te-viendo svg { width: 84px; height: 84px; }
+
+/* ---------- Construcción del personaje ---------- */
+#tc-lienzo { position: absolute; left: 170px; top: 90px; width: 700px; height: 900px; }
+#tc-escaneo { position: absolute; left: 170px; top: 90px; width: 700px; height: 10px; border-radius: 5px; opacity: 0;
+  background: linear-gradient(90deg, rgba(0,195,227,0), rgba(0,195,227,.9), rgba(255,69,84,.9), rgba(255,69,84,0));
+  box-shadow: 0 0 30px 8px rgba(0,195,227,.35); }
+#tc-barra { width: 620px; height: 18px; border-radius: 9px; background: rgba(42,47,58,.12); overflow: hidden; }
+#tc-barra i { display: block; height: 100%; width: 100%; border-radius: 9px; transform-origin: 0 50%; transform: scaleX(0);
+  background: linear-gradient(90deg, var(--azul), var(--rojo)); }
+
+/* para calibrar caraUsuario: lo que detecta la cámara (sacar cuando esté calibrado) */
+#t-datos { position: fixed; left: 12px; bottom: 8px; z-index: 30; margin: 0; font: 13px/1.3 Consolas, monospace; color: rgba(42,47,58,.55); }
