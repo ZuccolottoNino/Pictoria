@@ -7,16 +7,34 @@
                                            capas = cuántas capas dibujar (para la animación de construcción)
    Personaje.desdeCamara(muestras)       → rasgos a partir de varios mensajes cara:{...} del sensado
    Personaje.PREDETERMINADO              → rasgos para cuando no hay cámara
+   Personaje.enBlancoYNegro(rasgos)      → los mismos rasgos sin color (piel y pelo blancos, contorno negro)
+   Personaje.brazo(rasgos, op)           → un brazo suelto (imagen + hombros) para moverlo aparte; op como en dibujar
+                                           (dibujar con op.brazos = false no dibuja los brazos;
+                                           op.parte = "fondo" | "frente": lo que va debajo / encima de los brazos)
 
-   rasgos = { piel, colorPelo, pelo: "pelo1" | "pelo10" | "ninguno", cejas: bool, boca: "neutra" | "sonrisa", apertura: 0.35..1 } */
+   rasgos = { cuerpo: "bebe" | "base", piel, colorPelo, pelo: "pelo2" | "pelo10" | "ninguno", cejas: bool, boca: "neutra" | "sonrisa", apertura: 0.35..1 } */
 var Personaje = (function () {
   /* Cada pieza: recorte útil del png (x, y, ancho, alto, en el archivo) y dónde va su centro sobre el cuerpo
      (coordenadas del cuerpo, 2048x2048), con qué ancho. */
+  /* Las piezas nuevas vienen en un lienzo de 800x800, todas alineadas con el cuerpo: se pasan a las coordenadas
+     del cuerpo (2048) escalando la cabeza para que coincida con la de los ojos y cejas (x3.62, centro 400,310 → 1024,800). */
+  var K800 = 3.62;
+  function de800(src, rec) {
+    return { src: src, recorte: rec, ancho: rec[2] * K800,
+             centro: [1024 + (rec[0] + rec[2] / 2 - 400) * K800, 800 + (rec[1] + rec[3] / 2 - 310) * K800] };
+  }
   var PIEZAS = {
-    cuerpo: { src: "cuerpobase.png", recorte: [511, 319, 1026, 1584], centro: [1024, 1111], ancho: 1026 },
-    ojos:   { src: "ojos1.png",      recorte: [163, 394, 2074, 963],  centro: [1000, 790],  ancho: 520 },
-    cejas:  { src: "cejas1.png",     recorte: [183, 705, 2033, 321],  centro: [1000, 610],  ancho: 500 },
-    pelo1:  { src: "pelo1.png",      recorte: [576, 191, 1249, 937],  centro: [1000, 520],  ancho: 1120 },
+    // el cuerpo base viene en dos capas: la cabeza (abajo de todo) y el cuerpo (arriba de los brazos)
+    cara:      de800("cara_base.png",   [255, 175, 288, 264]),
+    base:      de800("cuerpo_base.png", [322, 399, 164, 224]),
+    bebe:      de800("cuerpo_bebe.png", [256, 176, 288, 431]),
+    // un brazo (el de la izquierda de la pantalla); el otro es el mismo espejado
+    brazoBase: de800("brazo_base.png",  [284, 412, 78, 135]),
+    brazoBebe: de800("brazo_bebe.png",  [369, 318, 70, 107]),
+    ojos:   { src: "ojos1.png",      recorte: [163, 394, 2074, 963],  centro: [1020, 790],  ancho: 520 },
+    cejas:  { src: "cejas1.png",     recorte: [183, 705, 2033, 321],  centro: [1020, 610],  ancho: 500 },
+    // pelo2 no viene alineado con el cuerpo: va donde iba pelo1 (más arriba, sobre la frente)
+    pelo2:  Object.assign(de800("pelo2.png", [248, 229, 304, 229]), { centro: [1020, 520] }),
     pelo10: { src: "pelo10.png",     recorte: [462, 65, 1487, 1647],  centro: [990, 880],   ancho: 1330 }
   };
   // la caja del personaje dentro del cuerpo (lo que se ve), en coordenadas del cuerpo
@@ -29,13 +47,20 @@ var Personaje = (function () {
   var OJOS_ACHINADOS = 0.26, OJOS_REDONDOS = 0.42;
   var SONRISA = 0.15;        // desde cuánto se toma como sonrisa (0 … 1)
   var ACLARAR_PIEL = 1.3;    // la cámara ve la piel más oscura de lo que es
-  var OJOS = [{ x: 861, y: 790 }, { x: 1139, y: 790 }], RADIO_OJO = 124;
-  var BOCA = { centro: [1000, 975], ancho: 150 };
-  var PREDETERMINADO = { piel: "#f5c9a5", colorPelo: "#2b1d14", pelo: "pelo1", cejas: true, boca: "neutra", apertura: 1 };
+  var OJOS = [{ x: 881, y: 790 }, { x: 1159, y: 790 }], RADIO_OJO = 124;
+  var BOCA = { centro: [1020, 975], ancho: 150 };
+  /* Brazos del bebé: giran desde el hombro (coordenadas del cuerpo). pivote = el hombro dentro del recorte del png;
+     INCLINACION = cuánto viene inclinado hacia afuera el dibujo (se endereza para que 0° sea colgando derecho). */
+  var BRAZOS = {
+    base: { pieza: "brazoBase", hombros: { der: [843, 1205], izq: [1227, 1205] }, pivote: [66, 10], largo: 413, INCLINACION: 21, REPOSO: 21 },
+    bebe: { pieza: "brazoBebe", hombros: { der: [838, 1289], izq: [1251, 1289] }, pivote: [55, 18], largo: 300, INCLINACION: 20.6, REPOSO: 14 }
+  };
+  var PREDETERMINADO = { cuerpo: "base", piel: "#f5c9a5", colorPelo: "#2b1d14", pelo: "ninguno", cejas: true, boca: "neutra", apertura: 1 };
 
-  var imgs = {}, cargando = null;
+  var imgs = {}, cargando = null, RUTA = "";
   function cargar(ruta) {
     if (cargando) return cargando;
+    RUTA = ruta;
     cargando = Promise.all(Object.keys(PIEZAS).map(function (k) {
       return new Promise(function (ok) {
         var im = new Image();
@@ -63,6 +88,47 @@ var Personaje = (function () {
     a.drawImage(im, r[0], r[1], r[2], r[3], 0, 0, aux.width, aux.height);
     a.globalCompositeOperation = "source-over";
     ctx.drawImage(aux, x, y);
+  }
+  // una pieza tenida sola en un canvas nuevo (para los brazos, que se mueven aparte)
+  function tenida(k, color, E) {
+    var p = PIEZAS[k], r = p.recorte, w = p.ancho, h = r[3] * w / r[2], im = imgs[k];
+    var c = document.createElement("canvas");
+    c.width = Math.max(1, Math.ceil(w * E)); c.height = Math.max(1, Math.ceil(h * E));
+    if (!im || !im.naturalWidth) return c;
+    var a = c.getContext("2d");
+    a.drawImage(im, r[0], r[1], r[2], r[3], 0, 0, c.width, c.height);
+    a.globalCompositeOperation = "multiply"; a.fillStyle = color; a.fillRect(0, 0, c.width, c.height);
+    a.globalCompositeOperation = "destination-in"; a.drawImage(im, r[0], r[1], r[2], r[3], 0, 0, c.width, c.height);
+    return c;
+  }
+  /* Personaje.brazo(rasgos, op) → datos para dibujar un brazo aparte (en un svg) con el mismo op que dibujar:
+     { url, ancho, alto, pivote: [x, y] dentro de la imagen, hombros: { der: [x, y], izq: [x, y] }, largo, inclinacion }
+     url es el png entero (800x800) sin teñir: ancho/alto/pivote son de ese png a escala; el color va con un filtro
+     (con file:// no se puede sacar una imagen teñida de un canvas).
+     La imagen es la del brazo de la izquierda de la pantalla (der = derecha del personaje, visto de frente);
+     la del otro lado se espeja. */
+  function brazo(rasgos, op) {
+    rasgos = rasgos || PREDETERMINADO; op = op || {};
+    var BRAZO = BRAZOS[rasgos.cuerpo] || BRAZOS.base;
+    var E = (op.alto || 500) / CAJA.h, ox = op.x || 0, oy = op.y || 0, p = PIEZAS[BRAZO.pieza];
+    var k = p.ancho / p.recorte[2] * E, im = imgs[BRAZO.pieza], W = (im && im.naturalWidth) || 800, H = (im && im.naturalHeight) || 800;
+    function pt(b) { return [ox + (b[0] - CAJA.x) * E, oy + (b[1] - CAJA.y) * E]; }
+    return { url: RUTA + p.src, src: p.src, pieza: BRAZO.pieza, ancho: W * k, alto: H * k,
+             pivote: [(p.recorte[0] + BRAZO.pivote[0]) * k, (p.recorte[1] + BRAZO.pivote[1]) * k],
+             recorte: { ancho: p.recorte[2] * k, alto: p.recorte[3] * k, pivote: [BRAZO.pivote[0] * k, BRAZO.pivote[1] * k] },
+             hombros: { der: pt(BRAZO.hombros.der), izq: pt(BRAZO.hombros.izq) }, largo: BRAZO.largo * E,
+             inclinacion: BRAZO.INCLINACION, reposo: BRAZO.REPOSO };
+  }
+  // dibuja los dos brazos quietos en el canvas (para la construcción)
+  function brazosQuietos(ctx, rasgos, op) {
+    var b = brazo(rasgos, op), c = tenida(b.pieza, rasgos.piel, (op.alto || 500) / CAJA.h * 2);
+    ["der", "izq"].forEach(function (lado) {
+      var h = b.hombros[lado], s = lado === "der" ? 1 : -1;
+      ctx.save(); ctx.translate(h[0], h[1]); ctx.scale(s, 1);
+      ctx.rotate((b.reposo - b.inclinacion) * Math.PI / 180);
+      ctx.drawImage(c, -b.recorte.pivote[0], -b.recorte.pivote[1], b.recorte.ancho, b.recorte.alto);
+      ctx.restore();
+    });
   }
   function parpados(ctx, rasgos, E, ox, oy) {
     var a = rasgos.apertura;
@@ -100,10 +166,10 @@ var Personaje = (function () {
       ctx.quadraticCurveTo(cx + w * 0.45, cy + w * 0.6, cx, cy + w * 0.62);
       ctx.quadraticCurveTo(cx - w * 0.45, cy + w * 0.6, cx - w / 2, cy - w * 0.12);
       ctx.closePath();
-      ctx.fillStyle = "#5a1a22"; ctx.fill();
+      ctx.fillStyle = rasgos.byn ? "#2a2a2a" : "#5a1a22"; ctx.fill();
       ctx.save(); ctx.clip();
       ctx.beginPath(); ctx.ellipse(cx, cy + w * 0.55, w * 0.3, w * 0.22, 0, 0, Math.PI * 2);
-      ctx.fillStyle = "#e86a7a"; ctx.fill();
+      ctx.fillStyle = rasgos.byn ? "#fff" : "#e86a7a"; ctx.fill();
       ctx.restore();
       ctx.stroke();
     } else {
@@ -121,7 +187,13 @@ var Personaje = (function () {
     rasgos = rasgos || PREDETERMINADO;
     op = op || {};
     var E = (op.alto || 500) / CAJA.h, ox = op.x || 0, oy = op.y || 0, n = op.capas == null ? CAPAS : op.capas;
-    if (n >= 1) pieza(ctx, "cuerpo", n >= 2 ? rasgos.piel : null, E, ox, oy);
+    // orden: cabeza → brazos → cuerpo → cara (ojos, cejas, pelo, boca).
+    // op.parte = "fondo" dibuja sólo la cabeza; "frente", todo lo que va arriba de los brazos (para moverlos aparte en el medio)
+    var bebe = rasgos.cuerpo === "bebe", piel = n >= 2 ? rasgos.piel : null;
+    if (op.parte !== "frente" && !bebe && n >= 1) pieza(ctx, "cara", piel, E, ox, oy);
+    if (op.parte === "fondo") return;
+    if (!op.parte && n >= 2 && op.brazos !== false) brazosQuietos(ctx, rasgos, op);
+    if (n >= 1) pieza(ctx, bebe ? "bebe" : "base", piel, E, ox, oy);
     if (n >= 3) { pieza(ctx, "ojos", null, E, ox, oy); parpados(ctx, rasgos, E, ox, oy); }
     if (n >= 4 && rasgos.cejas) pieza(ctx, "cejas", null, E, ox, oy);
     if (n >= 5 && rasgos.pelo !== "ninguno") pieza(ctx, rasgos.pelo, rasgos.colorPelo, E, ox, oy);
@@ -158,15 +230,21 @@ var Personaje = (function () {
     var recientes = muestras.slice(-8);
     var sonrisas = recientes.filter(function (m) { return m.sonrisa > SONRISA; }).length;
     return {
+      cuerpo: "base",
       piel: masVotado(muestras.map(function (m) { return masParecido(aclarar(m.piel, ACLARAR_PIEL), PALETA.piel); })),
       colorPelo: masVotado(muestras.map(function (m) { return masParecido(m.pelo, PALETA.pelo); })),
-      pelo: pelados > muestras.length / 2 ? "ninguno" : "pelo1",
+      pelo: pelados > muestras.length / 2 ? "ninguno" : "pelo2",
       cejas: true,
       boca: sonrisas >= recientes.length / 2 ? "sonrisa" : "neutra",
       apertura: 0.35 + t * 0.65
     };
   }
 
-  return { cargar: cargar, dibujar: dibujar, ancho: ancho, desdeCamara: desdeCamara, CAPAS: CAPAS,
+  // la misma forma (pelo, ojos, cejas, boca) pero en blanco y negro, como un dibujo sin pintar
+  function enBlancoYNegro(rasgos) {
+    return Object.assign({}, rasgos || PREDETERMINADO, { piel: "#ffffff", colorPelo: "#ffffff", byn: true });
+  }
+
+  return { enBlancoYNegro: enBlancoYNegro, cargar: cargar, dibujar: dibujar, ancho: ancho, desdeCamara: desdeCamara, brazo: brazo, CAPAS: CAPAS,
            PREDETERMINADO: PREDETERMINADO };
 })();

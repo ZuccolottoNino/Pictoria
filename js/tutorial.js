@@ -13,73 +13,99 @@ var SEG_VER = 5;     // segundos seguidos viendo una cara para arrancar
 var SEG_IDO = 10;    // segundos sin nadie frente a la cámara para volver a la espera
 var RUTA_PJ = "../assets/carausuario/";
 
-/* ---------- El personaje del visitante, con manos flotantes ----------
-   viewBox 620x880. El personaje (canvas) va de fondo; encima, en un svg, sus dos manos flotan a los costados.
-   Cada mano gira alrededor de un "hombro" invisible: 0° = abajo; la derecha se abre con grados positivos,
-   la izquierda con negativos. (Cuando haya brazos separados, la línea invisible de cada brazo pasa a ser el brazo.) */
-var HOMBRO = { der: [95, 430], izq: [525, 430] };
-var rasgos = Personaje.PREDETERMINADO;   // se reemplaza con los de la cámara al armar el personaje
+/* ---------- El personaje del visitante (bebé) con sus brazos ----------
+   viewBox 620x880. El cuerpo va en un canvas de fondo; encima, en un svg, los dos brazos (js/personaje.js → Personaje.brazo)
+   giran enteros desde el hombro: 0° = colgando derecho; la derecha se abre con grados positivos, la izquierda con negativos.
+   En la punta de cada brazo, un brillo del color de su mano (roja = derecha, azul = izquierda). */
+// en el tutorial el personaje va en blanco y negro: de la cámara toma la forma (pelo, ojos, sonrisa), no los colores
+var rasgos = Personaje.enBlancoYNegro(Personaje.PREDETERMINADO);   // se reemplaza con los de la cámara al armar el personaje
 var ALTO_PJ = 760;
-function dibujarPersonaje(canvas) {
-  var ctx = canvas.getContext("2d");
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
-  Personaje.dibujar(ctx, rasgos, { x: (620 - Personaje.ancho(ALTO_PJ)) / 2, y: 60, alto: ALTO_PJ });
+var OP_PJ = { x: (620 - Personaje.ancho(ALTO_PJ)) / 2, y: 60, alto: ALTO_PJ, brazos: false };
+var BRAZO = Personaje.brazo(rasgos, OP_PJ);    // medidas del brazo (el png entero, a escala)
+var HOMBRO = BRAZO.hombros, LARGO = BRAZO.largo, R_MANO = 26;
+var ARRIBA = 125;                              // brazo levantado (grados)
+// la cabeza va en el canvas de atrás, los brazos en el medio y el cuerpo con la cara en el de adelante
+function dibujarPersonaje(p) {
+  [[p.fondo, "fondo"], [p.canvas, "frente"]].forEach(function (c) {
+    var ctx = c[0].getContext("2d");
+    ctx.clearRect(0, 0, c[0].width, c[0].height);
+    Personaje.dibujar(ctx, rasgos, Object.assign({ parte: c[1] }, OP_PJ));
+  });
 }
+/* Capas: canvas de la cabeza, svg de los brazos, canvas del cuerpo y la cara, svg de adelante.
+   Dos svg iguales: el de atrás (debajo del cuerpo) tiene los brazos; el de adelante, los puntos de las manos y la estela.
+   Los dos giran juntos (p.brazo devuelve el grupo de cada uno). */
 function persona(cont) {
-  function brazo(lado, color) {
+  function grupo(lado, dentro) { return '<g class="brazo-' + lado + '">' + dentro + '</g>'; }
+  function brazo(lado) {
+    var h = HOMBRO[lado], s = lado === "der" ? 1 : -1;
+    return grupo(lado,
+      '<g transform="translate(' + h[0] + ' ' + h[1] + ') scale(' + s + ' 1) rotate(' + (-BRAZO.inclinacion) + ')">' +
+      '<image class="img-brazo" href="' + RUTA_PJ + BRAZO.src + '" filter="url(#piel-' + cont.id + ')" x="' + (-BRAZO.pivote[0]) + '" y="' + (-BRAZO.pivote[1]) +
+      '" width="' + BRAZO.ancho + '" height="' + BRAZO.alto + '"/></g>');
+  }
+  // la mano: halo grande de su color + punto con borde blanco, bien visible sobre la piel
+  function mano(lado, color) {
     var h = HOMBRO[lado];
-    return '<g class="brazo-' + lado + '">' +
-      '<line x1="' + h[0] + '" y1="' + h[1] + '" x2="' + h[0] + '" y2="' + (h[1] + 230) + '" stroke="none"/>' +
-      '<circle class="mano-' + lado + '" cx="' + h[0] + '" cy="' + (h[1] + 262) + '" r="40" fill="' + color + '" filter="url(#brillo)"/></g>';
+    return grupo(lado,
+      '<circle class="halo-' + lado + '" cx="' + h[0] + '" cy="' + (h[1] + LARGO) + '" r="' + (R_MANO * 2) + '" fill="' + color + '" opacity=".35" filter="url(#brillo-' + cont.id + ')"/>' +
+      '<circle class="mano-' + lado + '" cx="' + h[0] + '" cy="' + (h[1] + LARGO) + '" r="' + R_MANO + '" fill="' + color + '" stroke="#fff" stroke-width="7"/>');
   }
   cont.innerHTML =
-    '<canvas width="620" height="880"></canvas>' +
-    '<svg viewBox="0 0 620 880" style="overflow:visible">' +
-    '<defs><filter id="brillo" x="-80%" y="-80%" width="260%" height="260%">' +
-    '<feGaussianBlur stdDeviation="9" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs>' +
+    '<canvas class="fondo" width="620" height="880"></canvas>' +
+    '<svg class="atras" viewBox="0 0 620 880" style="overflow:visible">' +
+    // el brazo toma el color de piel: lo blanco se tiñe y lo negro queda negro (multiplicar), con su misma transparencia
+    '<defs><filter id="piel-' + cont.id + '" x="0" y="0" width="100%" height="100%" color-interpolation-filters="sRGB">' +
+    '<feFlood class="color-piel" flood-color="' + rasgos.piel + '" result="c"/><feBlend in="SourceGraphic" in2="c" mode="multiply" result="m"/>' +
+    '<feComposite in="m" in2="SourceGraphic" operator="in"/></filter></defs>' +
     '<ellipse cx="310" cy="850" rx="190" ry="22" fill="rgba(0,0,0,.08)"/>' +
-    brazo("der", ROJO) + brazo("izq", AZUL) +
+    brazo("der") + brazo("izq") + '</svg>' +
+    '<canvas class="frente" width="620" height="880"></canvas>' +
+    '<svg class="adelante" viewBox="0 0 620 880" style="overflow:visible">' +
+    '<defs><filter id="brillo-' + cont.id + '" x="-100%" y="-100%" width="300%" height="300%"><feGaussianBlur stdDeviation="10"/></filter></defs>' +
+    mano("der", ROJO) + mano("izq", AZUL) +
     // estela del movimiento (se ve sólo en la práctica), encima de todo
     '<path class="estela" d="" fill="none" stroke-width="16" stroke-linecap="round" stroke-dasharray="2 28" opacity="0"/>' +
     '</svg>';
-  var svg = cont.querySelector("svg");
+  var atras = cont.querySelector("svg.atras"), svg = cont.querySelector("svg.adelante");
   return {
     svg: svg,
-    canvas: cont.querySelector("canvas"),
-    brazo: function (lado) { return svg.querySelector(".brazo-" + lado); },
+    atras: atras,
+    fondo: cont.querySelector("canvas.fondo"),
+    canvas: cont.querySelector("canvas.frente"),
+    brazo: function (lado) { return cont.querySelectorAll(".brazo-" + lado); },
     mano: function (lado) { return svg.querySelector(".mano-" + lado); },
     estela: svg.querySelector(".estela")
   };
 }
 
-// gira un brazo desde su hombro
+// gira un brazo entero desde su hombro
 function girar(p, lado, grados, extra) {
   var h = HOMBRO[lado];
   return Object.assign({ rotation: grados, svgOrigin: h[0] + " " + h[1] }, extra || {});
+}
+// dónde queda la mano con el brazo girado tantos grados
+function puntaBrazo(lado, grados) {
+  var h = HOMBRO[lado], a = grados * Math.PI / 180;
+  return [h[0] - LARGO * Math.sin(a), h[1] + LARGO * Math.cos(a)];
 }
 
 var figuras = {};
 ["t1", "t2", "t3", "t4", "t5", "t6"].forEach(function (id) {
   figuras[id] = persona(document.getElementById(id + "-fig"));
 });
-// lleva la mano de un brazo a (x, y) estirando la línea desde el hombro (para el gesto de arrastrar)
-function llevarMano(p, lado, x, y, extra) {
-  var g = p.brazo(lado), tl = gsap.timeline();
-  tl.to(g.querySelector("line"), Object.assign({ attr: { x2: x, y2: y } }, extra || {}), 0)
-    .to(p.mano(lado), Object.assign({ attr: { cx: x, cy: y } }, extra || {}), 0);
-  return tl;
-}
 function reposo(p) {
-  ["der", "izq"].forEach(function (lado) {
-    var h = HOMBRO[lado];
-    gsap.set(p.brazo(lado).querySelector("line"), { attr: { x2: h[0], y2: h[1] + 230 } });
-    gsap.set(p.mano(lado), { attr: { cx: h[0], cy: h[1] + 262 } });
-  });
-  gsap.set(p.brazo("der"), girar(p, "der", 14));
-  gsap.set(p.brazo("izq"), girar(p, "izq", -14));
+  gsap.set(p.brazo("der"), girar(p, "der", BRAZO.reposo));
+  gsap.set(p.brazo("izq"), girar(p, "izq", -BRAZO.reposo));
+  gsap.set([p.mano("der"), p.mano("izq")], { attr: { r: R_MANO } });
 }
 Object.keys(figuras).forEach(function (k) { reposo(figuras[k]); });
-function redibujarFiguras() { Object.keys(figuras).forEach(function (k) { dibujarPersonaje(figuras[k].canvas); }); }
+function redibujarFiguras() {
+  Object.keys(figuras).forEach(function (k) {
+    dibujarPersonaje(figuras[k]);
+    figuras[k].atras.querySelector(".color-piel").setAttribute("flood-color", rasgos.piel);   // los brazos, del color de piel del visitante
+  });
+}
 Personaje.cargar(RUTA_PJ).then(redibujarFiguras);
 Manos.llenar(document.getElementById("escenario"));   // la mano del cartel de ejemplo
 
@@ -95,29 +121,30 @@ function entradaTexto(el) {
 function levantar(p, lado) {
   var s = lado === "der" ? 1 : -1;
   var tl = gsap.timeline();
-  tl.to(p.brazo(lado), girar(p, lado, s * 160, { duration: 0.9, ease: "back.out(1.6)" }));
+  tl.to(p.brazo(lado), girar(p, lado, s * ARRIBA, { duration: 0.9, ease: "back.out(1.6)" }));
   var b = gsap.timeline({ repeat: -1, yoyo: true, delay: 0.9 });
-  b.to(p.brazo(lado), girar(p, lado, s * 140, { duration: 0.5, ease: "sine.inOut" }));
-  var pulso = gsap.to(p.mano(lado), { attr: { r: 48 }, duration: 0.5, repeat: -1, yoyo: true, ease: "sine.inOut", delay: 0.9 });
+  b.to(p.brazo(lado), girar(p, lado, s * (ARRIBA - 25), { duration: 0.5, ease: "sine.inOut" }));
+  var pulso = gsap.to(p.mano(lado), { attr: { r: R_MANO * 1.3 }, duration: 0.5, repeat: -1, yoyo: true, ease: "sine.inOut", delay: 0.9 });
   bucles.push(b, tl, pulso);
   return tl;
 }
 
-// demostración del gesto: la mano sube al costado y se arrastra en línea recta, a la misma altura,
-// hasta el centro del cuerpo
+// demostración del gesto: el brazo entero sube al costado y barre hacia el centro del cuerpo
+// (la estela marca el recorrido de la mano)
 function demo(p, lado) {
-  var s = lado === "der" ? -1 : 1, h = HOMBRO[lado], color = lado === "der" ? ROJO : AZUL;
-  var y = h[1] + 90, xCostado = h[0] + s * 230, xCentro = 310;
-  p.estela.setAttribute("d", "M" + xCostado + " " + y + " L" + xCentro + " " + y);
+  var s = lado === "der" ? 1 : -1, color = lado === "der" ? ROJO : AZUL;
+  var desde = 95, hasta = -40;   // grados: al costado (un poco arriba de horizontal) → cruzando hacia el centro
+  var pts = [];
+  for (var g = desde; g >= hasta; g -= 5) pts.push(puntaBrazo(lado, s * g).map(function (v) { return v.toFixed(1); }).join(" "));
+  p.estela.setAttribute("d", "M" + pts.join(" L"));
   p.estela.setAttribute("stroke", color);
   var tl = gsap.timeline({ repeat: -1, repeatDelay: 0.5 });
   tl.set(p.estela, { opacity: 0 })
-    .to(p.brazo(lado), girar(p, lado, 0, { duration: 0.3 }))
-    .add(llevarMano(p, lado, xCostado, y, { duration: 0.6, ease: "power2.out" }), "<")
+    .to(p.brazo(lado), girar(p, lado, s * desde, { duration: 0.7, ease: "power2.out" }))
     .to(p.estela, { opacity: 0.8, duration: 0.2 })
-    .add(llevarMano(p, lado, xCentro, y, { duration: 0.7, ease: "power2.inOut" }))
+    .to(p.brazo(lado), girar(p, lado, s * hasta, { duration: 0.8, ease: "power2.inOut" }))
     .to(p.estela, { opacity: 0, duration: 0.4 }, "+=0.2")
-    .add(llevarMano(p, lado, h[0], h[1] + 262, { duration: 0.5, ease: "power1.inOut" }), "<");
+    .to(p.brazo(lado), girar(p, lado, s * BRAZO.reposo, { duration: 0.5, ease: "power1.inOut" }), "<");
   bucles.push(tl);
   return tl;
 }
@@ -135,7 +162,7 @@ function practica(id, lado) {
   function bien() {
     if (fin) return;
     var p = figuras[id];
-    gsap.fromTo(p.mano(lado), { attr: { r: 64 } }, { attr: { r: 40 }, duration: 0.5, ease: "power2.out" });
+    gsap.fromTo(p.mano(lado), { attr: { r: R_MANO * 1.8 } }, { attr: { r: R_MANO }, duration: 0.5, ease: "power2.out" });
     if (!hecho) {   // primer movimiento bien hecho
       hecho = true;
       decir("¡Muy bien! Ahora probalo " + REPETICIONES + " veces más.", "bien");
@@ -222,21 +249,16 @@ Infografia.presentacion([
       el: "#t-espera",
       preparar: function () {
         enInicio = true; muestras = []; viendoDesde = 0;
-        gsap.set(".te-pj", { autoAlpha: 0, y: 60 });
-        gsap.set("#te-texto h1", { autoAlpha: 0, y: -30 });
+        var v = document.getElementById("te-video");
+        try { v.currentTime = 0; } catch (e) {}
         gsap.set("#te-pide", { autoAlpha: 0 });
         gsap.set("#te-viendo", { autoAlpha: 0 });
       },
       entrar: function () {
-        var tl = gsap.timeline()
-          .to("#te-texto h1", { autoAlpha: 1, y: 0, duration: 0.7, ease: "back.out(1.6)" })
-          .to(".te-pj", { autoAlpha: 1, y: 0, duration: 0.7, stagger: 0.15, ease: "back.out(1.6)" }, "-=0.3")
-          .to("#te-pide", { autoAlpha: 1, duration: 0.5 });
-        // provisorio hasta el video: cada personaje "hace lo suyo"
-        var pj = document.querySelectorAll(".te-pj");
-        bucles.push(gsap.to(pj[0], { rotation: -4, duration: 1.2, ease: "sine.inOut", yoyo: true, repeat: -1, transformOrigin: "50% 100%" }));
-        bucles.push(gsap.to(pj[1], { y: -24, duration: 0.9, ease: "sine.inOut", yoyo: true, repeat: -1 }));
-        bucles.push(gsap.to(pj[2], { y: -14, rotation: 3, duration: 1.6, ease: "sine.inOut", yoyo: true, repeat: -1, transformOrigin: "50% 100%" }));
+        // el video de la intro, en bucle, hasta que la cámara ve a alguien
+        var v = document.getElementById("te-video"), pr = v.play();
+        if (pr && pr.catch) pr.catch(function () {});
+        var tl = gsap.timeline().to("#te-pide", { autoAlpha: 1, duration: 0.5, delay: 0.3 });
         // ¿hay alguien? el aro se llena mientras la cámara lo sigue viendo; si se va, vuelve a cero
         var aro = document.querySelector("#te-viendo .aro"), mostrando = false;
         vigia = setInterval(function () {
@@ -245,7 +267,6 @@ Infografia.presentacion([
             mostrando = t > 0;
             gsap.to("#te-viendo", { autoAlpha: mostrando ? 1 : 0, duration: 0.3 });
             gsap.to("#te-pide", { autoAlpha: mostrando ? 0 : 1, duration: 0.3 });
-            gsap.to(pj, { y: mostrando ? -10 : 0, duration: 0.4 });
           }
           aro.setAttribute("stroke-dashoffset", (276.5 * (1 - Math.min(1, t / SEG_VER))).toFixed(1));
           if (t >= SEG_VER) { clearInterval(vigia); vigia = null; Infografia.avanzar(); }
@@ -256,18 +277,18 @@ Infografia.presentacion([
       // sin cámara, avanzar con el teclado arma el personaje predeterminado
       alSiguiente: function () { return camara; },
       alAnterior: function () { return true; },
-      salir: function () { if (vigia) { clearInterval(vigia); vigia = null; } pararBucles(); }
+      salir: function () { if (vigia) { clearInterval(vigia); vigia = null; } document.getElementById("te-video").pause(); pararBucles(); }
     };
   })(),
 
   // B. Construcción: el personaje se arma capa por capa mientras una línea lo "escanea"; después arranca el tutorial
   (function () {
-    var PASOS = ["Analizando tu cara", "Tu color de piel", "Tus ojos", "Tus cejas", "Tu pelo", "Tu sonrisa"];
+    var PASOS = ["Analizando tu cara", "Tu cuerpo", "Tus ojos", "Tus cejas", "Tu pelo", "Tu boca"];
     return {
       el: "#t-crea",
       preparar: function () {
         enInicio = true;
-        rasgos = Personaje.desdeCamara(muestras.slice(-20));
+        rasgos = Personaje.enBlancoYNegro(Personaje.desdeCamara(muestras.slice(-20)));
         gsap.set("#tc-texto > *", { autoAlpha: 0, y: 30 });
         gsap.set("#tc-barra i", { scaleX: 0 });
         var c = document.getElementById("tc-lienzo");
@@ -329,12 +350,12 @@ Infografia.presentacion([
     entrar: function (e) {
       var p = figuras.t1;
       var tl = gsap.timeline();
-      tl.from([p.canvas, p.svg], { y: 60, opacity: 0, duration: 0.7, ease: "power3.out" })
+      tl.from([p.fondo, p.atras, p.canvas, p.svg], { y: 60, opacity: 0, duration: 0.7, ease: "power3.out" })
         .add(entradaTexto(e), 0.2);
       // saluda con las dos manos
       bucles.push(gsap.timeline({ repeat: -1, yoyo: true, delay: 0.8 })
-        .to(p.brazo("der"), girar(p, "der", 150, { duration: 0.7, ease: "sine.inOut" }), 0)
-        .to(p.brazo("izq"), girar(p, "izq", -150, { duration: 0.7, ease: "sine.inOut" }), 0));
+        .to(p.brazo("der"), girar(p, "der", ARRIBA, { duration: 0.7, ease: "sine.inOut" }), 0)
+        .to(p.brazo("izq"), girar(p, "izq", -ARRIBA, { duration: 0.7, ease: "sine.inOut" }), 0));
       return tl;
     },
     salir: pararBucles },
@@ -361,8 +382,8 @@ Infografia.presentacion([
     preparar: function () { reposo(figuras.t6); },
     entrar: function (e) {
       var p = figuras.t6;
-      gsap.to(p.brazo("der"), girar(p, "der", 160, { duration: 0.8, ease: "back.out(1.6)" }));
-      gsap.to(p.brazo("izq"), girar(p, "izq", -160, { duration: 0.8, ease: "back.out(1.6)", delay: 0.15 }));
+      gsap.to(p.brazo("der"), girar(p, "der", ARRIBA, { duration: 0.8, ease: "back.out(1.6)" }));
+      gsap.to(p.brazo("izq"), girar(p, "izq", -ARRIBA, { duration: 0.8, ease: "back.out(1.6)", delay: 0.15 }));
       return entradaTexto(e);
     },
     // la izquierda acá reinicia el tutorial desde el principio

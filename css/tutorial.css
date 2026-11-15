@@ -53,13 +53,15 @@ html, body { height: 100%; overflow: hidden; background: #EEF0F3; cursor: none; 
 .figura canvas, .figura svg { position: absolute; inset: 0; width: 100%; height: 100%; }
 
 /* ---------- Espera: los personajes de los núcleos ---------- */
-#te-personajes { position: absolute; left: 0; right: 0; top: 300px; display: flex; justify-content: center; align-items: flex-end; gap: 120px; }
-.te-pj { height: 420px; filter: drop-shadow(0 18px 24px rgba(0,0,0,.18)); }
-.te-pixel { image-rendering: pixelated; }
+#te-video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
 #te-texto { position: absolute; left: 0; right: 0; top: 80px; text-align: center; }
-#te-texto h1 { font-size: 110px; line-height: 1; font-weight: 700; letter-spacing: .02em; }
-#te-pide { position: absolute; left: 0; right: 0; top: 880px; font-family: "Inter", "Segoe UI", sans-serif; font-size: 44px; color: #4A505C; }
-#te-viendo { position: absolute; left: 50%; top: 860px; transform: translateX(-50%); display: flex; align-items: center; gap: 22px;
+#te-texto h1 { display: none; }   /* con el video no va el título */
+/* el pedido y el "te estoy viendo" van en una cápsula blanca, abajo, para leerse sobre el video */
+#te-pide { position: absolute; left: 50%; top: 830px; transform: translateX(-50%); white-space: nowrap; padding: 18px 44px; border-radius: 999px;
+  background: rgba(255,255,255,.92); box-shadow: 0 12px 40px rgba(0,0,0,.18);
+  font-family: "Inter", "Segoe UI", sans-serif; font-size: 44px; color: #2A2F3A; }
+#te-viendo { padding: 14px 44px; border-radius: 999px; background: rgba(255,255,255,.92); box-shadow: 0 12px 40px rgba(0,0,0,.18); }
+#te-viendo { position: absolute; left: 50%; top: 820px; transform: translateX(-50%); display: flex; align-items: center; gap: 22px;
   font-family: "Inter", "Segoe UI", sans-serif; font-size: 44px; font-weight: 600; color: var(--tinta); opacity: 0; white-space: nowrap; }
 #te-viendo svg { width: 84px; height: 84px; }
 

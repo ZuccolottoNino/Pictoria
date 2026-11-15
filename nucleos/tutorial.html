@@ -13,14 +13,10 @@
      izquierda de la pantalla. Las figuras <div class="figura"> las dibuja tutorial.js. -->
 <div id="escenario">
 
-  <!-- A. Espera: los personajes de los núcleos hasta que alguien se sienta frente a la cámara
+  <!-- A. Espera: el video de la intro en bucle hasta que alguien se sienta frente a la cámara
        (provisorio: después va el video de standby_mii) -->
   <section id="t-espera" class="slide">
-    <div id="te-personajes">
-      <img src="../assets/nucleo1/img/profesor-puntero.png" alt="" class="te-pj te-pixel">
-      <img src="../assets/nucleo2/img/personaje1.png" alt="" class="te-pj">
-      <img src="../assets/nucleo3/img/personaje1.png" alt="" class="te-pj">
-    </div>
+    <video id="te-video" src="../assets/intro/pj1.mp4" muted loop playsinline preload="auto"></video>
     <div id="te-texto">
       <h1>Pictoria</h1>
       <p id="te-pide">Sentate frente a la cámara para empezar</p>
