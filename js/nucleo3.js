@@ -845,7 +845,7 @@ function iniciar() {
         gsap.set(partido.words, { autoAlpha: 0, x: 60 * Infografia.direccion, rotation: 3 });
         gsap.set("#n3-personaje", { autoAlpha: 0, scale: 0.85, x: 70 * Infografia.direccion, transformOrigin: "50% 100%" });
         gsap.set("#n3-sombra-personaje", { autoAlpha: 0, scaleX: 0.4 });
-        gsap.set("#n3-tarjeta", { autoAlpha: 0, x: 70 * Infografia.direccion });
+        gsap.set("#n3-tarjeta", { autoAlpha: 0, x: 1100 });   // las cards de Adobe entran siempre por la derecha (también al volver)
         gsap.set("#n3-tarjeta .linea", { autoAlpha: 0, x: 26 * Infografia.direccion });
         gsap.set("#n3-adobe", { autoAlpha: 0, scale: 0.5, rotation: -12 });
         gsap.set("#n3-sombra-tarjeta", { autoAlpha: 0, scaleX: 0.5 });
@@ -857,7 +857,7 @@ function iniciar() {
           .to(partido.words, { autoAlpha: 1, x: 0, rotation: 0, duration: 0.7, stagger: 0.08, ease: "back.out(1.5)" })
           .to("#n3-personaje", { autoAlpha: 1, scale: 1, x: 0, duration: 0.9, ease: "back.out(1.4)" }, "-=0.45")
           .to("#n3-sombra-personaje", { autoAlpha: 1, scaleX: 1, duration: 0.8, ease: "power2.out" }, "<0.1")
-          .to("#n3-tarjeta", { autoAlpha: 1, x: 0, duration: 0.8, ease: "power3.out" }, "-=0.5")
+          .to("#n3-tarjeta", { autoAlpha: 1, x: 0, duration: 1, ease: "power3.out" }, "-=0.5")
           .to("#n3-sombra-tarjeta", { autoAlpha: 1, scaleX: 1, duration: 0.8, ease: "power2.out" }, "<0.1")
           .to("#n3-tarjeta .linea", { autoAlpha: 1, x: 0, duration: 0.55, stagger: 0.1, ease: "power2.out" }, "-=0.4")
           .to("#n3-adobe", { autoAlpha: 1, scale: 1, rotation: 0, duration: 0.8, ease: "back.out(1.8)" }, "-=0.5")
@@ -890,7 +890,7 @@ function iniciar() {
         gsap.set("#n3-t2-caja", { autoAlpha: 0, x: 40 * Infografia.direccion });
         gsap.set("#n3-personaje2", { autoAlpha: 0, scale: 0.85, x: 70 * Infografia.direccion, transformOrigin: "50% 100%" });
         gsap.set("#n3-sombra-personaje2", { autoAlpha: 0, scaleX: 0.4 });
-        gsap.set("#n3-tarjeta2", { autoAlpha: 0, x: 70 * Infografia.direccion });
+        gsap.set("#n3-tarjeta2", { autoAlpha: 0, x: 1100 });
         gsap.set("#n3-cifra", { autoAlpha: 0, x: 30 * Infografia.direccion });
         gsap.set("#n3-etiqueta", { autoAlpha: 0, x: 20 * Infografia.direccion });
         gsap.set(".n3-icono", { autoAlpha: 0, scale: 0, transformOrigin: "50% 50%" });
@@ -910,7 +910,7 @@ function iniciar() {
           .to("#n3-personaje2", { autoAlpha: 1, scale: 1, x: 0, duration: 0.9, ease: "back.out(1.4)" }, "-=0.45")
           .to("#n3-sombra-personaje2", { autoAlpha: 1, scaleX: 1, duration: 0.8, ease: "power2.out" }, "<0.1")
           // tarjeta
-          .to("#n3-tarjeta2", { autoAlpha: 1, x: 0, duration: 0.8, ease: "power3.out" }, "-=0.5")
+          .to("#n3-tarjeta2", { autoAlpha: 1, x: 0, duration: 1, ease: "power3.out" }, "-=0.5")
           .to("#n3-sombra-tarjeta2", { autoAlpha: 1, scaleX: 1, duration: 0.8, ease: "power2.out" }, "<0.1")
           // +16.000 con conteo
           .to("#n3-cifra", { autoAlpha: 1, x: 0, duration: 0.6, ease: "power2.out" }, "-=0.3")
@@ -953,7 +953,7 @@ function iniciar() {
         document.getElementById("n3-copia").innerHTML = document.getElementById("p2").innerHTML;
         gsap.set("#n3-copia #n3-tarjeta2", { transformOrigin: "50% 0%" });
 
-        gsap.set("#n3-tarjeta3", { autoAlpha: 0, x: 320 * Infografia.direccion });
+        gsap.set("#n3-tarjeta3", { autoAlpha: 0, x: 1100 });
         gsap.set(".n3-pregunta", { autoAlpha: 0, x: 30 * Infografia.direccion });
         gsap.set(".n3-torta", { autoAlpha: 0, scale: 0.6, rotation: -25, transformOrigin: "50% 50%" });
         cont3.forEach(function (c, i) { c.p = 0; pintar3(i); });
@@ -968,7 +968,7 @@ function iniciar() {
           // su sombra baja y pasa a ser la de la card nueva
           .to(s + "#n3-sombra-tarjeta2", { y: 80, x: -30, scaleX: 0.82, duration: 1.1, ease: "power3.inOut" }, 0)
           // entra la card nueva desde la derecha
-          .to("#n3-tarjeta3", { autoAlpha: 1, x: 0, duration: 0.9, ease: "power3.out" }, 0.4)
+          .to("#n3-tarjeta3", { autoAlpha: 1, x: 0, duration: 1, ease: "power3.out" }, 0.4)
           .to(".n3-pregunta", { autoAlpha: 1, x: 0, duration: 0.55, stagger: 0.12, ease: "power2.out" }, "-=0.3")
           .addLabel("tortas", "-=0.2")
           .to(".n3-torta", { autoAlpha: 1, scale: 1, rotation: 0, duration: 0.8, stagger: 0.15, ease: "back.out(1.5)" }, "tortas");
@@ -998,7 +998,7 @@ function iniciar() {
       preparar: function () {
         // Copia de la P3 tal como quedó (que a su vez tiene adentro la copia de la P2)
         document.getElementById("n3-copia3").innerHTML = document.getElementById("p3").innerHTML;
-        gsap.set("#n3-tarjeta-usos", { autoAlpha: 0, x: 320 * Infografia.direccion });
+        gsap.set("#n3-tarjeta-usos", { autoAlpha: 0, x: 1100 });
         gsap.set("#n3u2-titulo", { autoAlpha: 0, x: 30 * Infografia.direccion });
         gsap.set(".n3u2-barra", { scaleX: 0 });
         gsap.set(".n3u2-caja", { autoAlpha: 0, scale: 0.5, transformOrigin: "50% 50%" });
@@ -1013,7 +1013,7 @@ function iniciar() {
           .to(s + "#n3-tarjeta3", { y: -270, scale: 0.94, opacity: 0.6, filter: "blur(2px)", duration: 1.1, ease: "power3.inOut" }, 0)
           .to(s + "#n3-copia #n3-tarjeta2", { y: "-=90", opacity: 0.35, duration: 1.1, ease: "power3.inOut" }, 0)
           // entra la card nueva desde la derecha
-          .to("#n3-tarjeta-usos", { autoAlpha: 1, x: 0, duration: 0.9, ease: "power3.out" }, 0.4)
+          .to("#n3-tarjeta-usos", { autoAlpha: 1, x: 0, duration: 1, ease: "power3.out" }, 0.4)
           .to("#n3u2-titulo", { autoAlpha: 1, x: 0, duration: 0.5, ease: "power2.out" }, "-=0.3")
           .to(".n3u2-caja", { autoAlpha: 1, scale: 1, duration: 0.6, stagger: 0.15, ease: "back.out(2)" }, "-=0.1")
           .to(".n3u2-barra", { scaleX: 1, duration: 1.2, stagger: 0.15, ease: "power2.out" }, "<0.2")

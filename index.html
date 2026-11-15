@@ -55,6 +55,7 @@
   #error-memoria .icono-error { width: 12vmin; height: 12vmin; display: flex; align-items: center; justify-content: center;
     background: #FF2A2A; color: #fff; font-size: 7vmin; }
   #error-memoria .titulo-error { color: #fff; font-size: clamp(16px, 3vmin, 40px); line-height: 1.5; }
+  #error-memoria .relato-error { color: #c9c9d6; font-size: clamp(14px, 2.4vmin, 30px); line-height: 1.6; margin: 1.5vmin 0 2vmin; }
   #error-memoria .texto-error { color: #fff; font-size: clamp(14px, 2.6vmin, 34px); line-height: 1.7; }
 
   /* Pantalla de carga (dentro del velo): solo se ve si la página tarda en estar lista */
@@ -119,6 +120,7 @@
   <div class="tarjeta-error">
     <div class="icono-error">!</div>
     <p class="titulo-error">¡Esa no es la memoria correcta!</p>
+    <p class="relato-error"></p>
     <p class="texto-error"></p>
   </div>
 </div>
@@ -422,14 +424,31 @@ function prepararIrAPantalla() {
   });
 }
 
-/* Muestra "¡Esa no es la memoria correcta!" y qué memoria insertar; se va sola a los pocos segundos */
+/* Muestra qué memoria insertar, siguiendo la narrativa de la IA que crece; se va sola a los pocos segundos.
+   pedido: el núcleo de la memoria que insertó; esperado: el que le toca. */
+// adelantarse: según la etapa en la que está la IA (la que le toca)
+const RELATO_ADELANTARSE = [
+  "Sos una IA recién nacida: todavía estás en tus primeros días de vida.<br>Primero tenés que aprender a seguir reglas.",
+  "Todavía no aprendiste por tu cuenta.<br>Antes de crear imágenes, tenés que aprender de la experiencia.",
+  "¡Ya casi! Te falta una última etapa para convertirte en una IA que crea imágenes."
+];
 let temporizadorError = null;
-function mostrarErrorMemoria(esperado) {
+function mostrarErrorMemoria(esperado, pedido) {
   const caja = document.getElementById("error-memoria"), texto = caja.querySelector(".texto-error");
+  const titulo = caja.querySelector(".titulo-error"), relato = caja.querySelector(".relato-error");
   const n = CONFIG.nucleos[esperado];
   if (!n) {
-    texto.textContent = "Ya recorriste todas las memorias.";
+    titulo.textContent = "¡Ya terminaste tu evolución!";
+    relato.innerHTML = "Recorriste todas las etapas: ya sos una IA de última generación.";
+    texto.textContent = "";
+  } else if (pedido !== undefined && pedido < esperado) {
+    titulo.textContent = "¡Esa etapa ya la viviste!";
+    relato.innerHTML = "No se puede volver a ser una IA más chiquita: ahora te toca seguir creciendo.";
   } else {
+    titulo.textContent = "¡Todavía no!";
+    relato.innerHTML = RELATO_ADELANTARSE[esperado] || "Todavía no llegaste a esa etapa.";
+  }
+  if (n) {
     const m = n.memoria || { nombre: String(esperado + 1) };
     texto.innerHTML = `Insertá la memoria <span style="color:${m.hex || "#fff"}">${m.nombre}</span>` +
       (m.color ? `<br>color <span style="color:${m.hex}">${m.color}</span> en la ranura` : " en la ranura");
@@ -440,7 +459,7 @@ function mostrarErrorMemoria(esperado) {
   clearTimeout(temporizadorError);
   temporizadorError = setTimeout(() => {
     caja.animate([{ opacity: 1 }, { opacity: 0 }], { duration: 300 }).onfinish = () => { caja.hidden = true; };
-  }, 4000);
+  }, 6000);   // un poco más que antes: ahora tiene más texto para leer
   reiniciarInactividad();
 }
 
@@ -454,7 +473,7 @@ function irANucleo(n) {
   // Si eligió otro (adelantarse o volver a uno ya hecho), se le dice qué memoria insertar.
   if (CONFIG.ordenObligatorio) {
     const esperado = visitados.size ? Math.max(...visitados) + 1 : 0;
-    if (n !== esperado) { mostrarErrorMemoria(esperado); return; }
+    if (n !== esperado) { mostrarErrorMemoria(esperado, n); return; }
   }
   irA(indice);
 }
