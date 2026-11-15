@@ -2,12 +2,49 @@ Infografia.escalar("#escenario", 1920, 1080);
 
 var bucles = [];
 function pararBucles() { bucles.forEach(function (b) { b.kill(); }); bucles = []; }
+// juego de los 4 puntos: las rayitas de la guía punteada avanzan hacia el punto siguiente (siempre)
+gsap.to("#p10-guia polyline", { strokeDashoffset: -64, duration: 1.2, ease: "none", repeat: -1 });
 
 /* Recordatorio del gesto abajo a la derecha (js/pista.js): qué pantallas lo muestran y cómo */
+/* ---------- Línea de tiempo de AARON (pantalla 13): un hito y una etapa ---------- */
+var P13_CARDS = ["#p13-aaron", "#p13-1980", "#p13-1990"];
+// un hito: aparece el punto, bajan los palitos y cae la etiqueta
+function hito(h) {
+  return gsap.timeline()
+    .to(h.querySelector(".p3-punto, .p3-flecha"), { autoAlpha: 1, scale: 1, duration: 0.3, ease: "back.out(3)" })
+    .to(h.querySelectorAll(".p3-palo")[0], { scaleY: 1, duration: 0.2, ease: "steps(4)" })
+    .to(h.querySelector(".p3-etiqueta"), { autoAlpha: 1, y: 0, duration: 0.3, ease: "steps(3)" })
+    .to(h.querySelectorAll(".p3-palo")[1] || {}, { scaleY: 1, duration: 0.3, ease: "steps(5)" });
+}
+// una etapa: la tarjeta sube, el texto aparece y las obras se "pintan" de arriba hacia abajo
+function etapa(sel) {
+  return gsap.timeline()
+    .to(sel, { autoAlpha: 1, y: 0, duration: 0.5, ease: "power3.out" })
+    .to(sel + " h2", { autoAlpha: 1, duration: 0.3, ease: "steps(3)" })
+    .to(sel + " p", { autoAlpha: 1, duration: 0.01 }, "<")
+    .to(sel + " .letra", { autoAlpha: 1, duration: 0.01, stagger: 0.02 })
+    .to(sel + " .guiones-n1", { scaleX: 1, duration: 0.4, ease: "steps(10)" })
+    .to(sel + " .p13-obras img", { autoAlpha: 1, clipPath: "inset(0% 0% 0% 0%)", duration: 0.8, ease: "steps(8)", stagger: 0.25 });
+}
+// la fecha que se está leyendo se resalta (las otras quedan tenues; "Actualidad" siempre igual)
+function marcarHito13(k) {
+  gsap.utils.toArray("#p13 .p13-hito").forEach(function (h, i) { h.classList.toggle("tenue", i < P13_CARDS.length && i !== k); });
+}
+// la tarjeta de la etapa k vuelve a quedar oculta (las fechas de la línea quedan)
+function ocultarEtapa13(k) {
+  var sel = P13_CARDS[k];
+  if (k === 0) gsap.to("#p13-codo", { clipPath: "inset(0% 100% 100% 0%)", duration: 0.2 });
+  gsap.killTweensOf([sel, document.querySelectorAll(sel + " *")]);
+  gsap.to(sel, { autoAlpha: 0, y: 40, duration: 0.3, ease: "power2.in", onComplete: function () {
+    gsap.set(sel + " h2, " + sel + " p, " + sel + " .letra", { autoAlpha: 0 });
+    gsap.set(sel + " .guiones-n1", { scaleX: 0 });
+    gsap.set(sel + " .p13-obras img", { autoAlpha: 0, clipPath: "inset(0% 0% 100% 0%)" });
+  } });
+}
+
 var PISTA = {
-  enseñar: ["#p3", "#p4", "#p5"],                      // primeras pantallas manuales: aparece enseguida
   nunca: ["#p1", "#p15", "#n1-toca",                   // ya indican qué hacer por su cuenta
-          "#p2", "#p6", "#p9", "#p11", "#p12", "#p13", "#p14"],   // pasan solas (tienen su relojito)
+          "#p2", "#p6", "#p9", "#p11", "#p12"],   // pasan solas (tienen su relojito)
   dibujar: ["#p7", "#p8", "#p10"]                      // juegos: cartel de "Dibujá" (sin burbuja de gesto)
 };
 
@@ -148,21 +185,21 @@ function juegoDePuntos(cfg) {
     gsap.timeline()
       .to("." + id + "-punto", { scale: 1.4, duration: 0.15, ease: "steps(2)", yoyo: true, repeat: 1 })
       .to("#" + id + "-tiempo", { autoAlpha: 0, duration: 0.2, ease: "steps(2)" }, 0)
-      .to("#" + id + "-opciones", { autoAlpha: 1, y: 0, duration: 0.5, ease: "back.out(2)" });
+    ;
     arrancarAutoAvance();
   }
 
   // al terminar, unos segundos para reintentar (mano izquierda) antes de pasar solos a la siguiente pantalla
   function arrancarAutoAvance() {
     pararAutoAvance();
-    var el = document.getElementById(id + "-cuenta"), cuenta = { t: SEG_AUTO };
+    var cuenta = { t: SEG_AUTO }, OPCIONES = { izq: "Reintentar", der: "Avanzar" };
+    Pista.avisar(OPCIONES, " · seguimos solos en " + SEG_AUTO + " s");
     autoAvance = gsap.to(cuenta, { t: 0, duration: SEG_AUTO, ease: "none",
-      onUpdate: function () { el.textContent = "Seguimos solos en " + Math.ceil(cuenta.t) + " s"; },
+      onUpdate: function () { Pista.avisar(OPCIONES, " · seguimos solos en " + Math.ceil(cuenta.t) + " s"); },
       onComplete: function () { Infografia.avanzar(); } });
   }
   function pararAutoAvance() {
-    if (autoAvance) { autoAvance.kill(); autoAvance = null; }
-    var el = document.getElementById(id + "-cuenta"); if (el) el.textContent = "";
+    if (autoAvance) { autoAvance.kill(); autoAvance = null; Pista.quitar(); }
   }
 
   // cuenta regresiva que arranca con el primer trazo
@@ -212,6 +249,7 @@ function juegoDePuntos(cfg) {
       gsap.set("#" + id + "-dialogo .letra", { autoAlpha: 0 });
       gsap.set("#" + id + "-lienzo", { autoAlpha: 0, x: -120 * d });
       gsap.set("." + id + "-punto",  { autoAlpha: 0, scale: 0 });
+      gsap.set("#" + id + "-guia",   { autoAlpha: 0 });   // la guía punteada (si hay) aparece después de los puntos
       gsap.set("#" + id + "-opciones", { autoAlpha: 0, y: 30 });
     },
     entrar: function () {
@@ -222,6 +260,7 @@ function juegoDePuntos(cfg) {
         .to("#" + id + "-dialogo .letra", { autoAlpha: 1, duration: 0.01, stagger: 0.02 }, "-=0.2")
         .to("#" + id + "-lienzo", { autoAlpha: 1, x: 0, duration: 0.6, ease: "power3.out" }, 0.6)
         .to("." + id + "-punto",  { autoAlpha: 1, scale: 1, duration: 0.4, ease: "back.out(3)", stagger: 0.2 })
+        .to("#" + id + "-guia",   { autoAlpha: 1, duration: 0.5, ease: "steps(5)" })
         .add(function () {
           bucles.push(gsap.to("#" + id + " .caja-profe-img", { y: -6, duration: 0.9, ease: "sine.inOut", yoyo: true, repeat: -1 }));
           // los puntos laten para que se vea dónde hay que dibujar
@@ -360,17 +399,14 @@ function iniciar() {
           .add(function () {
             // la barra se carga hasta el final a saltos, como una carga retro;
             // a la mitad, el texto cambia una sola vez (con un parpadeo)
-            // al llenarse aparece el aviso de deslizar
+            // al llenarse, avanza sola a la siguiente pantalla
             bucles.push(gsap.timeline()
               .to("#p1-relleno", { width: 1306, duration: 8, ease: "steps(32)" })
               .addLabel("mitad", 4)
               .to(estado, { autoAlpha: 0, duration: 0.2, ease: "steps(2)" }, "mitad")
               .add(function () { estado.textContent = textos[1]; }, "mitad+=0.2")
               .to(estado, { autoAlpha: 1, duration: 0.2, ease: "steps(2)" }, "mitad+=0.2")
-              .to("#p1-aviso", { autoAlpha: 1, x: 0, duration: 0.5, ease: "power3.out" }, 8)
-              .add(function () {
-                bucles.push(gsap.to("#p1-aviso", { opacity: 0.3, duration: 0.6, ease: "steps(1)", yoyo: true, repeat: -1, repeatDelay: 0.3 }));
-              }));
+              .add(function () { Infografia.avanzar(); }, "+=0.6"));
 
             // ADN girando (se "aplana" y vuelve, como si rotara sobre su eje)
             bucles.push(gsap.to("#p1-adn", { scaleX: -1, duration: 1.4, ease: "steps(8)", yoyo: true, repeat: -1 }));
@@ -679,9 +715,7 @@ function iniciar() {
         // el cartel aparece cuando pasó el tiempo Y ya probó dibujar (lo que pase último)
         function mostrarCartel() {
           if (!tiempoCumplido || !p7Probado) return;
-          bucles.push(gsap.timeline()
-            .to("#p7-cartel", { autoAlpha: 1, y: 0, duration: 0.5, ease: "back.out(2)" })
-            .to("#p7-cartel", { opacity: 0.4, duration: 0.5, ease: "steps(1)", yoyo: true, repeat: -1, repeatDelay: 0.4 }));
+          Pista.avisar("Traé la mano derecha hacia el centro para comenzar");
         }
 
         // apenas dibuja, la guía de fondo se va
@@ -793,7 +827,7 @@ function iniciar() {
     },
 
     /* ============ Pantalla 13: arte con sistemas expertos ============ */
-    {
+    Recorrido.pantalla({
       el: "#p13",
       preparar: function () {
         var d = Infografia.direccion;
@@ -814,44 +848,22 @@ function iniciar() {
       },
       entrar: function () {
         var hitos = gsap.utils.toArray("#p13 .p13-hito");
-        var cards = ["#p13-aaron", "#p13-1980", "#p13-1990"];
-
-        // un hito: aparece el punto, bajan los palitos y cae la etiqueta
-        function hito(h) {
-          return gsap.timeline()
-            .to(h.querySelector(".p3-punto, .p3-flecha"), { autoAlpha: 1, scale: 1, duration: 0.3, ease: "back.out(3)" })
-            .to(h.querySelectorAll(".p3-palo")[0], { scaleY: 1, duration: 0.2, ease: "steps(4)" })
-            .to(h.querySelector(".p3-etiqueta"), { autoAlpha: 1, y: 0, duration: 0.3, ease: "steps(3)" })
-            .to(h.querySelectorAll(".p3-palo")[1] || {}, { scaleY: 1, duration: 0.3, ease: "steps(5)" });
-        }
-        // una etapa: la tarjeta sube, el texto aparece y las obras se "pintan" de arriba hacia abajo
-        function etapa(sel) {
-          return gsap.timeline()
-            .to(sel, { autoAlpha: 1, y: 0, duration: 0.5, ease: "power3.out" })
-            .to(sel + " h2", { autoAlpha: 1, duration: 0.3, ease: "steps(3)" })
-            .to(sel + " p", { autoAlpha: 1, duration: 0.01 }, "<")
-            .to(sel + " .letra", { autoAlpha: 1, duration: 0.01, stagger: 0.02 })
-            .to(sel + " .guiones-n1", { scaleX: 1, duration: 0.4, ease: "steps(10)" })
-            .to(sel + " .p13-obras img", { autoAlpha: 1, clipPath: "inset(0% 0% 0% 0%)", duration: 0.8, ease: "steps(8)", stagger: 0.25 });
-        }
+        var cards = P13_CARDS;
 
         return gsap.timeline()
           .to("#p13-titulo", { autoAlpha: 1, x: 0, duration: 0.5, ease: "power3.out" })
           .to("#p13-linea", { scaleX: 1, duration: 0.8, ease: "steps(16)" }, "-=0.2")
           .to("#p13 .p3-guiones", { scaleX: 1, duration: 0.6, ease: "steps(8)" }, "<0.2")
           .to("#p13-reloj", { autoAlpha: 1, scale: 1, rotation: 0, duration: 0.6, ease: "back.out(1.8)" }, "<")
-          // 1960/70 → AARON
+          // todas las fechas de la línea, una tras otra
           .add(hito(hitos[0]))
+          .add(hito(hitos[1]), "-=0.5")
+          .add(hito(hitos[2]), "-=0.5")
+          .add(hito(hitos[3]), "-=0.5")
+          // y sólo la etapa de AARON: las otras tarjetas se ven de a una con el gesto
+          .add(function () { marcarHito13(0); })
           .to("#p13-codo", { clipPath: "inset(0% 0% 0% 0%)", duration: 0.4, ease: "steps(6)" })
           .add(etapa(cards[0]))
-          // 1980
-          .add(hito(hitos[1]), "-=0.6")
-          .add(etapa(cards[1]))
-          // 1990
-          .add(hito(hitos[2]), "-=0.6")
-          .add(etapa(cards[2]))
-          // actualidad
-          .add(hito(hitos[3]), "-=0.4")
           .add(function () {
             bucles.push(gsap.to("#p13-reloj", { rotation: 360, duration: 6, ease: "steps(12)", repeat: -1 }));
             bucles.push(gsap.to("#p13 .p3-flecha", { x: 10, duration: 0.4, ease: "steps(2)", yoyo: true, repeat: -1, repeatDelay: 0.5 }));
@@ -860,7 +872,16 @@ function iniciar() {
           });
       },
       salir: pararBucles
-    },
+    }, { revelar: true, unoPorVez: true, items: ".p13-card", puntos: "#p13-puntos", siguiente: "la siguiente etapa",
+      // cada gesto de avanzar trae el siguiente año con su etapa; volver la saca
+      // se ve una sola etapa por vez: la de AARON lleva además el codo que la une con su fecha
+      mostrar: function (k) {
+        marcarHito13(k);
+        var tl = gsap.timeline({ delay: 0.25 });
+        if (k === 0) tl.to("#p13-codo", { clipPath: "inset(0% 0% 0% 0%)", duration: 0.4, ease: "steps(6)" });
+        tl.add(etapa(P13_CARDS[k]));
+      },
+      ocultar: function (k) { ocultarEtapa13(k); } }),
 
     /* ============ Pantalla 14: cuánta memoria ocupan (gráfico que cambia de escala) ============
        Las barras aparecen de a una y en cada una la escala crece para que entre:
@@ -892,10 +913,40 @@ function iniciar() {
           document.getElementById("p14-valor-" + m.id).style.bottom = (alto + 6 + 14) + "px";
         });
       }
+      var n = 1, accion = null, armando = false;   // cuántas barras se ven; animación del último gesto; ¿se está armando solo?
+      // una barra: (la escala crece para que entre) → nombre → la barra sube → su valor
+      function mostrarBarra(i) {
+        var m = MODELOS[i], tl = gsap.timeline({ onUpdate: dibujar });
+        if (i > 0) {
+          tl.to("#p14-escala", { scale: 1.15, color: "#fff", duration: 0.2, ease: "steps(2)", yoyo: true, repeat: 1 })
+            .to(estado, { max: m.escala, duration: 1.8, ease: "expo.inOut" }, "<");
+        }
+        tl.to(document.getElementById("p14-barra-" + m.id).parentNode.querySelector(".p14-nombre"), { autoAlpha: 1, duration: 0.3, ease: "steps(3)" })
+          .to(estado, { [m.id]: 1, duration: 1, ease: "steps(12)" }, "<")
+          .to(document.getElementById("p14-valor-" + m.id), { autoAlpha: 1, duration: 0.3, ease: "steps(3)" });
+        if (i === MODELOS.length - 1) tl.to("#p14-importante", { autoAlpha: 1, x: 0, duration: 0.6, ease: "power3.out" }, "+=0.2");
+        return tl;
+      }
+      // al revés: se va el valor, la barra baja y la escala vuelve a la del modelo anterior
+      function ocultarBarra(i) {
+        var m = MODELOS[i], tl = gsap.timeline({ onUpdate: dibujar });
+        if (i === MODELOS.length - 1) tl.to("#p14-importante", { autoAlpha: 0, x: 60, duration: 0.3 });
+        tl.to(document.getElementById("p14-valor-" + m.id), { autoAlpha: 0, duration: 0.2, ease: "steps(2)" })
+          .to(estado, { [m.id]: 0, duration: 0.8, ease: "steps(10)" })
+          .to(document.getElementById("p14-barra-" + m.id).parentNode.querySelector(".p14-nombre"), { autoAlpha: 0, duration: 0.2 }, "<")
+          .to("#p14-escala", { scale: 1.15, color: "#fff", duration: 0.2, ease: "steps(2)", yoyo: true, repeat: 1 })
+          .to(estado, { max: MODELOS[i - 1].escala, duration: 1.8, ease: "expo.inOut" }, "<");
+        return tl;
+      }
+      // si llega otro gesto en medio de una animación, la anterior termina de golpe
+      function paso(tl) { if (accion) accion.progress(1); accion = tl; }
+
       return {
         el: "#p14",
         preparar: function () {
           var d = Infografia.direccion;
+          if (accion) { accion.kill(); accion = null; }
+          n = 1; armando = false;
           estado.max = 2; estado.aaron = estado.sd = estado.dalle = 0;
           respira.aaron = respira.sd = respira.dalle = 0;
           dibujar();
@@ -905,23 +956,16 @@ function iniciar() {
           gsap.set("#p14-importante", { autoAlpha: 0, x: 120 * d });
         },
         entrar: function () {
+          n = 1; armando = true;
+          // al entrar las tres barras aparecen solas, de a una (la escala va creciendo);
+          // después, con los gestos, se pueden sacar y volver a sumar para ver de nuevo el cambio de escala
           var tl = gsap.timeline({ onUpdate: dibujar })
             .to("#p14-titulo",  { autoAlpha: 1, x: 0, duration: 0.5, ease: "power3.out" })
-            .to("#p14-grafico", { autoAlpha: 1, duration: 0.4, ease: "steps(4)" });
-
-          MODELOS.forEach(function (m, i) {
-            var col = "#p14-barra-" + m.id;
-            if (i > 0) {
-              // la escala crece hasta que entre la barra nueva (y la anterior se aplasta)
-              tl.to("#p14-escala", { scale: 1.15, color: "#fff", duration: 0.2, ease: "steps(2)", yoyo: true, repeat: 1 }, "+=1.2")
-                .to(estado, { max: m.escala, duration: 1.8, ease: "expo.inOut" }, "<");
-            }
-            tl.to(document.querySelector(col).parentNode.querySelector(".p14-nombre"), { autoAlpha: 1, duration: 0.3, ease: "steps(3)" })
-              .to(estado, { [m.id]: 1, duration: 1, ease: "steps(12)" }, "<")
-              .to(document.getElementById("p14-valor-" + m.id), { autoAlpha: 1, duration: 0.3, ease: "steps(3)" });
-          });
-
-          tl.to("#p14-importante", { autoAlpha: 1, x: 0, duration: 0.6, ease: "power3.out" }, "+=0.4")
+            .to("#p14-grafico", { autoAlpha: 1, duration: 0.4, ease: "steps(4)" })
+            .add(mostrarBarra(0))
+            .add(mostrarBarra(1), "+=1.2")
+            .add(mostrarBarra(2), "+=1.2")
+            .add(function () { n = MODELOS.length; armando = false; Pista.refrescar(); })
             .add(function () {
               // las barras "respiran": suben y bajan unos px, cada una a su ritmo
               MODELOS.forEach(function (m, i) {
@@ -930,6 +974,23 @@ function iniciar() {
             });
           return tl;
         },
+        // avanzar suma la barra siguiente (la escala crece); con las tres, avanza de pantalla
+        alSiguiente: function () {
+          if (armando) return true;   // mientras se arma solo, los gestos esperan
+          if (n >= MODELOS.length) return false;
+          paso(mostrarBarra(n)); n++;
+          Pista.refrescar();
+          return true;
+        },
+        // volver saca la última barra y la escala vuelve a achicarse; con una sola, vuelve de pantalla
+        alAnterior: function () {
+          if (armando) return true;
+          if (n <= 1) return false;
+          n--; paso(ocultarBarra(n));
+          Pista.refrescar();
+          return true;
+        },
+        pista: function () { return n < MODELOS.length ? "Traé la mano derecha hacia el centro para sumar el siguiente modelo" : null; },
         salir: pararBucles
       };
     })(),
@@ -969,6 +1030,6 @@ function iniciar() {
 
   ], PISTA), { transicion: "deslizar", duracion: 0.8,
     // pantallas que pasan solas (segundos de lectura después de que termina la entrada)
-    auto: { "#n1-toca": 7, "#p1": 13, "#p2": 13, "#p6": 13, "#p9": 13, "#p11": 13, "#p12": 13, "#p13": 13, "#p14": 13 } });   // las de información: mínimo 13 s
+    auto: { "#n1-toca": 7, "#p2": 8, "#p6": 13, "#p9": 8, "#p11": 8, "#p12": 13 } });   // las de información: mínimo 13 s
 }
 (document.fonts && document.fonts.ready ? document.fonts.ready : Promise.resolve()).then(iniciar);

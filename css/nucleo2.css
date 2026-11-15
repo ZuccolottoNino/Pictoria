@@ -471,3 +471,14 @@ p  { position: relative; font-size: 38px; color: #e9fdff; margin-top: 18px; text
 
 /* color del relojito de las pantallas automáticas (lo dibuja puente.js) */
 :root { --auto-color: #ffffff; }
+
+/* ---------- Recorrer los años de la línea de tiempo con los gestos (js/recorrido.js) ---------- */
+:root { --recorrido-color: #fff; }
+.ml-puntos { position: absolute; right: 40px; top: 14px; }   /* arriba a la derecha: el cartel del gesto no los tapa */
+/* la fecha que se está leyendo brilla en verde; las otras quedan más tenues */
+.ml-col .ml-cabeza { transition: box-shadow .3s, filter .3s; }
+.ml-col:not(.actual) .ml-cabeza { filter: opacity(.6); }
+.ml-col.actual .ml-cabeza { box-shadow: 0 0 0 4px rgba(166,227,91,.8), 0 0 30px rgba(166,227,91,.5); }
+
+/* reconocimiento del pez: si falta alguna parte, no lo afirma (veredicto en ámbar, con probabilidad) */
+#j22r-veredicto.dudoso { background: radial-gradient(circle at 50% 30%, #F7D774, #D99A2B 75%) !important; }

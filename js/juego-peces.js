@@ -19,7 +19,9 @@
     analizando: "Analizando el dibujo…",
     encontrando: "Buscando patrones…",
     listo: "Análisis terminado",
-    comparar: "La computadora reconoció tu pez porque tiene los mismos <b>patrones</b> que los ejemplos que vio: cuerpo, cola, ojo y aleta. ¡Así aprende a reconocer cosas nuevas!"
+    comparar: "La computadora reconoció tu pez porque tiene los mismos <b>patrones</b> que los ejemplos que vio: cuerpo, cola, ojo y aleta. ¡Así aprende a reconocer cosas nuevas!",
+    // si al dibujo le faltan partes, la computadora no lo afirma: sólo da una probabilidad
+    compararDudoso: "La computadora <b>no estuvo segura</b>: a tu pez le falta {faltan}, un <b>patrón</b> que sí tenían todos los ejemplos que vio. Con menos patrones, baja la probabilidad de reconocerlo."
   };
   var ya = function (id) { return document.getElementById(id); };
 
@@ -223,10 +225,11 @@
       });
     }
     /* ---- lápiz fantasma: recorre la guía del paso actual ---- */
+    var CON_DEMO = false;   // sin lápiz fantasma: la guía de cada parte es sólo la línea punteada
     function arrancarDemo() {
       pararDemo();
       var p = PASOS[paso];
-      if (!GUIA[p]) return;
+      if (!CON_DEMO || !GUIA[p]) return;
       var o = { t: 0 }, camino = GUIA[p];
       demo = gsap.timeline({ repeat: -1, repeatDelay: 1 })
         .set(o, { t: 0 })
@@ -255,8 +258,14 @@
       el.textContent = txt;
       gsap.fromTo(el, { autoAlpha: 0, scale: 0.7, xPercent: -50 }, { autoAlpha: 1, scale: 1, xPercent: -50, duration: 0.45, ease: "back.out(2.4)" });
     }
+    var avisoListo = false;   // está puesto el aviso de "¡Listo!" en el cartel unificado
     function indicarPaso() {
-      pista(TEXTOS["paso_" + PASOS[paso]]);
+      if (PASOS[paso] === "listo") {   // el gesto para seguir va en el cartel unificado de abajo a la derecha
+        gsap.to("#j22-pista", { autoAlpha: 0, duration: 0.2 });
+        ya("j22-pista").textContent = "";
+        Pista.avisar("Traé la mano derecha hacia el centro para seguir");
+      } else { if (avisoListo) Pista.quitar(); pista(TEXTOS["paso_" + PASOS[paso]]); }
+      avisoListo = PASOS[paso] === "listo";
       dibujarGuias();
       if (PASOS[paso] !== "listo") arrancarDemo(); else pararDemo();
       document.querySelectorAll(".j22-parte").forEach(function (el, i) {
@@ -408,7 +417,7 @@
         document.querySelector("#j22r-caja-ojo span").textContent = "Ojo " + po + "%";
         document.querySelector("#j22r-caja-aleta span").textContent = "Aleta " + pa + "%";
         // lista del análisis
-        ya("j22r-it-cuerpo").innerHTML = "<b>✓</b> Cuerpo y cola";
+        ya("j22r-it-cuerpo").innerHTML = hay.cuerpo ? "<b>✓</b> Cuerpo y cola" : "<b class='no'>✗</b> Cuerpo (no encontrado)";
         ya("j22r-it-ojo").innerHTML = hay.ojo ? "<b>✓</b> Ojo" : "<b class='no'>✗</b> Ojo (no encontrado)";
         ya("j22r-it-aleta").innerHTML = hay.aleta ? "<b>✓</b> Aleta" : "<b class='no'>✗</b> Aleta (no encontrada)";
         // colores de cada parte (pueden ser distintos)
@@ -417,9 +426,23 @@
           return "<span style='color:" + c.hex + "'>" + c.nombre + "</span>";
         });
         var distintos = usados.filter(function (x, i) { return usados.indexOf(x) === i; });
-        ya("j22r-it-color").innerHTML = "<b>✓</b> " + (distintos.length > 1 ? "Colores: " : "Color: ") + distintos.join(", ");
-        var total = Math.round((pc + (po || 55) + (pa || 55)) / 3);
-        ya("j22r-veredicto").innerHTML = "¡Es un <b>pez</b>! <small>" + total + "% de seguridad</small>";
+        ya("j22r-it-color").innerHTML = distintos.length
+          ? "<b>✓</b> " + (distintos.length > 1 ? "Colores: " : "Color: ") + distintos.join(", ")
+          : "<b class='no'>✗</b> Color (no hay dibujo)";
+        // con todas las partes lo afirma; si falta alguna, sólo dice que probablemente sea un pez
+        var faltan = ["ojo", "aleta"].filter(function (p) { return !hay[p]; });
+        dibujo.faltan = hay.cuerpo ? faltan : ["cuerpo"].concat(faltan);
+        var veredicto = ya("j22r-veredicto");
+        veredicto.classList.toggle("dudoso", dibujo.faltan.length > 0);
+        if (!hay.cuerpo) {
+          veredicto.innerHTML = "No sé qué es <small>" + confianza(15, 25) + "% de probabilidad de que sea un pez</small>";
+        } else if (faltan.length) {
+          veredicto.innerHTML = "Puede que sea un <b>pez</b> <small>" +
+            (faltan.length === 1 ? confianza(58, 72) : confianza(35, 48)) + "% de probabilidad</small>";
+        } else {
+          var total = Math.round((pc + po + pa) / 3);
+          veredicto.innerHTML = "¡Es un <b>pez</b>! <small>" + total + "% de seguridad</small>";
+        }
 
         gsap.set("#j22r-titulo", { autoAlpha: 0, y: -30 });
         gsap.set("#j22r-personaje", { autoAlpha: 0, scale: 0.85, x: -70 * d, transformOrigin: "50% 100%" });
@@ -469,11 +492,17 @@
      ============================================================ */
   function pantallaComparar() {
     var bucles = [];
-    ya("j22c-texto").innerHTML = TEXTOS.comparar;
     pintarReferencias(gsap.utils.toArray("#j22c-refs canvas"));
     return {
       el: "#j22-compara",
       preparar: function () {
+        // el texto depende de si al dibujo le faltaban partes (ver el reconocimiento)
+        var f = dibujo.faltan || [];
+        ya("j22c-texto").innerHTML = f.length
+          ? TEXTOS.compararDudoso.replace("le falta ", f.length > 1 ? "le faltan " : "le falta ").replace("{faltan}", f.length === 1 ? "<b>" + (f[0] === "aleta" ? "la aleta" : f[0] === "ojo" ? "el ojo" : "el cuerpo") + "</b>"
+              : "<b>" + f.map(function (p) { return p === "aleta" ? "la aleta" : p === "ojo" ? "el ojo" : "el cuerpo"; }).join(" y ") + "</b>")
+              .replace("un <b>patrón</b>", f.length === 1 ? "un <b>patrón</b>" : "<b>patrones</b>")
+          : TEXTOS.comparar;
         var d = Infografia.direccion;
         dibujarTrazos(ya("j22c-mio").getContext("2d"), dibujo.partes, colorDeParte, true);   // el pez que dibujó
         gsap.set("#j22c-titulo", { autoAlpha: 0, y: -30 });

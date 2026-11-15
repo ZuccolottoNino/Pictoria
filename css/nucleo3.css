@@ -57,57 +57,46 @@
 /* ---------- Pantalla 3 ---------- */
 #n3-copia { position: absolute; inset: 0; }   /* acá se copia el contenido de la P2 */
 
-#n3-tarjeta3 { left: 370px; top: 488px; width: 1465px; height: 495px; }
+#n3-tarjeta3 { left: 370px; top: 470px; width: 1465px; height: 530px; padding: 34px 50px; display: flex; flex-direction: column; gap: 22px; }
+/* jerarquía: título de la card > porcentaje del Sí > pregunta > el No (secundario) */
+#n3-t3-cabeza { display: flex; align-items: center; justify-content: space-between; }
+#n3-t3-titulo { margin: 0; font-family: "Space Grotesk", system-ui, sans-serif; font-weight: 700; font-size: 40px; color: var(--tinta); }
+#n3-t3-leyenda { display: flex; align-items: center; gap: 10px; font-family: "Inter", system-ui, sans-serif; font-size: 24px; color: #6B7091; }
+#n3-t3-leyenda i { width: 18px; height: 18px; border-radius: 50%; margin-left: 14px; }
+#n3-t3-leyenda i.si { background: var(--graf-si); }
+#n3-t3-leyenda i.no { background: var(--graf-no); }
+#n3-t3-cols { display: flex; justify-content: space-between; gap: 40px; }
+.n3-col3 { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 16px; }
+.n3-pregunta { text-align: center; }
+.n3-pregunta p { margin: 0; font-family: "Inter", system-ui, sans-serif; font-size: 24px; line-height: 31px; color: var(--tinta); text-wrap: balance; }
+.n3-no { margin: 0; font-family: "Inter", system-ui, sans-serif; font-size: 22px; color: #6B7091; }
 
-.n3-pregunta { position: absolute; top: 34px; width: 417px; height: 105px; padding-top: 27px;
-  border-radius: 40px; background: rgba(247, 248, 253, .8); box-shadow: 0 0 28px rgba(120, 110, 200, .10);
-  text-align: center; font-family: "Inter", system-ui, sans-serif; font-size: 24px; line-height: 29px; color: var(--tinta); }
-#n3-q1 { left: 38px; }
-#n3-q2 { left: 522px; }
-#n3-q3 { left: 1026px; top: 31px; }
-
-.n3-torta { position: absolute; width: 256px; height: 256px; }
-#n3-torta1 { left: 124px;  top: 154px; }
-#n3-torta2 { left: 602px;  top: 152px; }
-#n3-torta3 { left: 1107px; top: 158px; }
-
-/* Torta: el "NO" es un sector cónico (--a en grados) sobre un degradé radial */
-.n3-disco { --a: 0; position: absolute; inset: 0; border-radius: 50%;
-  background: conic-gradient(#E9CAF0 calc(var(--a) * 1deg), transparent 0),
-              radial-gradient(circle closest-side, #FFD9C4 0%, #FFD9C4 20%, #B5E7FA 100%); }
-
-.n3-no, .n3-si { position: absolute; margin: 0; transform: translate(-50%, -50%); text-align: center; white-space: nowrap;
-  font-family: "Space Grotesk", system-ui, sans-serif; font-weight: 700; color: var(--tinta); }
-.n3-si { font-size: 40px; line-height: 44px; }
-.n3-no { font-size: 24px; line-height: 29px; }
-
-#n3-torta1 .n3-no { left: 183px; top: 78px; }   #n3-torta1 .n3-si { left: 126px; top: 176px; }
-#n3-torta2 .n3-no { left: 167px; top: 60px; }   #n3-torta2 .n3-si { left: 133px; top: 179px; }
-#n3-torta3 .n3-no { left: 191px; top: 102px; }  #n3-torta3 .n3-si { left: 106px; top: 172px; }
+/* Aro: el Sí (violeta) crece en sentido horario (--s en grados); el resto es el No, en gris lila tenue */
+:root { --graf-si: #8E5BEA; --graf-no: #E4E0F0; }
+.n3-torta { position: relative; width: 230px; height: 230px; flex: none; }
+.n3-disco { --s: 0; position: absolute; inset: 0; border-radius: 50%;
+  background: conic-gradient(var(--graf-si) calc(var(--s) * 1deg), var(--graf-no) 0);
+  -webkit-mask: radial-gradient(circle closest-side, transparent 72%, #000 73%);
+          mask: radial-gradient(circle closest-side, transparent 72%, #000 73%); }
+.n3-centro { position: absolute; inset: 0; margin: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+.n3-si-n { font-family: "Space Grotesk", system-ui, sans-serif; font-weight: 700; font-size: 56px; line-height: 1; color: var(--tinta); }
+.n3-centro small { margin-top: 4px; font-family: "Inter", system-ui, sans-serif; font-size: 18px; color: #6B7091; }
 
 /* ---------- Pantalla 3b: para qué usan la IA (la card de las tortas sube y entra esta) ---------- */
 #n3-copia3 { position: absolute; inset: 0; }
-#n3-tarjeta-usos { left: 476px; top: 545px; width: 1350px; height: 445px; }
-#n3u2-titulo { position: absolute; left: 0; right: 0; top: 34px; margin: 0; text-align: center;
-  font-family: "Space Grotesk", system-ui, sans-serif; font-weight: 700; font-size: 36px; color: var(--tinta); }
-/* línea que une las tres cajas, con dos brillos rosas entre ellas */
-#n3u2-linea { position: absolute; left: 336px; width: 681px; top: 279px; height: 4px; border-radius: 2px;
-  background: linear-gradient(90deg, #B5E7FA, #F5C9E6, #B5E7FA, #F5C9E6); transform-origin: 0 50%; }
-#n3u2-linea i { position: absolute; top: 50%; width: 40px; height: 40px; margin: -20px 0 0 -20px; border-radius: 50%;
-  background: radial-gradient(circle, rgba(245,201,230,.95), rgba(245,201,230,0) 70%); }
-#n3u2-linea i:nth-child(1) { left: 25%; }
-#n3u2-linea i:nth-child(2) { left: 75%; }
-.n3u2-col { position: absolute; top: 120px; width: 260px; margin-left: -130px;
-  display: flex; flex-direction: column; align-items: center; gap: 22px; }
-#n3u2-c1 { left: 336px; }  #n3u2-c2 { left: 676px; }  #n3u2-c3 { left: 1017px; }
-.n3u2-pct { padding: 10px 22px; border-radius: 22px; background: rgba(247, 248, 253, .9);
-  box-shadow: 0 0 22px rgba(120, 110, 200, .18), inset 0 0 0 3px rgba(181, 231, 250, .5);
-  font-family: "Space Grotesk", system-ui, sans-serif; font-weight: 700; font-size: 34px; color: var(--tinta); }
-.n3u2-caja { width: 136px; height: 136px; border-radius: 30px; background: #fff; display: flex; align-items: center; justify-content: center;
-  box-shadow: 0 0 26px rgba(120, 110, 200, .18), inset 0 0 0 3px rgba(181, 231, 250, .45); }
-.n3u2-caja img { width: 81px; height: 81px; }
-.n3u2-nombre { padding: 12px 26px; border-radius: 22px; background: rgba(247, 248, 253, .9); box-shadow: 0 0 22px rgba(120, 110, 200, .12);
-  text-align: center; font-family: "Inter", system-ui, sans-serif; font-weight: 600; font-size: 24px; line-height: 29px; color: var(--tinta); }
+#n3-tarjeta-usos { left: 476px; top: 545px; width: 1350px; height: 445px; padding: 34px 56px; display: flex; flex-direction: column; gap: 26px; }
+#n3u2-titulo { margin: 0; font-family: "Space Grotesk", system-ui, sans-serif; font-weight: 700; font-size: 40px; color: var(--tinta); }
+#n3u2-sub { margin: 6px 0 0; font-family: "Inter", system-ui, sans-serif; font-size: 22px; color: #6B7091; }
+/* barras horizontales de 0 a 100 %: una fila por tarea, la barra en violeta y el valor al final */
+#n3u2-barras { display: flex; flex-direction: column; gap: 18px; }
+.n3u2-fila { display: grid; grid-template-columns: 76px 270px 1fr 110px; align-items: center; gap: 22px; }
+.n3u2-caja { width: 76px; height: 76px; border-radius: 18px; background: #fff; display: flex; align-items: center; justify-content: center;
+  box-shadow: 0 0 18px rgba(120, 110, 200, .16), inset 0 0 0 3px rgba(181, 231, 250, .45); }
+.n3u2-caja img { width: 46px; height: 46px; }
+.n3u2-nombre { margin: 0; font-family: "Inter", system-ui, sans-serif; font-weight: 600; font-size: 28px; color: var(--tinta); }
+.n3u2-pista { height: 34px; border-radius: 6px; background: #EEEDF8; overflow: hidden; }
+.n3u2-barra { height: 100%; border-radius: 0 6px 6px 0; background: var(--graf-si); transform-origin: 0 50%; }
+.n3u2-pct { margin: 0; font-family: "Space Grotesk", system-ui, sans-serif; font-weight: 700; font-size: 44px; color: var(--tinta); }
 
 /* ---------- Pantalla 4 ---------- */
 .n3-azul { font-weight: 700; color: #5F6FB8; }
@@ -468,3 +457,38 @@
 
 /* color del relojito de las pantallas automáticas (lo dibuja puente.js) */
 :root { --auto-color: #BD72FF; }
+
+/* ---------- Recorrer los datos con los gestos (js/recorrido.js) ---------- */
+:root { --recorrido-color: #8E5BEA; }
+.n3-detalle { margin: 0; font-family: "Inter", system-ui, sans-serif; font-size: 22px; color: var(--graf-si); opacity: 0; transition: opacity .3s; }
+.n3-detalle b { font-weight: 700; }
+.n3-col3.elegido .n3-detalle { opacity: 1; }
+.n3-col3.elegido .n3-pregunta p { font-weight: 600; }
+#n3-t3-puntos { position: absolute; left: 0; right: 0; top: 50px; }   /* arriba, entre el título y la leyenda */
+#n3u2-cabeza { position: relative; }
+#n3u2-puntos { position: absolute; right: 0; top: 14px; }
+.n3u2-fila.elegido .n3u2-nombre { color: var(--graf-si); }
+#n3c-puntos { position: absolute; left: 330px; bottom: 40px; }   /* abajo a la izquierda, fuera del cartel del gesto */
+#n3e-puntos { position: absolute; left: 0; right: 0; bottom: 22px; }
+.n3c-fila.elegido { box-shadow: 0 18px 70px rgba(120, 110, 200, .3); }
+
+/* Las indicaciones de gestos salen todas del cartel de abajo a la derecha (js/pista.js) */
+#d1-aviso, #d2-aviso, #d3-aviso { display: none !important; }
+
+/* ---------- Podio de las cifras: 1.º Stable Diffusion, 2.º Midjourney, 3.º DALL·E ---------- */
+#n3f-podio { position: absolute; left: 560px; right: 150px;   /* deja libre la esquina del relojito */
+  top: 400px; bottom: 30px;
+  display: flex; justify-content: center; align-items: flex-end; gap: 34px; }
+.n3f-lugar { width: 350px; display: flex; flex-direction: column; align-items: center; }
+.n3f-lugar .n3f-logo { width: 270px; height: auto; border-radius: 14px; box-shadow: 0 10px 30px rgba(120,110,200,.18); }
+.n3f-valor { margin: 18px 0 14px; text-align: center; font-family: "IBM Plex Mono", ui-monospace, monospace; font-size: 30px; line-height: 38px; color: var(--tinta); }
+.n3f-valor b { font-weight: 600; font-size: 40px; color: #5F6FB7; }
+.n3f-valor span { font-size: 24px; color: #8A90AE; }
+.n3f-escalon { width: 100%; border-radius: 22px 22px 0 0; display: flex; align-items: flex-start; justify-content: center; padding-top: 18px;
+  transform-origin: 50% 100%; box-shadow: 0 12px 40px rgba(120,110,200,.18); }
+.n3f-escalon span { font-family: "Space Grotesk", system-ui, sans-serif; font-weight: 700; font-size: 110px; line-height: 1; color: #fff; }
+#n3f-lugar1 .n3f-escalon { height: 300px; background: linear-gradient(180deg, #A47BF0, #7A4BE0); }
+#n3f-lugar2 .n3f-escalon { height: 210px; background: linear-gradient(180deg, #C2A9F5, #A788EC); }
+#n3f-lugar3 .n3f-escalon { height: 150px; background: linear-gradient(180deg, #DDD0F8, #C6B4F2); }
+#n3f-lugar3 .n3f-escalon span { font-size: 90px; }
+#n3f-lugar1 .n3f-valor b { font-size: 48px; color: #7A4BE0; }
