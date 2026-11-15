@@ -9,7 +9,9 @@ Infografia.escalar("#escenario", 1920, 1080);
 var ROJO = "#FF4554", AZUL = "#00C3E3";
 var REPETICIONES = 5;
 var SEG_RELOJ = 9;   // segundos de la pantalla del relojito (el de muestra y el de verdad)
-var SEG_VER = 5;     // segundos seguidos viendo una cara para arrancar
+var SEG_VER = 5;
+var PRACTICA_INICIO = 1.5;   // segundos al entrar a una práctica en los que todavía no se cuentan gestos
+var PRACTICA_PAUSA = 1.0;    // segundos mínimos entre dos gestos contados en la práctica     // segundos seguidos viendo una cara para arrancar
 var SEG_IDO = 10;    // segundos sin nadie frente a la cámara para volver a la espera
 var RUTA_PJ = "../assets/carausuario/";
 
@@ -98,6 +100,7 @@ function reposo(p) {
   gsap.set(p.brazo("der"), girar(p, "der", BRAZO.reposo));
   gsap.set(p.brazo("izq"), girar(p, "izq", -BRAZO.reposo));
   gsap.set([p.mano("der"), p.mano("izq")], { attr: { r: R_MANO } });
+  manoNormal(p, "der"); manoNormal(p, "izq");
 }
 Object.keys(figuras).forEach(function (k) { reposo(figuras[k]); });
 function redibujarFiguras() {
@@ -129,22 +132,45 @@ function levantar(p, lado) {
   return tl;
 }
 
-// demostración del gesto: el brazo entero sube al costado y barre hacia el centro del cuerpo
+// lleva la mano a (x, y): el brazo gira hacia ese punto y se estira o se acorta (como si se acercara a la cámara)
+function manoEn(p, lado, x, y) {
+  var h = HOMBRO[lado], dx = x - h[0], dy = y - h[1], d = Math.max(1, Math.hypot(dx, dy));
+  var a = Math.atan2(-dx, dy) * 180 / Math.PI, g = p.brazo(lado), o = h[0] + " " + h[1];
+  gsap.set(g[0], { rotation: a, scaleY: d / LARGO, svgOrigin: o });   // el brazo (atrás)
+  gsap.set(g[1], { rotation: a, svgOrigin: o });                      // el punto de la mano (adelante), sin deformarse
+  g[1].querySelectorAll("circle").forEach(function (c) { c.setAttribute("cy", h[1] + d); });
+}
+// en la práctica, el brazo que se usa pasa por delante del cuerpo (al svg de adelante, debajo del punto de la mano);
+// con adelante = false vuelve atrás
+function brazoAdelante(p, lado, adelante) {
+  var g = p.brazo(lado)[0];   // el grupo con la imagen del brazo (siempre es el primero en el documento)
+  if (adelante) p.svg.insertBefore(g, p.svg.querySelector('[class^="brazo-"]'));
+  else p.atras.appendChild(g);
+}
+function manoNormal(p, lado) {
+  var h = HOMBRO[lado], g = p.brazo(lado);
+  gsap.set(g[0], { scaleY: 1, svgOrigin: h[0] + " " + h[1] });
+  g[1].querySelectorAll("circle").forEach(function (c) { c.setAttribute("cy", h[1] + LARGO); });
+}
+
+// demostración del gesto: la mano sube al costado y va en línea recta, a la misma altura, hasta el centro del cuerpo
 // (la estela marca el recorrido de la mano)
 function demo(p, lado) {
-  var s = lado === "der" ? 1 : -1, color = lado === "der" ? ROJO : AZUL;
-  var desde = 95, hasta = -40;   // grados: al costado (un poco arriba de horizontal) → cruzando hacia el centro
-  var pts = [];
-  for (var g = desde; g >= hasta; g -= 5) pts.push(puntaBrazo(lado, s * g).map(function (v) { return v.toFixed(1); }).join(" "));
-  p.estela.setAttribute("d", "M" + pts.join(" L"));
+  var s = lado === "der" ? 1 : -1, color = lado === "der" ? ROJO : AZUL, h = HOMBRO[lado];
+  var y = h[1] + LARGO * 0.6, x0 = h[0] - s * LARGO * 0.8, x1 = 310;   // del costado al centro, recto
+  var reposoXY = puntaBrazo(lado, s * BRAZO.reposo);
+  p.estela.setAttribute("d", "M" + x0.toFixed(1) + " " + y.toFixed(1) + " L" + x1 + " " + y.toFixed(1));
   p.estela.setAttribute("stroke", color);
-  var tl = gsap.timeline({ repeat: -1, repeatDelay: 0.5 });
+  var m = { x: reposoXY[0], y: reposoXY[1] };
+  function pintar() { manoEn(p, lado, m.x, m.y); }
+  var tl = gsap.timeline({ repeat: -1, repeatDelay: 0.5, onRepeat: function () { manoNormal(p, lado); } });
   tl.set(p.estela, { opacity: 0 })
-    .to(p.brazo(lado), girar(p, lado, s * desde, { duration: 0.7, ease: "power2.out" }))
+    .set(m, { x: reposoXY[0], y: reposoXY[1], onComplete: pintar })
+    .to(m, { x: x0, y: y, duration: 0.7, ease: "power2.out", onUpdate: pintar })
     .to(p.estela, { opacity: 0.8, duration: 0.2 })
-    .to(p.brazo(lado), girar(p, lado, s * hasta, { duration: 0.8, ease: "power2.inOut" }))
+    .to(m, { x: x1, duration: 0.8, ease: "power2.inOut", onUpdate: pintar })
     .to(p.estela, { opacity: 0, duration: 0.4 }, "+=0.2")
-    .to(p.brazo(lado), girar(p, lado, s * BRAZO.reposo, { duration: 0.5, ease: "power1.inOut" }), "<");
+    .to(m, { x: reposoXY[0], y: reposoXY[1], duration: 0.5, ease: "power1.inOut", onUpdate: pintar }, "<");
   bucles.push(tl);
   return tl;
 }
@@ -152,6 +178,14 @@ function demo(p, lado) {
 /* ---------- Práctica de una mano ---------- */
 function practica(id, lado) {
   var el, estado, puntos, fin = false, intentos = 0, hecho = false;
+  // la cámara puede mandar varios gestos seguidos con un solo movimiento (o seguir mandando desde la pantalla anterior):
+  // no se cuenta nada hasta PRACTICA_INICIO segundos después de entrar, y entre gesto y gesto tiene que pasar PRACTICA_PAUSA
+  var desde = 0, ultimo = 0, pasar = null;
+  function sirve() {
+    var t = Date.now();
+    if (t < desde || t - ultimo < PRACTICA_PAUSA * 1000) return false;
+    ultimo = t; return true;
+  }
   var nombre = lado === "der" ? "derecha (roja)" : "izquierda (azul)";
   var otra = lado === "der" ? "izquierda" : "derecha";
   function decir(txt, clase) {
@@ -160,7 +194,7 @@ function practica(id, lado) {
     gsap.fromTo(estado, { scale: 0.92 }, { scale: 1, duration: 0.35, ease: "back.out(2)", transformOrigin: "left center" });
   }
   function bien() {
-    if (fin) return;
+    if (fin || !sirve()) return;
     var p = figuras[id];
     gsap.fromTo(p.mano(lado), { attr: { r: R_MANO * 1.8 } }, { attr: { r: R_MANO }, duration: 0.5, ease: "power2.out" });
     if (!hecho) {   // primer movimiento bien hecho
@@ -176,13 +210,13 @@ function practica(id, lado) {
     if (intentos >= REPETICIONES) {
       fin = true;
       decir(lado === "der" ? "¡Perfecto! Ahora la otra mano." : "¡Perfecto! Ya sabés usar las dos.", "bien");
-      gsap.delayedCall(1.6, function () { Infografia.avanzar(); });
+      pasar = gsap.delayedCall(1.6, function () { pasar = null; Infografia.avanzar(); });
     } else {
       decir("¡Bien! Te faltan " + (REPETICIONES - intentos) + ".", "bien");
     }
   }
   function mal() {
-    if (fin) return;
+    if (fin || !sirve()) return;
     decir("Esa es la mano " + otra + ". Usá la " + nombre + ".", "mal");
   }
   return {
@@ -190,14 +224,16 @@ function practica(id, lado) {
     preparar: function (e) {
       el = e; estado = e.querySelector(".t-estado"); puntos = e.querySelector(".t-puntos");
       fin = false; hecho = false; intentos = 0;
+      desde = Date.now() + PRACTICA_INICIO * 1000; ultimo = 0;
       estado.className = "t-estado";
-      estado.textContent = "Hacé el movimiento como tu IA de la izquierda.";
+      estado.textContent = "Hacé el movimiento que ves a la izquierda.";
       gsap.set(puntos, { opacity: 0 });
       Array.prototype.forEach.call(puntos.children, function (i) { i.classList.remove("ok"); });
       reposo(figuras[id]);
+      brazoAdelante(figuras[id], lado, true);   // el brazo que se practica, por delante del cuerpo
     },
     entrar: function (e) { demo(figuras[id], lado); return entradaTexto(e); },
-    salir: pararBucles,
+    salir: function () { if (pasar) { pasar.kill(); pasar = null; } pararBucles(); brazoAdelante(figuras[id], lado, false); },
     // la mano correcta cuenta; la otra muestra un aviso. En ambos casos no se cambia de pantalla.
     alSiguiente: function () { if (lado === "der") bien(); else mal(); return true; },
     alAnterior:  function () { if (lado === "izq") bien(); else mal(); return true; }
@@ -315,8 +351,8 @@ Infografia.presentacion([
         });
         tl.to("#tc-escaneo", { autoAlpha: 0, duration: 0.3 })
           .add(function () {
-            document.getElementById("tc-titulo").textContent = "¡Esta IA sos vos!";
-            document.getElementById("tc-paso").textContent = "Ahora vamos a aprender juntos los movimientos";
+            document.getElementById("tc-titulo").textContent = "¡Naciste! Sos una IA";
+            document.getElementById("tc-paso").textContent = "Ahora vas a aprender a moverte";
             redibujarFiguras();   // el tutorial ya usa tu personaje
           })
           .fromTo("#tc-lienzo", { scale: 1 }, { scale: 1.05, duration: 0.25, yoyo: true, repeat: 1, ease: "power2.out" })
