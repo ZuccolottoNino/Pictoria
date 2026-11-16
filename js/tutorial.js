@@ -303,8 +303,10 @@ Infografia.presentacion([
           var t = viendoDesde ? (Date.now() - viendoDesde) / 1000 : 0;
           if (t > 0 !== mostrando) {
             mostrando = t > 0;
+            // un cartel reemplaza al otro: mientras te ve, sólo "Te estoy viendo…"
+            gsap.killTweensOf(["#te-viendo", "#te-pide"]);
             gsap.to("#te-viendo", { autoAlpha: mostrando ? 1 : 0, duration: 0.3 });
-            gsap.to("#te-pide", { autoAlpha: mostrando ? 0 : 1, duration: 0.3 });
+            gsap.to("#te-pide", { autoAlpha: mostrando ? 0 : 1, duration: mostrando ? 0.15 : 0.3 });
           }
           aro.setAttribute("stroke-dashoffset", (276.5 * (1 - Math.min(1, t / SEG_VER))).toFixed(1));
           if (t >= SEG_VER) { clearInterval(vigia); vigia = null; Infografia.avanzar(); }

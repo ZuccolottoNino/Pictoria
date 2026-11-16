@@ -50,8 +50,8 @@ MAX_GAP = 0.30          # tolerancia si MediaPipe pierde la mano a mitad del ges
 
 # --- Gestos ------------------------------------------------------------------
 # Mapeo mano izquierda / derecha -> mensaje que le manda a la web.
-#   mano izquierda, de izquierda a derecha  -> 'anterior'  (retroceder)
-#   mano derecha,  de derecha a izquierda   -> 'siguiente' (avanzar)
+#   mano izquierda, desde su costado hacia el centro -> 'anterior'  (retroceder)
+#   mano derecha,  desde su costado hacia el centro -> 'siguiente' (avanzar)
 # Para agregar o cambiar gestos, mirá GESTOS en gestos.py.
 MENSAJE_ATRAS = 'anterior'
 MENSAJE_ADELANTE = 'siguiente'
@@ -61,8 +61,9 @@ MENSAJE_ADELANTE = 'siguiente'
 #   -1 = la x tiene que BAJAR              (derecha -> izquierda en pantalla)
 # Si hacés el gesto y la web hace lo contrario, invertí el signo acá.
 # (Estos valores se leen DESPUÉS de aplicar INVERTIR_X.)
-DIR_MENSAJE_ATRAS = +1        # mano izquierda
-DIR_MENSAJE_ADELANTE = -1     # mano derecha
+# El gesto es del COSTADO hacia el CENTRO (antes era al revés: del centro hacia el costado).
+DIR_MENSAJE_ATRAS = -1        # mano izquierda
+DIR_MENSAJE_ADELANTE = +1     # mano derecha
 
 # ---------------------------------------------------------------------------
 # Cara del visitante (caraUsuario) — cara.py

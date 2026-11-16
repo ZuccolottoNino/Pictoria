@@ -34,6 +34,7 @@ var Evolucion = (function () {
     ".evo-texto { top: 40px; }" +
     ".evo-texto h1 { font-size: var(--evo-titulo, 84px); line-height: 1.1; color: #ffe27a; text-shadow: 0 0 30px rgba(255,210,90,.6); }" +
     ".evo-texto p { margin-top: 14px; font-size: var(--evo-p, 44px); line-height: 1.2; }" +
+    ".evo-cierre { position: absolute; left: 0; right: 0; top: 290px; text-align: center; color: #ffe27a; font-size: var(--evo-cierre, 34px); opacity: .85; }" +
     ".evo-flash { position: absolute; inset: 0; background: #fff; opacity: 0; pointer-events: none; }" +
     ".evo-chispa { position: absolute; width: 14px; height: 14px; border-radius: 50%; background: #fff; box-shadow: 0 0 16px 6px rgba(255,240,180,.8); opacity: 0; }";
   document.head.appendChild(css);
@@ -173,5 +174,72 @@ var Evolucion = (function () {
     };
   }
 
-  return { pantalla: pantalla, guardar: guardar, leer: leer, olvidar: olvidar };
+  /* La pregunta del final (después del núcleo 3): tu IA adulta, y detrás la sombra de una forma que todavía no existe,
+     que late como si fuera a evolucionar otra vez… pero no: queda la pregunta.
+     Evolucion.pregunta({ el: "#evo-sigue", antes, titulo, texto, cierre }) */
+  function pregunta(cfg) {
+    var el, ctx, rasgos, bucles = [], fuera = document.createElement("canvas");
+    function pintar(brillo) {
+      ctx.clearRect(0, 0, 900, 900);
+      var r = Object.assign({}, rasgos, { etapa: "adulto", byn: false });
+      // la sombra de lo que vendría: más grande, sin cara, con un signo de pregunta
+      var altoS = 860, xs = (900 - Personaje.ancho(altoS)) / 2;
+      fuera.width = fuera.height = 900;
+      var o = fuera.getContext("2d");
+      Personaje.dibujar(o, Object.assign({}, r, { pelo: "ninguno", anteojos: false }), { x: xs, y: 880 - altoS, alto: altoS, capas: 2 });
+      o.globalCompositeOperation = "source-in"; o.fillStyle = "rgba(120,150,255," + (0.18 + 0.5 * brillo) + ")"; o.fillRect(0, 0, 900, 900);
+      ctx.save(); ctx.shadowColor = "rgba(150,190,255," + (0.3 + 0.7 * brillo) + ")"; ctx.shadowBlur = 40 + 40 * brillo;
+      ctx.drawImage(fuera, 0, 0); ctx.restore();
+      ctx.save(); ctx.font = "700 220px system-ui, sans-serif"; ctx.textAlign = "center";
+      ctx.fillStyle = "rgba(255,255,255," + (0.25 + 0.6 * brillo) + ")"; ctx.fillText("?", 450, 330); ctx.restore();
+      // adelante, la IA que sos ahora
+      var alto = 560;
+      Personaje.dibujar(ctx, r, { x: (900 - Personaje.ancho(alto)) / 2, y: 880 - alto, alto: alto });
+    }
+    return {
+      el: cfg.el,
+      preparar: function (e) {
+        el = e;
+        if (!el.querySelector("canvas")) {
+          el.classList.add("evo");
+          Object.keys(cfg.letra || {}).forEach(function (k) { el.style.setProperty("--evo-" + k, cfg.letra[k]); });
+          el.innerHTML = '<div class="evo-rayos"></div><div class="evo-halo"></div><canvas width="900" height="900"></canvas>' +
+            '<p class="evo-antes"></p><div class="evo-texto"><h1></h1><p></p></div><p class="evo-cierre"></p>';
+        }
+        ctx = el.querySelector("canvas").getContext("2d");
+        el.querySelector(".evo-antes").textContent = cfg.antes;
+        el.querySelector(".evo-texto h1").textContent = cfg.titulo;
+        el.querySelector(".evo-texto p").textContent = cfg.texto;
+        el.querySelector(".evo-cierre").textContent = cfg.cierre || "";
+        rasgos = leer();
+        gsap.set(el.querySelectorAll(".evo-antes, .evo-texto, .evo-cierre, .evo-rayos, .evo-halo"), { autoAlpha: 0 });
+        gsap.set(el.querySelector("canvas"), { autoAlpha: 0, y: 30 });
+        Personaje.cargar(RUTA).then(function () { pintar(0); });
+      },
+      entrar: function () {
+        var cv = el.querySelector("canvas"), b = { v: 0 };
+        var tl = gsap.timeline()
+          .add(function () { pintar(0); })
+          .to(cv, { autoAlpha: 1, y: 0, duration: 0.7, ease: "power3.out" })
+          .to(el.querySelector(".evo-antes"), { autoAlpha: 1, duration: 0.6 }, "-=0.2")
+          .to(el.querySelector(".evo-halo"), { autoAlpha: 0.7, duration: 1 }, "+=0.8")
+          .to(el.querySelector(".evo-rayos"), { autoAlpha: 0.6, duration: 1 }, "<")
+          // la sombra late tres veces, como si fuera a evolucionar… y se queda en la duda
+          .to(b, { v: 1, duration: 0.35, repeat: 5, yoyo: true, ease: "sine.inOut", onUpdate: function () { pintar(b.v); } }, "<")
+          .to(el.querySelector(".evo-antes"), { autoAlpha: 0, duration: 0.4 })
+          .to(el.querySelector(".evo-texto"), { autoAlpha: 1, duration: 0.6 })
+          .from(el.querySelector(".evo-texto h1"), { scale: 0.7, duration: 0.7, ease: "back.out(2)" }, "<")
+          .to(el.querySelector(".evo-cierre"), { autoAlpha: 1, duration: 0.6 }, "+=1.2")
+          .add(function () {
+            bucles.push(gsap.to(el.querySelector(".evo-rayos"), { rotation: 360, duration: 30, ease: "none", repeat: -1 }));
+            bucles.push(gsap.to(b, { v: 0.45, duration: 1.8, yoyo: true, repeat: -1, ease: "sine.inOut", onUpdate: function () { pintar(b.v); } }));
+          });
+        Evolucion.animacion = tl;
+        return tl;
+      },
+      salir: function () { bucles.forEach(function (x) { x.kill(); }); bucles = []; }
+    };
+  }
+
+  return { pantalla: pantalla, pregunta: pregunta, guardar: guardar, leer: leer, olvidar: olvidar };
 })();

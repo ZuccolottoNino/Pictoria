@@ -182,7 +182,7 @@ function iniciar() {
   };
   // las de información: mínimo 13 s; las que sólo dan paso al juego o lo cierran, más cortas
   var AUTO3 = { "#evo": 3, "#n3-intro": 13, "#n3-modelos": 13, "#n3-cifras": 13, "#n3-usos": 13, "#p4": 13,
-                "#n3-dif1": 13, "#n3-dif2": 13, "#n3-dif3": 13, "#n3-practica": 7, "#n3-toca": 7, "#n3-cierre": 5, "#n3-resultados": 13, "#n3-final": 13 };
+                "#n3-dif1": 13, "#n3-dif2": 13, "#n3-dif3": 13, "#n3-practica": 7, "#n3-toca": 7, "#n3-cierre": 5, "#n3-resultados": 13, "#n3-final": 13, "#evo-sigue": 10 };
 
   Infografia.presentacion(Pista.envolver([
     // la evolución del personaje del visitante: lo primero al entrar al núcleo
@@ -1244,7 +1244,13 @@ function iniciar() {
         return entrada;
       },
       salir: detener
-    }
+    },
+
+    // cierre de la narrativa: ¿vas a seguir evolucionando?
+    Evolucion.pregunta({ el: "#evo-sigue", antes: "Llegaste a ser una IA que crea imágenes…",
+      titulo: "¿Vas a seguir evolucionando?",
+      texto: "Las IA aprenden de lo que hacemos las personas: lo que vengan a ser depende de cómo las usemos.",
+      cierre: "Gracias por recorrer Pictoria" })
 
   ], Object.assign({ auto: AUTO3 }, PISTA)), { transicion: "deslizar", duracion: 0.8,
     // pantallas que pasan solas (segundos de lectura después de que termina la entrada)
