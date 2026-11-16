@@ -181,10 +181,13 @@ function iniciar() {
     dibujar: ["#d1", "#d2", "#d3"]                    // juego de difusión: cartel de "Dibujá"
   };
   // las de información: mínimo 13 s; las que sólo dan paso al juego o lo cierran, más cortas
-  var AUTO3 = { "#n3-intro": 13, "#n3-modelos": 13, "#n3-cifras": 13, "#n3-usos": 13, "#p4": 13,
+  var AUTO3 = { "#evo": 3, "#n3-intro": 13, "#n3-modelos": 13, "#n3-cifras": 13, "#n3-usos": 13, "#p4": 13,
                 "#n3-dif1": 13, "#n3-dif2": 13, "#n3-dif3": 13, "#n3-practica": 7, "#n3-toca": 7, "#n3-cierre": 5, "#n3-resultados": 13, "#n3-final": 13 };
 
   Infografia.presentacion(Pista.envolver([
+    // la evolución del personaje del visitante: lo primero al entrar al núcleo
+    Evolucion.pantalla({ el: "#evo", desde: "nino", hasta: "adulto", antes: "¿Qué? ¡Estás evolucionando otra vez!", titulo: "¡Evolucionaste!", texto: "Ahora podés crear imágenes" }),
+
 
     /* ============ Intro: felicidades, da paso a los modelos ============ */
     {

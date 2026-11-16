@@ -133,9 +133,12 @@ var PISTA = {
   nunca: ["#j2-clasificar", "#j2-fin"],       // tienen sus propias indicaciones (el juego, insertar la memoria)
   dibujar: ["#j22-dibuja"]                    // juego de los peces: cartel de "Dibujá"
 };
-var AUTO2 = { "#j2-toca": 7, "#j22-toca": 7, "#p1": 13, "#j2-intro": 6, "#j22-observa": 6, "#j22-reconoce": 5 };   // información: mínimo 13 s; las del juego, más cortas
+var AUTO2 = { "#evo": 3, "#j2-toca": 7, "#j22-toca": 7, "#p1": 13, "#j2-intro": 6, "#j22-observa": 6, "#j22-reconoce": 5 };   // información: mínimo 13 s; las del juego, más cortas
 
 Infografia.presentacion(Pista.envolver([
+    // la evolución del personaje del visitante: lo primero al entrar al núcleo
+    Evolucion.pantalla({ el: "#evo", desde: "bebe", hasta: "nino", antes: "¿Qué? ¡Estás evolucionando!", titulo: "¡Evolucionaste!", texto: "Ahora aprendés de ejemplos" }),
+
   /* ============ Pantalla 1: bienvenida a la etapa 2 (Machine Learning) ============ */
   {
     el: "#p1",

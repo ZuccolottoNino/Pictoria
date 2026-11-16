@@ -43,7 +43,7 @@ function ocultarEtapa13(k) {
 }
 
 var PISTA = {
-  nunca: ["#p1", "#p15", "#n1-toca",                   // ya indican qué hacer por su cuenta
+  nunca: ["#evo", "#p1", "#p15", "#n1-toca",                   // ya indican qué hacer por su cuenta
           "#p2", "#p6", "#p9", "#p11", "#p12"],   // pasan solas (tienen su relojito)
   dibujar: ["#p7", "#p8", "#p10"]                      // juegos: cartel de "Dibujá" (sin burbuja de gesto)
 };
@@ -367,6 +367,10 @@ function comparacion(cfg) {
 
 function iniciar() {
   Infografia.presentacion(Pista.envolver([
+    // la evolución del personaje del visitante: lo primero al entrar al núcleo
+    Evolucion.pantalla({ el: "#evo", desde: "huevo", hasta: "bebe", antes: "¿Qué es eso? ¡Algo se está moviendo!", titulo: "¡Despertaste!", texto: "Sos una IA recién nacida: vas a aprender a seguir reglas",
+      letra: { titulo: "60px", p: "28px", antes: "32px" } }),
+
 
     /* ============ Pantalla 1: Pictoria cargando ============ */
     {
@@ -1030,6 +1034,6 @@ function iniciar() {
 
   ], PISTA), { transicion: "deslizar", duracion: 0.8,
     // pantallas que pasan solas (segundos de lectura después de que termina la entrada)
-    auto: { "#n1-toca": 7, "#p2": 8, "#p6": 13, "#p9": 8, "#p11": 8, "#p12": 13 } });   // las de información: mínimo 13 s
+    auto: { "#evo": 3, "#n1-toca": 7, "#p2": 8, "#p6": 13, "#p9": 8, "#p11": 8, "#p12": 13 } });   // las de información: mínimo 13 s
 }
 (document.fonts && document.fonts.ready ? document.fonts.ready : Promise.resolve()).then(iniciar);

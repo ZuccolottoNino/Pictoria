@@ -11,7 +11,7 @@ var REPETICIONES = 5;
 var SEG_RELOJ = 9;   // segundos de la pantalla del relojito (el de muestra y el de verdad)
 var SEG_VER = 5;
 var PRACTICA_INICIO = 1.5;   // segundos al entrar a una práctica en los que todavía no se cuentan gestos
-var PRACTICA_PAUSA = 1.0;    // segundos mínimos entre dos gestos contados en la práctica     // segundos seguidos viendo una cara para arrancar
+var PRACTICA_PAUSA = 1.6;    // segundos mínimos entre dos gestos contados en la práctica     // segundos seguidos viendo una cara para arrancar
 var SEG_IDO = 10;    // segundos sin nadie frente a la cámara para volver a la espera
 var RUTA_PJ = "../assets/carausuario/";
 
@@ -19,8 +19,9 @@ var RUTA_PJ = "../assets/carausuario/";
    viewBox 620x880. El cuerpo va en un canvas de fondo; encima, en un svg, los dos brazos (js/personaje.js → Personaje.brazo)
    giran enteros desde el hombro: 0° = colgando derecho; la derecha se abre con grados positivos, la izquierda con negativos.
    En la punta de cada brazo, un brillo del color de su mano (roja = derecha, azul = izquierda). */
-// en el tutorial el personaje va en blanco y negro: de la cámara toma la forma (pelo, ojos, sonrisa), no los colores
-var rasgos = Personaje.enBlancoYNegro(Personaje.PREDETERMINADO);   // se reemplaza con los de la cámara al armar el personaje
+// en el tutorial el personaje es siempre el mismo, blanco y sin rasgos del visitante (todavía no "nació");
+// lo que detecta la cámara se guarda para los núcleos, donde sale del huevo con su cara
+var rasgos = Personaje.enBlancoYNegro(Personaje.PREDETERMINADO);
 var ALTO_PJ = 760;
 var OP_PJ = { x: (620 - Personaje.ancho(ALTO_PJ)) / 2, y: 60, alto: ALTO_PJ, brazos: false };
 var BRAZO = Personaje.brazo(rasgos, OP_PJ);    // medidas del brazo (el png entero, a escala)
@@ -260,7 +261,7 @@ function recibirCara(datos) {
   try { muestras.push(JSON.parse(datos)); } catch (e) { return; }
   var m = muestras[muestras.length - 1];   // para calibrar: lo que detecta la cámara, abajo a la izquierda
   document.getElementById("t-datos").textContent = "cámara · piel " + m.piel + " · pelo " + m.pelo +
-    (m.pelado ? " (pelado)" : "") + " · sonrisa " + m.sonrisa + " · ojos " + m.ojos;
+    (m.pelado ? " (pelado)" : "") + " · sonrisa " + m.sonrisa + " · ojos " + m.ojos + " · anteojos " + m.anteojos;
   muestras = muestras.slice(-40);
   if (!viendoDesde) viendoDesde = Date.now();
 }
@@ -285,6 +286,7 @@ Infografia.presentacion([
       el: "#t-espera",
       preparar: function () {
         enInicio = true; muestras = []; viendoDesde = 0;
+        Evolucion.olvidar();   // visitante nuevo
         var v = document.getElementById("te-video");
         try { v.currentTime = 0; } catch (e) {}
         gsap.set("#te-pide", { autoAlpha: 0 });
@@ -319,12 +321,14 @@ Infografia.presentacion([
 
   // B. Construcción: el personaje se arma capa por capa mientras una línea lo "escanea"; después arranca el tutorial
   (function () {
-    var PASOS = ["Analizando tu cara", "Tu cuerpo", "Tus ojos", "Tus cejas", "Tu pelo", "Tu boca"];
+    var PASOS = ["Analizando tu cara", "Tu cuerpo", "Tus ojos", "Tus cejas", "Guardando tus rasgos", "Tu boca"];
     return {
       el: "#t-crea",
       preparar: function () {
         enInicio = true;
-        rasgos = Personaje.enBlancoYNegro(Personaje.desdeCamara(muestras.slice(-20)));
+        var visitante = Personaje.desdeCamara(muestras.slice(-20));
+        Evolucion.guardar(visitante);   // en color: los núcleos lo hacen evolucionar
+        rasgos = Personaje.enBlancoYNegro(Personaje.PREDETERMINADO);
         gsap.set("#tc-texto > *", { autoAlpha: 0, y: 30 });
         gsap.set("#tc-barra i", { scaleX: 0 });
         var c = document.getElementById("tc-lienzo");
@@ -351,8 +355,8 @@ Infografia.presentacion([
         });
         tl.to("#tc-escaneo", { autoAlpha: 0, duration: 0.3 })
           .add(function () {
-            document.getElementById("tc-titulo").textContent = "¡Naciste! Sos una IA";
-            document.getElementById("tc-paso").textContent = "Ahora vas a aprender a moverte";
+            document.getElementById("tc-titulo").textContent = "¡Ya casi!";
+            document.getElementById("tc-paso").textContent = "Antes de nacer, vas a aprender a moverte";
             redibujarFiguras();   // el tutorial ya usa tu personaje
           })
           .fromTo("#tc-lienzo", { scale: 1 }, { scale: 1.05, duration: 0.25, yoyo: true, repeat: 1, ease: "power2.out" })

@@ -37,6 +37,33 @@ var Personaje = (function () {
     pelo2:  Object.assign(de800("pelo2.png", [248, 229, 304, 229]), { centro: [1020, 520] }),
     pelo10: { src: "pelo10.png",     recorte: [462, 65, 1487, 1647],  centro: [990, 880],   ancho: 1330 }
   };
+  /* Ropa y accesorios: vienen centrados en su lienzo de 800 (no sobre el cuerpo). Cada uno dice dónde va su centro
+     sobre el cuerpo (coordenadas del lienzo de 800 del cuerpo) y a qué escala. */
+  function prenda(src, rec, centro800, escala) {
+    return { src: src, recorte: rec, ancho: rec[2] * escala * K800,
+             centro: [1024 + (centro800[0] - 400) * K800, 800 + (centro800[1] - 310) * K800] };
+  }
+  [
+    ["bebe_enterito", [312, 306, 175, 192], [405, 508], 0.98],
+    ["bebe_babero",   [333, 327, 135, 151], [405, 468], 0.62],
+    ["bebe_remera",   [299, 329, 201, 147], [405, 478], 0.95],
+    ["nino_remera",   [312, 331, 175, 143], [404, 486], 0.98],
+    ["nino_pantalon", [333, 316, 133, 172], [404, 562], 0.86],
+    ["nino_buzo",     [277, 321, 246, 162], [404, 490], 1.0],
+    ["adulto_camisa", [276, 323, 238, 156], [403, 488], 1.0],
+    ["adulto_pantalon", [333, 311, 133, 173], [404, 562], 0.86],
+    ["adulto_traje",  [282, 326, 234, 152], [404, 490], 1.0],
+    ["anteojos",      [313, 364, 173, 66],  [400, 307], 0.98]
+  ].forEach(function (a) { PIEZAS[a[0]] = prenda(a[0] + ".png", a[1], a[2], a[3]); });
+
+  /* Etapas de la evolución: el mismo visitante (piel, pelo, ojos, boca), cambia el cuerpo, el tamaño y la ropa.
+     ropa: [pieza, color] en el orden en que se dibuja (lo de abajo primero). */
+  var ETAPAS = {
+    bebe:   { cuerpo: "bebe", tamano: 0.62, ropa: [["bebe_enterito", "#9fd3f2"], ["bebe_babero", "#fff6c8"]] },
+    nino:   { cuerpo: "base", tamano: 0.82, brazos: false, ropa: [["nino_pantalon", "#5b7fc4"], ["nino_remera", "#ffd166"], ["nino_buzo", "#ef6f6c"]] },
+    adulto: { cuerpo: "base", tamano: 1, brazos: false,  ropa: [["adulto_pantalon", "#3c4252"], ["adulto_camisa", "#ffffff"], ["adulto_traje", "#4a5878"]] }
+  };
+
   // la caja del personaje dentro del cuerpo (lo que se ve), en coordenadas del cuerpo
   var CAJA = { x: 380, y: 160, w: 1300, h: 1760 };
   var PALETA = {
@@ -46,7 +73,8 @@ var Personaje = (function () {
   // medida de la cámara (alto/ancho del ojo): con la cámara de la muestra, ojos comunes dan ~0.40
   var OJOS_ACHINADOS = 0.26, OJOS_REDONDOS = 0.42;
   var SONRISA = 0.15;        // desde cuánto se toma como sonrisa (0 … 1)
-  var ACLARAR_PIEL = 1.3;    // la cámara ve la piel más oscura de lo que es
+  var ACLARAR_PIEL = 1.3;
+  var ANTEOJOS = 0.35;       // desde cuánto borde sobre el puente de la nariz se toma como anteojos (calibrar con la cámara)    // la cámara ve la piel más oscura de lo que es
   var OJOS = [{ x: 881, y: 790 }, { x: 1159, y: 790 }], RADIO_OJO = 124;
   var BOCA = { centro: [1020, 975], ancho: 150 };
   /* Brazos del bebé: giran desde el hombro (coordenadas del cuerpo). pivote = el hombro dentro del recorte del png;
@@ -109,7 +137,8 @@ var Personaje = (function () {
      la del otro lado se espeja. */
   function brazo(rasgos, op) {
     rasgos = rasgos || PREDETERMINADO; op = op || {};
-    var BRAZO = BRAZOS[rasgos.cuerpo] || BRAZOS.base;
+    var cuerpo = ETAPAS[rasgos.etapa] ? ETAPAS[rasgos.etapa].cuerpo : rasgos.cuerpo;
+    var BRAZO = BRAZOS[cuerpo] || BRAZOS.base;
     var E = (op.alto || 500) / CAJA.h, ox = op.x || 0, oy = op.y || 0, p = PIEZAS[BRAZO.pieza];
     var k = p.ancho / p.recorte[2] * E, im = imgs[BRAZO.pieza], W = (im && im.naturalWidth) || 800, H = (im && im.naturalHeight) || 800;
     function pt(b) { return [ox + (b[0] - CAJA.x) * E, oy + (b[1] - CAJA.y) * E]; }
@@ -189,12 +218,15 @@ var Personaje = (function () {
     var E = (op.alto || 500) / CAJA.h, ox = op.x || 0, oy = op.y || 0, n = op.capas == null ? CAPAS : op.capas;
     // orden: cabeza → brazos → cuerpo → cara (ojos, cejas, pelo, boca).
     // op.parte = "fondo" dibuja sólo la cabeza; "frente", todo lo que va arriba de los brazos (para moverlos aparte en el medio)
-    var bebe = rasgos.cuerpo === "bebe", piel = n >= 2 ? rasgos.piel : null;
+    var etapa = ETAPAS[rasgos.etapa];
+    var bebe = (etapa ? etapa.cuerpo : rasgos.cuerpo) === "bebe", piel = n >= 2 ? rasgos.piel : null;
     if (op.parte !== "frente" && !bebe && n >= 1) pieza(ctx, "cara", piel, E, ox, oy);
     if (op.parte === "fondo") return;
-    if (!op.parte && n >= 2 && op.brazos !== false) brazosQuietos(ctx, rasgos, op);
+    if (!op.parte && n >= 2 && op.brazos !== false && !(etapa && etapa.brazos === false)) brazosQuietos(ctx, rasgos, op);   // con mangas, los brazos quedan adentro de la ropa
     if (n >= 1) pieza(ctx, bebe ? "bebe" : "base", piel, E, ox, oy);
+    if (etapa && n >= 2) etapa.ropa.forEach(function (r) { pieza(ctx, r[0], r[1], E, ox, oy); });
     if (n >= 3) { pieza(ctx, "ojos", null, E, ox, oy); parpados(ctx, rasgos, E, ox, oy); }
+    if (n >= 3 && rasgos.anteojos) pieza(ctx, "anteojos", "#3a3f4b", E, ox, oy);
     if (n >= 4 && rasgos.cejas) pieza(ctx, "cejas", null, E, ox, oy);
     if (n >= 5 && rasgos.pelo !== "ninguno") pieza(ctx, rasgos.pelo, rasgos.colorPelo, E, ox, oy);
     if (n >= 6) boca(ctx, rasgos, E, ox, oy);
@@ -227,6 +259,7 @@ var Personaje = (function () {
     var medida = ojos.length ? ojos[Math.floor(ojos.length * 0.75)] : OJOS_REDONDOS;
     var t = Math.max(0, Math.min(1, (medida - OJOS_ACHINADOS) / (OJOS_REDONDOS - OJOS_ACHINADOS)));
     var pelados = muestras.filter(function (m) { return m.pelado; }).length;
+    var conAnteojos = muestras.filter(function (m) { return m.anteojos > ANTEOJOS; }).length;
     var recientes = muestras.slice(-8);
     var sonrisas = recientes.filter(function (m) { return m.sonrisa > SONRISA; }).length;
     return {
@@ -235,6 +268,7 @@ var Personaje = (function () {
       colorPelo: masVotado(muestras.map(function (m) { return masParecido(m.pelo, PALETA.pelo); })),
       pelo: pelados > muestras.length / 2 ? "ninguno" : "pelo2",
       cejas: true,
+      anteojos: conAnteojos > muestras.length / 2,
       boca: sonrisas >= recientes.length / 2 ? "sonrisa" : "neutra",
       apertura: 0.35 + t * 0.65
     };
@@ -245,6 +279,6 @@ var Personaje = (function () {
     return Object.assign({}, rasgos || PREDETERMINADO, { piel: "#ffffff", colorPelo: "#ffffff", byn: true });
   }
 
-  return { enBlancoYNegro: enBlancoYNegro, cargar: cargar, dibujar: dibujar, ancho: ancho, desdeCamara: desdeCamara, brazo: brazo, CAPAS: CAPAS,
+  return { ETAPAS: ETAPAS, enBlancoYNegro: enBlancoYNegro, cargar: cargar, dibujar: dibujar, ancho: ancho, desdeCamara: desdeCamara, brazo: brazo, CAPAS: CAPAS,
            PREDETERMINADO: PREDETERMINADO };
 })();

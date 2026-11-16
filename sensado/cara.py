@@ -7,6 +7,8 @@
 # De la cara saca rasgos simples y los manda por el mismo WebSocket que los gestos:
 #   cara:{"piel":"#d9a074","pelo":"#2b1d14","pelado":false,"sonrisa":0.12,"ojos":0.27,"x":0.51}
 #   ojos = qué tan abiertos son: alto / ancho del ojo (~0.18 achinados … ~0.32 bien redondos)
+#   anteojos = cuánto borde hay sobre el puente de la nariz, entre los ojos (0 … 1): sin anteojos es piel lisa
+#              (valor bajo); el armazón deja una línea marcada (valor alto). El umbral lo decide la web.
 #   cara:nadie            (cuando la persona se va)
 # La web decide qué hacer con eso (pruebas/carausuario.html arma el personaje).
 # =============================================================================
@@ -35,6 +37,7 @@ COSTADO_DER = 454
 # contorno de los ojos: (arriba, abajo, rabillo, lagrimal)
 OJO_A = (159, 145, 33, 133)
 OJO_B = (386, 374, 263, 362)
+PUENTE = 168            # entre los ojos, donde apoya el puente de los anteojos
 
 
 def _hex(rgb):
@@ -51,6 +54,20 @@ def _muestra(frame, cx, cy, r):
     zona = frame[y0:y1, x0:x1].reshape(-1, 3)
     b, g, r_ = [float(sorted(zona[:, i])[len(zona) // 2]) for i in range(3)]
     return (r_, g, b)
+
+
+def _bordes(gris, cx, cy, ancho, alto):
+    """Cuánto borde horizontal hay en un rectángulo (0 … 1): el armazón de los anteojos es una línea marcada."""
+    h, w = gris.shape[:2]
+    x0, x1 = max(0, int(cx - ancho / 2)), min(w, int(cx + ancho / 2))
+    y0, y1 = max(0, int(cy - alto / 2)), min(h, int(cy + alto / 2))
+    if x1 - x0 < 4 or y1 - y0 < 4:
+        return 0.0
+    zona = gris[y0:y1, x0:x1].astype('float32')
+    gy = cv2.Sobel(zona, cv2.CV_32F, 0, 1, ksize=3)
+    # el 90% más alto de la zona: una línea fina alcanza aunque el resto sea piel
+    v = sorted(abs(gy).reshape(-1))
+    return min(1.0, float(v[int(len(v) * 0.9)]) / 255.0)
 
 
 def _distancia(a, b):
@@ -75,6 +92,7 @@ class DetectorCara(object):
         self.rasgos = None           # lo último que se detectó (para la ventana)
         self.puntos = None           # landmarks en píxeles (para dibujar)
         self.aperturas = []          # últimas mediciones de apertura de ojos (para no contar parpadeos)
+        self.puentes = []            # últimas mediciones de borde sobre el puente de la nariz (anteojos)
 
     def cerrar(self):
         try:
@@ -100,6 +118,7 @@ class DetectorCara(object):
                 self.presente = False
                 self.rasgos = None
                 self.aperturas = []
+                self.puentes = []
                 return 'cara:nadie'
             return None
 
@@ -142,11 +161,17 @@ class DetectorCara(object):
         orden = sorted(self.aperturas)
         ojos = orden[int(len(orden) * 0.75)]
 
+        # anteojos: borde sobre el puente de la nariz (mediana de las últimas mediciones)
+        gris = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+        self.puentes.append(_bordes(gris, P(PUENTE)[0], P(PUENTE)[1], ancho_cara * 0.14, alto_cara * 0.08))
+        del self.puentes[:-12]
+        anteojos = sorted(self.puentes)[len(self.puentes) // 2]
+
         x = sum(p.x for p in lm) / len(lm)
         if config.INVERTIR_X:
             x = 1 - x
         self.rasgos = {'piel': _hex(piel), 'pelo': _hex(pelo), 'pelado': pelado,
-                       'sonrisa': round(sonrisa, 2), 'ojos': round(ojos, 3), 'x': round(x, 3),
+                       'sonrisa': round(sonrisa, 2), 'ojos': round(ojos, 3), 'anteojos': round(anteojos, 3), 'x': round(x, 3),
                        'muestra_pelo': (fx, y_pelo), 'r': r}
         datos = {k: v for k, v in self.rasgos.items() if k not in ('muestra_pelo', 'r')}
         return 'cara:' + json.dumps(datos)
@@ -165,8 +190,8 @@ def dibujar_cara(frame, det):
         cv2.rectangle(frame, (int(x - r), int(y - r)), (int(x + r), int(y + r)), (255, 255, 255), 1)
     fx, fy = det.rasgos['muestra_pelo']
     cv2.circle(frame, (int(fx), int(fy)), r, (0, 200, 255), 2)
-    texto = 'CARA piel %s  pelo %s%s  sonrisa %.2f  ojos %.2f' % (
+    texto = 'CARA piel %s  pelo %s%s  sonrisa %.2f  ojos %.2f  anteojos %.2f' % (
         det.rasgos['piel'], det.rasgos['pelo'], ' (pelado?)' if det.rasgos['pelado'] else '',
-        det.rasgos['sonrisa'], det.rasgos['ojos'])
+        det.rasgos['sonrisa'], det.rasgos['ojos'], det.rasgos['anteojos'])
     cv2.putText(frame, texto, (int(min(xs)), int(max(ys)) + 22), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 0), 3, cv2.LINE_AA)
     cv2.putText(frame, texto, (int(min(xs)), int(max(ys)) + 22), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (240, 240, 240), 1, cv2.LINE_AA)
