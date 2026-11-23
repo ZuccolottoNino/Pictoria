@@ -13,15 +13,49 @@ var Evolucion = (function () {
   var RUTA = "../assets/carausuario/";
 
   // el tutorial guarda los rasgos del visitante; los núcleos los leen (si no hay, el predeterminado)
-  function guardar(rasgos) { try { localStorage.setItem(CLAVE, JSON.stringify(rasgos)); } catch (e) {} }
-  function olvidar() { try { localStorage.removeItem(CLAVE); } catch (e) {} }
+  function guardar(rasgos) {
+    rasgos = Object.assign({ id: Date.now() }, rasgos);   // id: para no guardar dos veces al mismo visitante en el historial
+    try { localStorage.setItem(CLAVE, JSON.stringify(rasgos)); } catch (e) {}
+  }
+  function olvidar() { try { localStorage.removeItem(CLAVE); localStorage.removeItem(CLAVE_PAISAJE); } catch (e) {} }
+
+  /* Historial: los últimos HISTORIAL visitantes que terminaron el recorrido (su personaje y el paisaje que generaron),
+     para mostrarle al siguiente "quiénes nacieron antes que vos". Queda guardado en el navegador de la muestra. */
+  var CLAVE_PAISAJE = "pictoria-paisaje", CLAVE_HISTORIAL = "pictoria-historial", HISTORIAL = 3;
+  // el paisaje que generó el visitante (núcleo 3, difusión): se guarda chico, en jpg
+  function guardarPaisaje(canvas) {
+    try {
+      var c = document.createElement("canvas"), w = 480;
+      c.width = w; c.height = Math.round(canvas.height * w / canvas.width);
+      c.getContext("2d").drawImage(canvas, 0, 0, c.width, c.height);
+      localStorage.setItem(CLAVE_PAISAJE, c.toDataURL("image/jpeg", 0.8));
+    } catch (e) {}
+  }
+  function historial() {
+    try { var h = JSON.parse(localStorage.getItem(CLAVE_HISTORIAL)); if (Array.isArray(h)) return h; } catch (e) {}
+    return [];
+  }
+  // suma al visitante actual al historial (una sola vez) y deja sólo los últimos HISTORIAL
+  function sumarAlHistorial() {
+    var yo = null, paisaje = null;
+    try { yo = JSON.parse(localStorage.getItem(CLAVE)); paisaje = localStorage.getItem(CLAVE_PAISAJE); } catch (e) {}
+    if (!yo || !yo.piel) return;
+    var h = historial().filter(function (v) { return v.rasgos && v.rasgos.id !== yo.id; });
+    h.unshift({ rasgos: yo, paisaje: paisaje });
+    try { localStorage.setItem(CLAVE_HISTORIAL, JSON.stringify(h.slice(0, HISTORIAL))); } catch (e) {}
+  }
   function leer() {
     try { var r = JSON.parse(localStorage.getItem(CLAVE)); if (r && r.piel) return r; } catch (e) {}
     return Object.assign({}, Personaje.PREDETERMINADO);
   }
 
+  // mientras se ve una pantalla de evolución, toda la página va oscura (si no, a los costados se ve el fondo del núcleo)
+  function fondoOscuro(si) { document.documentElement.classList.toggle("evo-activa", !!si); }
+
   var css = document.createElement("style");
   css.textContent =
+    "html.evo-activa, html.evo-activa body { background: #0b1024 !important; }" +
+    "html.evo-activa #fondo-aero { visibility: hidden; }" +
     ".evo { background: radial-gradient(ellipse at 50% 55%, #2b3a6b 0%, #141a33 55%, #070a17 100%) !important; overflow: hidden; color: #fff; }" +
     ".evo-rayos { position: absolute; left: 50%; top: 56%; width: 2600px; height: 2600px; margin: -1300px 0 0 -1300px; opacity: 0;" +
     "  background: repeating-conic-gradient(from 0deg, rgba(255,255,255,.10) 0deg 6deg, rgba(255,255,255,0) 6deg 18deg);" +
@@ -35,6 +69,17 @@ var Evolucion = (function () {
     ".evo-texto h1 { font-size: var(--evo-titulo, 84px); line-height: 1.1; color: #ffe27a; text-shadow: 0 0 30px rgba(255,210,90,.6); }" +
     ".evo-texto p { margin-top: 14px; font-size: var(--evo-p, 44px); line-height: 1.2; }" +
     ".evo-cierre { position: absolute; left: 0; right: 0; top: 290px; text-align: center; color: #ffe27a; font-size: var(--evo-cierre, 34px); opacity: .85; }" +
+    ".evo-tarjetas { position: absolute; left: 0; right: 0; top: 250px; display: flex; justify-content: center; gap: 44px; }" +
+    ".evo-tarjeta { position: relative; width: 520px; height: 640px; margin: 0; border-radius: 30px;" +
+    "  background: rgba(255,255,255,.08); box-shadow: inset 0 0 0 3px rgba(255,255,255,.25), 0 20px 60px rgba(0,0,0,.45); }" +
+    ".evo-cuadro { position: absolute; left: 22px; top: 22px; width: 476px; height: 336px; border-radius: 18px; overflow: hidden;" +
+    "  box-shadow: 0 0 0 5px #fff, 0 10px 30px rgba(0,0,0,.35); }" +
+    ".evo-cuadro img, .evo-sin-paisaje { display: block; width: 100%; height: 100%; object-fit: cover; }" +
+    ".evo-sin-paisaje { background: linear-gradient(180deg, #A9DBFF, #F1E6FF 60%, #6F95CF); }" +
+    ".evo-cuadro span { position: absolute; left: 12px; top: 10px; padding: 4px 14px; border-radius: 999px; font-size: 22px;" +
+    "  background: rgba(10,14,30,.6); color: #fff; }" +
+    ".evo .evo-tarjeta canvas { position: absolute; left: 0; bottom: 0; top: auto; width: 520px; height: 420px; margin: 0; }" +
+    ".evo-cierre-abajo { top: auto !important; bottom: 60px; }" +
     ".evo-flash { position: absolute; inset: 0; background: #fff; opacity: 0; pointer-events: none; }" +
     ".evo-chispa { position: absolute; width: 14px; height: 14px; border-radius: 50%; background: #fff; box-shadow: 0 0 16px 6px rgba(255,240,180,.8); opacity: 0; }";
   document.head.appendChild(css);
@@ -102,6 +147,7 @@ var Evolucion = (function () {
     return {
       el: cfg.el,
       preparar: function (e) {
+        fondoOscuro(true);
         el = e; terminado = false;
         if (!el.querySelector("canvas")) {
           el.classList.add("evo");
@@ -167,7 +213,7 @@ var Evolucion = (function () {
         Evolucion.animacion = tl;   // (para las capturas de prueba)
         return tl;
       },
-      salir: function () { terminado = true; parar(); },
+      salir: function () { terminado = true; parar(); fondoOscuro(false); },
       // mientras evoluciona, los gestos no la cortan
       alSiguiente: function () { return !terminado; },
       alAnterior: function () { return true; }
@@ -199,6 +245,7 @@ var Evolucion = (function () {
     return {
       el: cfg.el,
       preparar: function (e) {
+        fondoOscuro(true);
         el = e;
         if (!el.querySelector("canvas")) {
           el.classList.add("evo");
@@ -237,9 +284,70 @@ var Evolucion = (function () {
         Evolucion.animacion = tl;
         return tl;
       },
-      salir: function () { bucles.forEach(function (x) { x.kill(); }); bucles = []; }
+      salir: function () { bucles.forEach(function (x) { x.kill(); }); bucles = []; fondoOscuro(false); }
     };
   }
 
-  return { pantalla: pantalla, pregunta: pregunta, guardar: guardar, leer: leer, olvidar: olvidar };
+  /* Pantalla final: "Mirá quiénes nacieron antes que vos": los últimos visitantes (ya adultos), cada uno parado
+     delante del paisaje que generó. Después de mostrarlos, el visitante actual pasa a ser parte del historial.
+     Evolucion.recuerdos({ el, titulo, texto, vacio, cierre }) */
+  function recuerdos(cfg) {
+    var el, bucles = [];
+    return {
+      el: cfg.el,
+      preparar: function (e) {
+        fondoOscuro(true);
+        el = e;
+        if (!el.querySelector(".evo-tarjetas")) {
+          el.classList.add("evo");
+          Object.keys(cfg.letra || {}).forEach(function (k) { el.style.setProperty("--evo-" + k, cfg.letra[k]); });
+          el.innerHTML = '<div class="evo-rayos"></div><div class="evo-texto"><h1></h1><p></p></div>' +
+            '<div class="evo-tarjetas"></div><p class="evo-cierre evo-cierre-abajo"></p>';
+        }
+        var yo = leer();
+        var anteriores = historial().filter(function (v) { return v.rasgos && !(yo.id && v.rasgos.id === yo.id); });
+        el.querySelector(".evo-texto h1").textContent = anteriores.length ? cfg.titulo : cfg.vacio;
+        el.querySelector(".evo-texto p").textContent = anteriores.length ? cfg.texto : "";
+        el.querySelector(".evo-cierre").textContent = cfg.cierre || "";
+        var caja = el.querySelector(".evo-tarjetas");
+        caja.innerHTML = "";
+        anteriores.slice(0, HISTORIAL).forEach(function (v) {
+          var f = document.createElement("figure");
+          f.className = "evo-tarjeta";
+          f.innerHTML = '<div class="evo-cuadro">' + (v.paisaje ? '<img alt="" src="' + v.paisaje + '">' : '<div class="evo-sin-paisaje"></div>') +
+            '<span>' + (v.paisaje ? cfg.rotulo || "Su paisaje" : cfg.sinPaisaje || "No llegó a generar su paisaje") + '</span></div>' +
+            '<canvas width="520" height="420"></canvas>';
+          caja.appendChild(f);
+          var cv = f.querySelector("canvas");
+          Personaje.cargar(RUTA).then(function () {
+            var alto = 360, r = Object.assign({}, v.rasgos, { etapa: "adulto", byn: false });
+            Personaje.dibujar(cv.getContext("2d"), r, { x: (520 - Personaje.ancho(alto)) / 2, y: 420 - alto - 8, alto: alto });
+          });
+        });
+        gsap.set(el.querySelectorAll(".evo-texto, .evo-cierre, .evo-rayos"), { autoAlpha: 0 });
+        gsap.set(el.querySelectorAll(".evo-tarjeta"), { autoAlpha: 0, y: 80, scale: 0.9 });
+      },
+      entrar: function () {
+        var tl = gsap.timeline()
+          .to(el.querySelector(".evo-rayos"), { autoAlpha: 0.5, duration: 1 })
+          .to(el.querySelector(".evo-texto"), { autoAlpha: 1, duration: 0.6 }, "<0.2")
+          .from(el.querySelector(".evo-texto h1"), { y: -20, duration: 0.6, ease: "back.out(2)" }, "<")
+          .to(el.querySelectorAll(".evo-tarjeta"), { autoAlpha: 1, y: 0, scale: 1, duration: 0.7, stagger: 0.3, ease: "back.out(1.6)" }, "-=0.2")
+          .to(el.querySelector(".evo-cierre"), { autoAlpha: 1, duration: 0.6 }, "+=0.4")
+          .add(function () {
+            bucles.push(gsap.to(el.querySelector(".evo-rayos"), { rotation: 360, duration: 40, ease: "none", repeat: -1 }));
+            el.querySelectorAll(".evo-tarjeta canvas").forEach(function (c, i) {
+              bucles.push(gsap.to(c, { y: -10, duration: 1.4 + i * 0.2, ease: "sine.inOut", yoyo: true, repeat: -1 }));
+            });
+          });
+        sumarAlHistorial();   // ahora vos también quedás para el próximo
+        Evolucion.animacion = tl;
+        return tl;
+      },
+      salir: function () { bucles.forEach(function (x) { x.kill(); }); bucles = []; fondoOscuro(false); }
+    };
+  }
+
+  return { pantalla: pantalla, pregunta: pregunta, recuerdos: recuerdos, guardar: guardar, leer: leer, olvidar: olvidar,
+           guardarPaisaje: guardarPaisaje, historial: historial };
 })();

@@ -12,7 +12,7 @@
                                            (dibujar con op.brazos = false no dibuja los brazos;
                                            op.parte = "fondo" | "frente": lo que va debajo / encima de los brazos)
 
-   rasgos = { cuerpo: "bebe" | "base", piel, colorPelo, pelo: "pelo2" | "pelo10" | "ninguno", cejas: bool, boca: "neutra" | "sonrisa", apertura: 0.35..1 } */
+   rasgos = { cuerpo: "bebe" | "base", piel, colorPelo, pelo: "pelo3" … "pelo11" | "ninguno", cejas: bool, boca: "neutra" | "sonrisa", apertura: 0.35..1 } */
 var Personaje = (function () {
   /* Cada pieza: recorte útil del png (x, y, ancho, alto, en el archivo) y dónde va su centro sobre el cuerpo
      (coordenadas del cuerpo, 2048x2048), con qué ancho. */
@@ -33,9 +33,22 @@ var Personaje = (function () {
     brazoBebe: de800("brazo_bebe.png",  [369, 318, 70, 107]),
     ojos:   { src: "ojos1.png",      recorte: [163, 394, 2074, 963],  centro: [1020, 790],  ancho: 520 },
     cejas:  { src: "cejas1.png",     recorte: [183, 705, 2033, 321],  centro: [1020, 610],  ancho: 500 },
-    // pelo2 no viene alineado con el cuerpo: va donde iba pelo1 (más arriba, sobre la frente)
-    pelo2:  Object.assign(de800("pelo2.png", [248, 229, 304, 229]), { centro: [1020, 520] }),
-    pelo10: { src: "pelo10.png",     recorte: [462, 65, 1487, 1647],  centro: [990, 880],   ancho: 1330 }
+    // pelos: todos vienen alineados con la cabeza (mismo lienzo de 800 que cara_base), relleno blanco y líneas negras
+    pelo3:   de800("pelo3.png",   [237, 133, 325, 200]),
+    pelo4:   de800("pelo4.png",   [227, 114, 342, 212]),
+    pelo5:   de800("pelo5.png",   [226, 102, 346, 224]),
+    pelo6:   de800("pelo6.png",   [212, 95, 370, 235]),
+    pelo7:   de800("pelo7.png",   [211, 90, 371, 246]),
+    pelo8:   de800("pelo8.png",   [196, 67, 387, 241]),
+    pelo9:   de800("pelo9.png",   [232, 105, 328, 231]),
+    pelo10:  de800("pelo10.png",  [229, 109, 339, 257]),
+    pelo11:  de800("pelo11.png",  [211, 117, 360, 255]),
+    // pelos de mujer (pelo50 en adelante): mismo lienzo de 800, alineados con la cabeza
+    pelo50:  de800("pelo50.png",  [165, 127, 416, 273]),
+    pelo51:  de800("pelo51.png",  [204, 133, 386, 275]),
+    pelo52:  de800("pelo52.png",  [210, 135, 413, 278]),
+    pelo53:  de800("pelo53.png",  [132, 175, 533, 321]),
+    pelo54:  de800("pelo54.png",  [194, 129, 406, 269])
   };
   /* Ropa y accesorios: vienen centrados en su lienzo de 800 (no sobre el cuerpo). Cada uno dice dónde va su centro
      sobre el cuerpo (coordenadas del lienzo de 800 del cuerpo) y a qué escala. */
@@ -73,7 +86,28 @@ var Personaje = (function () {
   // medida de la cámara (alto/ancho del ojo): con la cámara de la muestra, ojos comunes dan ~0.40
   var OJOS_ACHINADOS = 0.26, OJOS_REDONDOS = 0.42;
   var SONRISA = 0.15;        // desde cuánto se toma como sonrisa (0 … 1)
-  var ACLARAR_PIEL = 1.3;
+  // el lugar es oscuro: la cámara ve todo más oscuro de lo que es. Se levantan los colores con una curva
+  // (los oscuros suben más que los claros) antes de buscar el más parecido de la paleta.
+  var LUZ_PIEL = 1.6, LUZ_PELO = 1.35;   // 1 = como lo ve la cámara; más alto = más claro
+  /* Peinados: cómo es cada uno (largo 0 corto … 1 largo, flequillo 0/1, rulos 0/1). La cámara mide lo mismo y
+     se elige el más parecido. RULOS = desde cuánta textura se toma como pelo con rulos (calibrar con la cámara). */
+  var RULOS = 0.35;
+  var PEINADOS = {
+    pelo3:  { largo: 0,    flequillo: 1, rulos: 0 },   // taza, corto
+    pelo4:  { largo: 0,    flequillo: 0.5, rulos: 0 }, // corto, en puntas
+    pelo5:  { largo: 0.35, flequillo: 0.5, rulos: 0.5 }, // medio, ondulado, raya
+    pelo6:  { largo: 0.15, flequillo: 1, rulos: 0 },   // flequillo recto
+    pelo7:  { largo: 0.1,  flequillo: 0.7, rulos: 0.3 }, // despeinado
+    pelo8:  { largo: 0.05, flequillo: 0.5, rulos: 1 },  // rulos cortos
+    pelo9:  { largo: 0,    flequillo: 0, rulos: 0 },   // peinado para atrás
+    pelo10: { largo: 0.15, flequillo: 0.5, rulos: 1 }, // rulos
+    pelo11: { largo: 0.4,  flequillo: 0.5, rulos: 0.5 }, // medio, ondas
+    pelo50: { largo: 0.6,  flequillo: 0.7, rulos: 0 },  // carré con flequillo de costado
+    pelo51: { largo: 0.75, flequillo: 1, rulos: 0 },   // flequillo recto, largo
+    pelo52: { largo: 1,    flequillo: 0, rulos: 0 },   // largo, raya al medio
+    pelo53: { largo: 0.8,  flequillo: 0.5, rulos: 0.5 }, // dos colitas
+    pelo54: { largo: 1,    flequillo: 0.3, rulos: 1 }  // largo con rulos
+  };
   var ANTEOJOS = 0.35;       // desde cuánto borde sobre el puente de la nariz se toma como anteojos (calibrar con la cámara)    // la cámara ve la piel más oscura de lo que es
   var OJOS = [{ x: 881, y: 790 }, { x: 1159, y: 790 }], RADIO_OJO = 124;
   var BOCA = { centro: [1020, 975], ancho: 150 };
@@ -103,7 +137,9 @@ var Personaje = (function () {
   var aux = document.createElement("canvas");
   // pinta una pieza: lo blanco toma el color, lo negro queda negro (multiplicar), respetando la transparencia
   function pieza(ctx, k, color, E, ox, oy) {
-    var p = PIEZAS[k], r = p.recorte, w = p.ancho, h = r[3] * w / r[2], im = imgs[k];
+    var p = PIEZAS[k];
+    if (!p) return;
+    var r = p.recorte, w = p.ancho, h = r[3] * w / r[2], im = imgs[k];
     if (!im || !im.naturalWidth) return;
     var x = ox + (p.centro[0] - w / 2 - CAJA.x) * E, y = oy + (p.centro[1] - h / 2 - CAJA.y) * E;
     if (!color) { ctx.drawImage(im, r[0], r[1], r[2], r[3], x, y, w * E, h * E); return; }
@@ -225,10 +261,14 @@ var Personaje = (function () {
     if (!op.parte && n >= 2 && op.brazos !== false && !(etapa && etapa.brazos === false)) brazosQuietos(ctx, rasgos, op);   // con mangas, los brazos quedan adentro de la ropa
     if (n >= 1) pieza(ctx, bebe ? "bebe" : "base", piel, E, ox, oy);
     if (etapa && n >= 2) etapa.ropa.forEach(function (r) { pieza(ctx, r[0], r[1], E, ox, oy); });
+    // las cejas van debajo del pelo (el flequillo las tapa); los ojos, los anteojos y la boca, arriba de todo
+    // (los pelos largos o con flequillo no pueden tapar la cara)
+    if (n >= 4 && rasgos.cejas) pieza(ctx, "cejas", null, E, ox, oy);
+    // un pelo que ya no existe (ej. de un visitante guardado antes de cambiar los peinados) se reemplaza por uno corto
+    var pelo = rasgos.pelo === "ninguno" ? null : (PIEZAS[rasgos.pelo] ? rasgos.pelo : "pelo3");
+    if (n >= 5 && pelo) pieza(ctx, pelo, rasgos.colorPelo, E, ox, oy);
     if (n >= 3) { pieza(ctx, "ojos", null, E, ox, oy); parpados(ctx, rasgos, E, ox, oy); }
     if (n >= 3 && rasgos.anteojos) pieza(ctx, "anteojos", "#3a3f4b", E, ox, oy);
-    if (n >= 4 && rasgos.cejas) pieza(ctx, "cejas", null, E, ox, oy);
-    if (n >= 5 && rasgos.pelo !== "ninguno") pieza(ctx, rasgos.pelo, rasgos.colorPelo, E, ox, oy);
     if (n >= 6) boca(ctx, rasgos, E, ox, oy);
   }
   // ancho del personaje para un alto dado (para centrarlo)
@@ -248,8 +288,24 @@ var Personaje = (function () {
     lista.forEach(function (v) { cuenta[v] = (cuenta[v] || 0) + 1; if (cuenta[v] > max) { max = cuenta[v]; mejor = v; } });
     return mejor;
   }
+  // aclara con una curva (gamma): f = 1 no cambia; f > 1 levanta sobre todo los tonos oscuros
   function aclarar(hex, f) {
-    return "#" + rgb(hex).map(function (v) { return ("0" + Math.min(255, Math.round(v * f)).toString(16)).slice(-2); }).join("");
+    return "#" + rgb(hex).map(function (v) {
+      return ("0" + Math.min(255, Math.round(255 * Math.pow(v / 255, 1 / f))).toString(16)).slice(-2);
+    }).join("");
+  }
+  // el peinado más parecido a lo que midió la cámara (promedio de las muestras)
+  function peinadoParecido(muestras) {
+    function prom(k) { var v = muestras.map(function (m) { return m[k]; }).filter(function (x) { return typeof x === "number"; });
+                       return v.length ? v.reduce(function (a, b) { return a + b; }, 0) / v.length : 0; }
+    var yo = { largo: prom("largo"), flequillo: prom("flequillo"), rulos: Math.min(1, prom("rulos") / RULOS) };
+    var mejor = "pelo3", dMin = Infinity;
+    Object.keys(PEINADOS).forEach(function (k) {
+      var p = PEINADOS[k];
+      var d = 2 * Math.pow(p.largo - yo.largo, 2) + Math.pow(p.flequillo - yo.flequillo, 2) + 1.5 * Math.pow(p.rulos - yo.rulos, 2);
+      if (d < dMin) { dMin = d; mejor = k; }
+    });
+    return mejor;
   }
   // varios mensajes de la cámara → un solo personaje (gana el tono que más veces se detectó).
   // La sonrisa se toma de los últimos 2 segundos: si estás sonriendo cuando se arma, sale sonriendo.
@@ -264,9 +320,9 @@ var Personaje = (function () {
     var sonrisas = recientes.filter(function (m) { return m.sonrisa > SONRISA; }).length;
     return {
       cuerpo: "base",
-      piel: masVotado(muestras.map(function (m) { return masParecido(aclarar(m.piel, ACLARAR_PIEL), PALETA.piel); })),
-      colorPelo: masVotado(muestras.map(function (m) { return masParecido(m.pelo, PALETA.pelo); })),
-      pelo: pelados > muestras.length / 2 ? "ninguno" : "pelo2",
+      piel: masVotado(muestras.map(function (m) { return masParecido(aclarar(m.piel, LUZ_PIEL), PALETA.piel); })),
+      colorPelo: masVotado(muestras.map(function (m) { return masParecido(aclarar(m.pelo, LUZ_PELO), PALETA.pelo); })),
+      pelo: pelados > muestras.length / 2 ? "ninguno" : peinadoParecido(muestras),
       cejas: true,
       anteojos: conAnteojos > muestras.length / 2,
       boca: sonrisas >= recientes.length / 2 ? "sonrisa" : "neutra",

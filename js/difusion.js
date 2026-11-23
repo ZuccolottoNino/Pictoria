@@ -823,6 +823,7 @@
       presionando = false; actual = null; cursor.classList.remove("vis", "pres");
       gsap.to("#d3-tiempo", { autoAlpha: 0, duration: 0.3 });
       dibujarGenerada(M.ctxBase);
+      if (window.Evolucion) Evolucion.guardarPaisaje(M.ctxBase.canvas);   // para mostrárselo a los próximos visitantes
       mensaje("d3-msg", TEXTOS.msgGen1);
       gsap.to(boceto, { autoAlpha: 0, duration: CFG.duracionGeneracion * 0.6, ease: "power1.in" });
       gen = porPasos({

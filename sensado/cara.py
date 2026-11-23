@@ -7,6 +7,9 @@
 # De la cara saca rasgos simples y los manda por el mismo WebSocket que los gestos:
 #   cara:{"piel":"#d9a074","pelo":"#2b1d14","pelado":false,"sonrisa":0.12,"ojos":0.27,"x":0.51}
 #   ojos = qué tan abiertos son: alto / ancho del ojo (~0.18 achinados … ~0.32 bien redondos)
+#   largo     = cuánto pelo hay a los costados de la mandíbula y más abajo (0 corto … 1 largo, por los hombros)
+#   flequillo = si la frente está tapada por pelo (0 … 1)
+#   rulos     = textura del pelo arriba de la cabeza (más alto = más rulos / ondas); el umbral lo decide la web
 #   anteojos = cuánto borde hay sobre el puente de la nariz, entre los ojos (0 … 1): sin anteojos es piel lisa
 #              (valor bajo); el armazón deja una línea marcada (valor alto). El umbral lo decide la web.
 #   cara:nadie            (cuando la persona se va)
@@ -70,6 +73,16 @@ def _bordes(gris, cx, cy, ancho, alto):
     return min(1.0, float(v[int(len(v) * 0.9)]) / 255.0)
 
 
+def _textura(gris, cx, cy, ancho, alto):
+    """Cuánta textura fina hay en un rectángulo (varianza del laplaciano, normalizada): los rulos dan valores altos."""
+    h, w = gris.shape[:2]
+    x0, x1 = max(0, int(cx - ancho / 2)), min(w, int(cx + ancho / 2))
+    y0, y1 = max(0, int(cy - alto / 2)), min(h, int(cy + alto / 2))
+    if x1 - x0 < 6 or y1 - y0 < 6:
+        return 0.0
+    return min(1.0, float(cv2.Laplacian(gris[y0:y1, x0:x1], cv2.CV_32F).var()) / 2000.0)
+
+
 def _distancia(a, b):
     return sum((x - y) ** 2 for x, y in zip(a, b)) ** 0.5
 
@@ -93,6 +106,7 @@ class DetectorCara(object):
         self.puntos = None           # landmarks en píxeles (para dibujar)
         self.aperturas = []          # últimas mediciones de apertura de ojos (para no contar parpadeos)
         self.puentes = []            # últimas mediciones de borde sobre el puente de la nariz (anteojos)
+        self.formas = []             # últimas mediciones de la forma del pelo (largo, flequillo, rulos)
 
     def cerrar(self):
         try:
@@ -119,6 +133,7 @@ class DetectorCara(object):
                 self.rasgos = None
                 self.aperturas = []
                 self.puentes = []
+                self.formas = []
                 return 'cara:nadie'
             return None
 
@@ -144,6 +159,33 @@ class DetectorCara(object):
         pelo = tuple(sorted(t[k] for t in pelos)[len(pelos) // 2] for k in range(3)) if pelos else (40, 30, 20)
         # si lo de arriba de la frente se parece a la piel, no hay pelo (o es muy corto)
         pelado = _distancia(pelo, piel) < config.CARA_UMBRAL_PELADO
+
+        # forma del pelo. Para no confundir pelo con el fondo (el lugar es oscuro y hay mucho pelo oscuro),
+        # un punto cuenta como pelo si se parece al pelo bastante más que al fondo y que a la piel.
+        cx = (P(COSTADO_IZQ)[0] + P(COSTADO_DER)[0]) / 2
+        fondo = [c for c in (_muestra(frame, cx + s * ancho_cara * 1.15, fy, r) for s in (-1, 1)) if c]
+        def es_pelo(px, py):
+            c = _muestra(frame, px, py, r)
+            if not c or pelado:
+                return 0.0
+            dp, ds = _distancia(c, pelo), _distancia(c, piel)
+            df = min([_distancia(c, f) for f in fondo] or [999])
+            return 1.0 if dp < 45 and dp < ds * 0.7 and dp < df * 0.7 else 0.0
+        my = P(MENTON)[1]
+        # largo: a los costados de la mandíbula, a la altura del mentón y por debajo (hombros)
+        puntos_largo = [(P(COSTADO_IZQ)[0] - ancho_cara * 0.08, my - alto_cara * 0.2), (P(COSTADO_DER)[0] + ancho_cara * 0.08, my - alto_cara * 0.2),
+                        (P(COSTADO_IZQ)[0] - ancho_cara * 0.05, my + alto_cara * 0.1), (P(COSTADO_DER)[0] + ancho_cara * 0.05, my + alto_cara * 0.1),
+                        (P(COSTADO_IZQ)[0], my + alto_cara * 0.35), (P(COSTADO_DER)[0], my + alto_cara * 0.35)]
+        largo = sum(es_pelo(*q) for q in puntos_largo) / len(puntos_largo)
+        # flequillo: la frente, entre las cejas y el nacimiento del pelo
+        fr = P(FRENTE)
+        flequillo = (es_pelo(fr[0], fr[1] - alto_cara * 0.05) + es_pelo(fr[0] - ancho_cara * 0.18, fr[1]) +
+                     es_pelo(fr[0] + ancho_cara * 0.18, fr[1])) / 3
+        # rulos: textura (bordes) en la zona del pelo, arriba de la frente
+        rulos = 0.0 if pelado else _textura(cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY), fx, y_pelo, ancho_cara * 0.5, alto_cara * 0.18)
+        self.formas.append((largo, flequillo, rulos))
+        del self.formas[:-12]
+        largo, flequillo, rulos = (sorted(f[k] for f in self.formas)[len(self.formas) // 2] for k in range(3))
 
         sonrisa = 0.0
         if res.face_blendshapes:
@@ -172,6 +214,7 @@ class DetectorCara(object):
             x = 1 - x
         self.rasgos = {'piel': _hex(piel), 'pelo': _hex(pelo), 'pelado': pelado,
                        'sonrisa': round(sonrisa, 2), 'ojos': round(ojos, 3), 'anteojos': round(anteojos, 3), 'x': round(x, 3),
+                       'largo': round(largo, 2), 'flequillo': round(flequillo, 2), 'rulos': round(rulos, 3),
                        'muestra_pelo': (fx, y_pelo), 'r': r}
         datos = {k: v for k, v in self.rasgos.items() if k not in ('muestra_pelo', 'r')}
         return 'cara:' + json.dumps(datos)
@@ -190,8 +233,9 @@ def dibujar_cara(frame, det):
         cv2.rectangle(frame, (int(x - r), int(y - r)), (int(x + r), int(y + r)), (255, 255, 255), 1)
     fx, fy = det.rasgos['muestra_pelo']
     cv2.circle(frame, (int(fx), int(fy)), r, (0, 200, 255), 2)
-    texto = 'CARA piel %s  pelo %s%s  sonrisa %.2f  ojos %.2f  anteojos %.2f' % (
+    texto = 'CARA piel %s  pelo %s%s  sonrisa %.2f  ojos %.2f  anteojos %.2f  largo %.2f  flequillo %.2f  rulos %.2f' % (
         det.rasgos['piel'], det.rasgos['pelo'], ' (pelado?)' if det.rasgos['pelado'] else '',
-        det.rasgos['sonrisa'], det.rasgos['ojos'], det.rasgos['anteojos'])
+        det.rasgos['sonrisa'], det.rasgos['ojos'], det.rasgos['anteojos'],
+        det.rasgos['largo'], det.rasgos['flequillo'], det.rasgos['rulos'])
     cv2.putText(frame, texto, (int(min(xs)), int(max(ys)) + 22), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 0), 3, cv2.LINE_AA)
     cv2.putText(frame, texto, (int(min(xs)), int(max(ys)) + 22), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (240, 240, 240), 1, cv2.LINE_AA)

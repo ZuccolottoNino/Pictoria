@@ -261,7 +261,8 @@ function recibirCara(datos) {
   try { muestras.push(JSON.parse(datos)); } catch (e) { return; }
   var m = muestras[muestras.length - 1];   // para calibrar: lo que detecta la cámara, abajo a la izquierda
   document.getElementById("t-datos").textContent = "cámara · piel " + m.piel + " · pelo " + m.pelo +
-    (m.pelado ? " (pelado)" : "") + " · sonrisa " + m.sonrisa + " · ojos " + m.ojos + " · anteojos " + m.anteojos;
+    (m.pelado ? " (pelado)" : "") + " · sonrisa " + m.sonrisa + " · ojos " + m.ojos + " · anteojos " + m.anteojos +
+    " · largo " + m.largo + " · flequillo " + m.flequillo + " · rulos " + m.rulos;
   muestras = muestras.slice(-40);
   if (!viendoDesde) viendoDesde = Date.now();
 }

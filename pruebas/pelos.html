@@ -1,0 +1,23 @@
+<!doctype html><html><body style="margin:0;background:#eef0f3">
+<canvas id="c" width="1920" height="1080"></canvas>
+<script src="../js/personaje.js"></script>
+<script>
+var pelos = location.search.indexOf("mujer") >= 0 ? ["pelo50", "pelo51", "pelo52", "pelo53", "pelo54"]
+  : ["pelo3", "pelo4", "pelo5", "pelo6", "pelo7", "pelo8", "pelo9", "pelo10", "pelo11"];
+var colores = ["#2b1d14", "#c28a4a", "#e8c76a", "#b8452d", "#9a9a9a"];
+var pieles = ["#ffe3cf", "#d9a074", "#6e4630", "#f5c9a5", "#a8704a"];
+Personaje.cargar("../assets/carausuario/").then(function () {
+  var ctx = document.getElementById("c").getContext("2d");
+  ctx.font = "bold 22px sans-serif";
+  // cada pelo en una columna; cada fila, otro color de pelo y de piel (sólo la cabeza, para que se vea grande)
+  pelos.forEach(function (p, f) {
+    ctx.fillStyle = "#333"; ctx.fillText(p, f * 212 + 70, 30);
+    colores.forEach(function (c, k) {
+      var alto = 300, r = Object.assign({}, Personaje.PREDETERMINADO, { pelo: p, colorPelo: c, piel: pieles[k] });
+      ctx.save(); ctx.beginPath(); ctx.rect(f * 212, k * 208 + 40, 212, 208); ctx.clip();
+      Personaje.dibujar(ctx, r, { x: f * 212 + (212 - Personaje.ancho(alto)) / 2, y: k * 208 + 50, alto: alto });
+      ctx.restore();
+    });
+  });
+});
+</script></body></html>
