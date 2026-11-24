@@ -7,7 +7,7 @@
 Infografia.escalar("#escenario", 1920, 1080);
 
 var ROJO = "#FF4554", AZUL = "#00C3E3";
-var REPETICIONES = 5;
+var REPETICIONES = 3;
 var SEG_RELOJ = 9;   // segundos de la pantalla del relojito (el de muestra y el de verdad)
 var SEG_VER = 5;
 var PRACTICA_INICIO = 1.5;   // segundos al entrar a una práctica en los que todavía no se cuentan gestos

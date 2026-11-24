@@ -184,6 +184,16 @@ function iniciar() {
   var AUTO3 = { "#evo": 3, "#n3-intro": 13, "#n3-modelos": 13, "#n3-cifras": 13, "#n3-usos": 13, "#p4": 13,
                 "#n3-dif1": 13, "#n3-dif2": 13, "#n3-dif3": 13, "#n3-practica": 7, "#n3-toca": 7, "#n3-cierre": 5, "#n3-resultados": 13, "#n3-final": 13, "#evo-sigue": 10, "#evo-recuerdos": 13 };
 
+  // una fila de la comparación entra entera y su contenido aparece de izquierda a derecha: logo → datos
+  function mostrarFila3(f) {
+    gsap.set(f.querySelector(".n3c-logo"), { autoAlpha: 0, scale: 0.8 });
+    gsap.set(f.querySelectorAll(".n3c-celda"), { autoAlpha: 0, x: 30 });
+    return gsap.timeline()
+      .fromTo(f, { autoAlpha: 0, x: 120 }, { autoAlpha: 1, x: 0, duration: 0.6, ease: "power3.out" })
+      .to(f.querySelector(".n3c-logo"), { autoAlpha: 1, scale: 1, duration: 0.5, ease: "back.out(2)" }, "<0.2")
+      .to(f.querySelectorAll(".n3c-celda"), { autoAlpha: 1, x: 0, duration: 0.4, ease: "power2.out", stagger: 0.12 }, "<0.15");
+  }
+
   Infografia.presentacion(Pista.envolver([
     // la evolución del personaje del visitante: lo primero al entrar al núcleo
     Evolucion.pantalla({ el: "#evo", desde: "nino", hasta: "adulto", antes: "¿Qué? ¡Estás evolucionando otra vez!", titulo: "¡Evolucionaste!", texto: "Ahora podés crear imágenes" }),
@@ -271,7 +281,8 @@ function iniciar() {
     },
 
     /* ============ Comparación de modelos (tabla por filas) ============ */
-    {
+    // las filas aparecen de a una: la primera al entrar; cada gesto de avanzar muestra la siguiente
+    Recorrido.pantalla({
       el: "#n3-comparacion",
       preparar: function () {
         var d = Infografia.direccion;
@@ -286,13 +297,8 @@ function iniciar() {
         var filas = gsap.utils.toArray("#n3-comparacion .n3c-fila");
         entrada = gsap.timeline()
           .to(".n3c-col", { autoAlpha: 1, y: 0, duration: 0.5, ease: "power3.out", stagger: 0.12 });
-        // cada fila entra entera y su contenido aparece de izquierda a derecha: logo → datos
-        filas.forEach(function (f, i) {
-          entrada
-            .to(f, { autoAlpha: 1, x: 0, duration: 0.6, ease: "power3.out" }, 0.4 + i * 0.35)
-            .to(f.querySelector(".n3c-logo"), { autoAlpha: 1, scale: 1, duration: 0.5, ease: "back.out(2)" }, "<0.2")
-            .to(f.querySelectorAll(".n3c-celda"), { autoAlpha: 1, x: 0, duration: 0.4, ease: "power2.out", stagger: 0.12 }, "<0.15");
-        });
+        // al entrar sólo aparece la primera fila (Midjourney); las otras, con el gesto (ver mostrarFila3)
+        entrada.add(mostrarFila3(filas[0]), 0.4);
         entrada
           .to("#n3c-personaje", { autoAlpha: 1, scale: 1, x: 0, duration: 0.9, ease: "back.out(1.4)" }, "-=0.4")
           .to("#n3c-sombra-personaje", { autoAlpha: 1, scaleX: 1, duration: 0.8, ease: "power2.out" }, "<0.1")
@@ -303,7 +309,9 @@ function iniciar() {
         return entrada;
       },
       salir: detener
-    },
+    }, { items: ".n3c-fila", revelar: true, siguiente: "el siguiente modelo",
+      mostrar: function (k, filas) { mostrarFila3(filas[k]); },
+      ocultar: function (k, filas) { gsap.to(filas[k], { autoAlpha: 0, x: 80, duration: 0.35, ease: "power2.in" }); } }),
 
     /* ============ 15.000 millones de imágenes ============ */
     {
