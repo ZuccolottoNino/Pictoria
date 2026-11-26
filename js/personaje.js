@@ -31,7 +31,10 @@ var Personaje = (function () {
     // un brazo (el de la izquierda de la pantalla); el otro es el mismo espejado
     brazoBase: de800("brazo_base.png",  [284, 412, 78, 135]),
     brazoBebe: de800("brazo_bebe.png",  [369, 318, 70, 107]),
-    ojos:   { src: "ojos1.png",      recorte: [163, 394, 2074, 963],  centro: [1020, 790],  ancho: 520 },
+    // ojos en 3 capas (mismo lienzo): el blanco con el contorno, la pupila (se mueve para mirar) y los brillos
+    ojos:   { src: "ojo1.png",       recorte: [163, 394, 2074, 963],  centro: [1020, 790],  ancho: 520 },
+    pupila: { src: "ojo2.png",       recorte: [163, 394, 2074, 963],  centro: [1020, 790],  ancho: 520 },
+    brillo: { src: "ojo3.png",       recorte: [163, 394, 2074, 963],  centro: [1020, 790],  ancho: 520 },
     cejas:  { src: "cejas1.png",     recorte: [183, 705, 2033, 321],  centro: [1020, 610],  ancho: 500 },
     // pelos: todos vienen alineados con la cabeza (mismo lienzo de 800 que cara_base), relleno blanco y líneas negras.
     // Se usa el lienzo entero (no un recorte), así si se edita un pelo no hay que cambiar nada acá.
@@ -114,25 +117,24 @@ var Personaje = (function () {
   // el lugar es oscuro: la cámara ve todo más oscuro de lo que es. Se levantan los colores con una curva
   // (los oscuros suben más que los claros) antes de buscar el más parecido de la paleta.
   var LUZ_PIEL = 1.6, LUZ_PELO = 1.35;   // 1 = como lo ve la cámara; más alto = más claro
-  /* Peinados: cómo es cada uno (largo 0 corto … 1 largo, flequillo 0/1, rulos 0/1). La cámara mide lo mismo y
-     se elige el más parecido. RULOS = desde cuánta textura se toma como pelo con rulos (calibrar con la cámara). */
-  var RULOS = 0.35;
-  var PEINADOS = {
-    pelo3:  { largo: 0,    flequillo: 1, rulos: 0 },   // taza, corto
-    pelo4:  { largo: 0,    flequillo: 0.5, rulos: 0 }, // corto, en puntas
-    pelo5:  { largo: 0.35, flequillo: 0.5, rulos: 0.5 }, // medio, ondulado, raya
-    pelo6:  { largo: 0.15, flequillo: 1, rulos: 0 },   // flequillo recto
-    pelo7:  { largo: 0.1,  flequillo: 0.7, rulos: 0.3 }, // despeinado
-    pelo8:  { largo: 0.05, flequillo: 0.5, rulos: 1 },  // rulos cortos
-    pelo9:  { largo: 0,    flequillo: 0, rulos: 0 },   // peinado para atrás
-    pelo10: { largo: 0.15, flequillo: 0.5, rulos: 1 }, // rulos
-    pelo11: { largo: 0.4,  flequillo: 0.5, rulos: 0.5 }, // medio, ondas
-    pelo50: { largo: 0.6,  flequillo: 0.7, rulos: 0 },  // carré con flequillo de costado
-    pelo51: { largo: 0.75, flequillo: 1, rulos: 0 },   // flequillo recto, largo
-    pelo52: { largo: 1,    flequillo: 0, rulos: 0 },   // largo, raya al medio
-    pelo53: { largo: 0.8,  flequillo: 0.5, rulos: 0.5 }, // dos colitas
-    pelo54: { largo: 1,    flequillo: 0.3, rulos: 1 }  // largo con rulos
+  /* Peinados por categoría. La cámara mide el largo (0 … 1), el flequillo (0 … 1) y los rulos (textura); con eso se decide
+     la categoría y dentro de ella se elige uno al azar (así no salen todos iguales). Si hay flequillo, se prefieren los
+     que tienen flequillo (FLEQUILLOS). Umbrales para calibrar con la cámara (pruebas/carausuario.html muestra los valores): */
+  var MUY_CORTO = 0.10;  // largo hasta esto = pelo muy corto (rapado)
+  var CORTO = 0.3;       // largo por debajo de esto = pelo corto
+  var LARGO = 0.65;      // largo desde esto = pelo largo (entre los dos = medio)
+  var CON_FLEQUILLO = 0.6;
+  var RULOS = 0.35;      // textura desde la que se toma como pelo con rulos
+  var CATEGORIAS = {
+    "muy corto":       ["pelo3"],
+    "corto":           ["pelo4", "pelo6", "pelo7", "pelo9"],
+    "corto con rulos": ["pelo8", "pelo10"],
+    "medio":           ["pelo5", "pelo11", "pelo50"],
+    "largo":           ["pelo51", "pelo52"],
+    "largo con rulos": ["pelo53", "pelo54"]
   };
+  var FLEQUILLOS = ["pelo6", "pelo50", "pelo51"];   // (pelo3 es muy corto, sin flequillo)
+
   var ANTEOJOS = 0.35;       // desde cuánto borde sobre el puente de la nariz se toma como anteojos (calibrar con la cámara)
   var OJOS = [{ x: 881, y: 790 }, { x: 1159, y: 790 }], RADIO_OJO = 124;
   var BOCA = { centro: [1020, 975], ancho: 150 };
@@ -302,6 +304,16 @@ var Personaje = (function () {
     rasgosCara(ctx, rasgos, E, ox, oy, n);
     ctx.restore();
   }
+  /* Hacia dónde mira: Personaje.mirar(x, y), de -1 a 1 (0, 0 = al frente). Mueve la pupila dentro del ojo
+     (hasta MIRADA_MAX, en coordenadas del cuerpo) y los brillos un poco menos, para que el ojo se vea vivo. */
+  var MIRADA_MAX = 34, mirada = { x: 0, y: 0 };
+  function mirar(x, y) { mirada.x = Math.max(-1, Math.min(1, x || 0)); mirada.y = Math.max(-1, Math.min(1, y || 0)); }
+  function ojos(ctx, rasgos, E, ox, oy) {
+    var dx = mirada.x * MIRADA_MAX * E, dy = mirada.y * MIRADA_MAX * 0.6 * E;
+    pieza(ctx, "ojos", null, E, ox, oy);
+    pieza(ctx, "pupila", null, E, ox + dx, oy + dy);
+    pieza(ctx, "brillo", null, E, ox + dx * 0.75, oy + dy * 0.75);
+  }
   function rasgosCara(ctx, rasgos, E, ox, oy, n) {
     // las cejas van debajo del pelo (el flequillo las tapa); los ojos, los anteojos y la boca, arriba de todo
     // (los pelos largos o con flequillo no pueden tapar la cara)
@@ -309,7 +321,7 @@ var Personaje = (function () {
     // un pelo que ya no existe (ej. de un visitante guardado antes de cambiar los peinados) se reemplaza por uno corto
     var pelo = rasgos.pelo === "ninguno" ? null : (PIEZAS[rasgos.pelo] ? rasgos.pelo : "pelo3");
     if (n >= 5 && pelo) pieza(ctx, pelo, rasgos.colorPelo, E, ox, oy);
-    if (n >= 3) { pieza(ctx, "ojos", null, E, ox, oy); parpados(ctx, rasgos, E, ox, oy); }
+    if (n >= 3) { ojos(ctx, rasgos, E, ox, oy); parpados(ctx, rasgos, E, ox, oy); }
     if (n >= 3 && rasgos.anteojos) pieza(ctx, "anteojos", "#3a3f4b", E, ox, oy);
     if (n >= 6) boca(ctx, rasgos, E, ox, oy);
   }
@@ -344,22 +356,26 @@ var Personaje = (function () {
     azar = azar.filter(function (c) { return c !== ropa1; });
     return { ropa1: ropa1, ropa2: azar[0], detalle: azar[1], acento: azar[2] };
   }
-  // el peinado más parecido a lo que midió la cámara (promedio de las muestras)
-  function peinadoParecido(muestras) {
+  // la categoría de pelo según lo que midió la cámara (promedio de las muestras)
+  function categoriaPelo(muestras) {
     function prom(k) { var v = muestras.map(function (m) { return m[k]; }).filter(function (x) { return typeof x === "number"; });
                        return v.length ? v.reduce(function (a, b) { return a + b; }, 0) / v.length : 0; }
-    var yo = { largo: prom("largo"), flequillo: prom("flequillo"), rulos: Math.min(1, prom("rulos") / RULOS) };
-    var mejor = "pelo3", dMin = Infinity;
-    Object.keys(PEINADOS).forEach(function (k) {
-      var p = PEINADOS[k];
-      var d = 2 * Math.pow(p.largo - yo.largo, 2) + Math.pow(p.flequillo - yo.flequillo, 2) + 1.5 * Math.pow(p.rulos - yo.rulos, 2);
-      if (d < dMin) { dMin = d; mejor = k; }
-    });
-    return mejor;
+    var largo = prom("largo"), rulos = prom("rulos") >= RULOS;
+    var cat = largo <= MUY_CORTO && !rulos ? "muy corto" : largo < CORTO ? (rulos ? "corto con rulos" : "corto") : largo < LARGO ? "medio" : (rulos ? "largo con rulos" : "largo");
+    return { categoria: cat, flequillo: prom("flequillo") >= CON_FLEQUILLO };
+  }
+  // un peinado de la categoría; azar (0 … 1) elige cuál: el mismo azar da siempre el mismo peinado
+  function peinadoDe(c, azar) {
+    var lista = CATEGORIAS[c.categoria];
+    var conF = lista.filter(function (p) { return FLEQUILLOS.indexOf(p) >= 0; });
+    var sinF = lista.filter(function (p) { return FLEQUILLOS.indexOf(p) < 0; });
+    if (c.flequillo && conF.length) lista = conF; else if (!c.flequillo && sinF.length) lista = sinF;
+    return lista[Math.floor((azar == null ? Math.random() : azar) * lista.length) % lista.length];
   }
   // varios mensajes de la cámara → un solo personaje (gana el tono que más veces se detectó).
   // La sonrisa se toma de los últimos 2 segundos: si estás sonriendo cuando se arma, sale sonriendo.
-  function desdeCamara(muestras) {
+  // azar (opcional, 0 … 1): para que el peinado elegido dentro de la categoría no cambie si se llama varias veces
+  function desdeCamara(muestras, azar) {
     if (!muestras || !muestras.length) return Object.assign({}, PREDETERMINADO);
     var ojos = muestras.map(function (m) { return m.ojos; }).filter(function (v) { return typeof v === "number"; }).sort();
     var medida = ojos.length ? ojos[Math.floor(ojos.length * 0.75)] : OJOS_REDONDOS;
@@ -372,7 +388,9 @@ var Personaje = (function () {
       cuerpo: "base",
       piel: masVotado(muestras.map(function (m) { return masParecido(aclarar(m.piel, LUZ_PIEL), PALETA.piel); })),
       colorPelo: masVotado(muestras.map(function (m) { return masParecido(aclarar(m.pelo, LUZ_PELO), PALETA.pelo); })),
-      pelo: pelados > muestras.length / 2 ? "ninguno" : peinadoParecido(muestras),
+      pelo: pelados > muestras.length / 2 ? "ninguno" : peinadoDe(categoriaPelo(muestras), azar),
+      categoriaPelo: pelados > muestras.length / 2 ? "pelado" : categoriaPelo(muestras).categoria +
+        (categoriaPelo(muestras).flequillo ? " con flequillo" : ""),
       cejas: true,
       anteojos: conAnteojos > muestras.length / 2,
       boca: sonrisas >= recientes.length / 2 ? "sonrisa" : "neutra",
@@ -386,6 +404,6 @@ var Personaje = (function () {
     return Object.assign({}, rasgos || PREDETERMINADO, { piel: "#ffffff", colorPelo: "#ffffff", byn: true });
   }
 
-  return { ETAPAS: ETAPAS, enBlancoYNegro: enBlancoYNegro, cargar: cargar, dibujar: dibujar, ancho: ancho, desdeCamara: desdeCamara, brazo: brazo, CAPAS: CAPAS,
+  return { mirar: mirar, ETAPAS: ETAPAS, enBlancoYNegro: enBlancoYNegro, cargar: cargar, dibujar: dibujar, ancho: ancho, desdeCamara: desdeCamara, brazo: brazo, CAPAS: CAPAS,
            PREDETERMINADO: PREDETERMINADO };
 })();

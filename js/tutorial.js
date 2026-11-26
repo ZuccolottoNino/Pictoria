@@ -259,6 +259,7 @@ function recibirCara(datos) {
   }
   if (vueltaAEspera) { vueltaAEspera.kill(); vueltaAEspera = null; }
   try { muestras.push(JSON.parse(datos)); } catch (e) { return; }
+  if (typeof muestras[muestras.length - 1].x === "number") { caraX = muestras[muestras.length - 1].x; caraVista = Date.now(); }
   var m = muestras[muestras.length - 1];   // para calibrar: lo que detecta la cámara, abajo a la izquierda
   document.getElementById("t-datos").textContent = "cámara · piel " + m.piel + " · pelo " + m.pelo +
     (m.pelado ? " (pelado)" : "") + " · sonrisa " + m.sonrisa + " · ojos " + m.ojos + " · anteojos " + m.anteojos +
@@ -266,6 +267,31 @@ function recibirCara(datos) {
   muestras = muestras.slice(-40);
   if (!viendoDesde) viendoDesde = Date.now();
 }
+/* ---------- La mirada: el personaje te sigue con los ojos ----------
+   Con la cámara, mira hacia donde está tu cara (x de la cámara: 0 izquierda … 1 derecha de la pantalla).
+   Sin nadie (o sin cámara), mira alrededor de vez en cuando. Sólo se redibuja el personaje que está a la vista. */
+var caraX = 0.5, caraVista = 0, mirandoA = { x: 0, y: 0 }, curioseo = { x: 0, y: 0, hasta: 0 };
+function animarMirada() {
+  var ahora = Date.now(), obj;
+  if (ahora - caraVista < 1500) obj = { x: (0.5 - caraX) * 2.4, y: 0.15 };   // al revés: el personaje te mira de frente (si vas a tu izquierda, él mira a su derecha)
+  else {
+    if (ahora > curioseo.hasta) curioseo = { x: Math.random() * 1.6 - 0.8, y: Math.random() * 0.8 - 0.3, hasta: ahora + 1500 + Math.random() * 2500 };
+    obj = curioseo;
+  }
+  var antes = mirandoA.x + "," + mirandoA.y;
+  mirandoA.x += (obj.x - mirandoA.x) * 0.15; mirandoA.y += (obj.y - mirandoA.y) * 0.15;
+  mirandoA.x = Math.round(mirandoA.x * 100) / 100; mirandoA.y = Math.round(mirandoA.y * 100) / 100;
+  if (antes !== mirandoA.x + "," + mirandoA.y) {
+    Personaje.mirar(mirandoA.x, mirandoA.y);
+    Object.keys(figuras).forEach(function (k) {
+      var s = figuras[k].canvas.closest(".slide");
+      if (s && !s.hidden) dibujarPersonaje(figuras[k]);
+    });
+  }
+  setTimeout(animarMirada, 60);
+}
+Personaje.cargar(RUTA_PJ).then(animarMirada);
+
 var camara = false;            // hay sensado conectado (si no, con el teclado se puede saltear la espera)
 (function conectar() {
   var ws;
