@@ -231,31 +231,27 @@
         <!-- área y línea (se revelan de izquierda a derecha) -->
         <g clip-path="url(#n3e-revela)">
           <path id="n3e-area" fill="url(#n3e-area-grad)"
-                d="M200 419.6 L356.3 386.8 L616.8 329.4 L981.6 222.8 L1190 173.6 L1190 436 L200 436 Z"/>
+                d="M200 419.6 L616.8 329.4 L1190 173.6 L1190 436 L200 436 Z"/>
         </g>
         <path id="n3e-linea" fill="none" stroke="url(#n3e-linea-grad)" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"
-              d="M200 419.6 L356.3 386.8 L616.8 329.4 L981.6 222.8 L1190 173.6"/>
+              d="M200 419.6 L616.8 329.4 L1190 173.6"/>
 
         <!-- puntos de cada dato -->
         <circle class="n3e-punto" cx="200"    cy="419.6" r="10"/>
-        <circle class="n3e-punto" cx="356.3"  cy="386.8" r="10"/>
         <circle class="n3e-punto" cx="616.8"  cy="329.4" r="10"/>
-        <circle class="n3e-punto" cx="981.6"  cy="222.8" r="10"/>
         <circle class="n3e-punto" id="n3e-ultimo" cx="1190" cy="173.6" r="12"/>
 
         <!-- fechas del eje X -->
         <g class="n3e-fechas">
           <text transform="translate(200 486) rotate(-28)">jul 2023</text>
-          <text transform="translate(356 486) rotate(-28)">oct 2023</text>
           <text transform="translate(617 486) rotate(-28)">mar 2024</text>
-          <text transform="translate(982 486) rotate(-28)">oct 2024</text>
           <text transform="translate(1190 486) rotate(-28)">feb 2025</text>
         </g>
 
         <!-- valor final -->
         <g id="n3e-etiqueta">
-          <rect x="1050" y="88" width="280" height="56" rx="28"/>
-          <text x="1190" y="126">&gt;<tspan id="n3e-valor">0</tspan> millones</text>
+          <rect x="1010" y="88" width="360" height="56" rx="28"/>
+          <text x="1190" y="126"><tspan id="n3e-valor">0</tspan> millones</text>
         </g>
       </svg>
       <div id="n3e-puntos"></div>

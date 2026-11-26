@@ -442,7 +442,7 @@ p  { position: relative; font-size: 38px; color: #e9fdff; margin-top: 18px; text
 #j2f-panel #j2f-titulo { font-family: "Audiowide", "Segoe UI", sans-serif; font-weight: 400; font-size: 64px; color: #fff;
   text-shadow: 0 0 18px rgba(255,255,255,.45), 0 4px 12px rgba(0,70,90,.45); }
 #j2f-panel #j2f-memoria { font-family: "ADLaM Display", "Segoe UI", sans-serif; font-weight: 400; color: #fff; text-shadow: 0 2px 8px rgba(0,60,70,.45); }
-#j2f-panel #j2f-memoria b { color: #A6E35B; font-weight: 400; }
+#j2f-panel #j2f-memoria b { color: #2F9BFF; font-weight: 400; }
 
 /* manos de los gestos (rojo = derecha / avanzar, azul = izquierda / volver) */
 .j2c-gesto .mano-icono { font-size: 34px; }
@@ -458,7 +458,7 @@ p  { position: relative; font-size: 38px; color: #e9fdff; margin-top: 18px; text
   font-family: "Space Grotesk", "Segoe UI", sans-serif; font-weight: 700; font-size: 72px; color: #23476B; text-shadow: none; }
 #j2f-memoria { position: absolute; left: 0; right: 0; top: 230px; margin: 0; text-align: center;
   font-family: "Space Grotesk", "Segoe UI", sans-serif; font-weight: 700; font-size: 64px; line-height: 84px; color: #2C7FB8; text-shadow: none; }
-#j2f-memoria b { color: #8BC34A; }
+#j2f-memoria b { color: #2F9BFF; }
 #j2f-flecha { position: absolute; left: 975px; top: 840px; width: 90px; height: 68px; filter: drop-shadow(0 6px 14px rgba(0,60,100,.4)); }
 
 /* Recordatorio del gesto (js/pista.js): vidrio verdoso, como las cajas de la etapa 2 */

@@ -13,6 +13,37 @@ var partido4 = null;   // SplitText del título de la P4
 var cifra15 = { n: 0 };   // contador de la pantalla de los 15.000 millones
 var partidoIntro = null, partidoModelos = null, partidoUsos = null, partidoAgua = null, partidoEvolucion = null;
 var valorEvolucion = { v: 0 };   // contador de la etiqueta del gráfico
+// el gráfico de la evolución hasta el punto k (0, 1, 2): línea, área, puntos, fechas y etiqueta con su valor
+var VALORES_EVOLUCION = [1000, 6500, 16000];
+function evolucionIr(k, animar) {
+  var linea = document.getElementById("n3e-linea"), largo = linea.getTotalLength();
+  var puntos = document.querySelectorAll("#n3e-grafico .n3e-punto"), fechas = document.querySelectorAll(".n3e-fechas text");
+  var hasta = 0, prev = null;
+  Array.prototype.forEach.call(puntos, function (p, n) {
+    var x = +p.getAttribute("cx"), y = +p.getAttribute("cy");
+    if (prev && n <= k) hasta += Math.hypot(x - prev.x, y - prev.y);
+    prev = { x: x, y: y };
+  });
+  var p = puntos[k], dur = animar ? 1.4 : 0, et = document.getElementById("n3e-etiqueta"), valor = document.getElementById("n3e-valor");
+  gsap.killTweensOf([linea, "#n3e-revela-rect", valorEvolucion]);
+  gsap.killTweensOf(et, "x,y");
+  gsap.to(linea, { strokeDashoffset: largo - hasta, duration: dur, ease: "power1.inOut" });
+  gsap.to("#n3e-revela-rect", { attr: { width: +p.getAttribute("cx") }, duration: dur, ease: "power1.inOut" });
+  Array.prototype.forEach.call(puntos, function (q, n) {
+    if (n === 0 && !animar) return;   // el primero lo hace aparecer la entrada
+    gsap.to(q, { scale: n <= k ? 1 : 0, duration: animar ? 0.4 : 0, delay: animar && n === k ? dur - 0.15 : 0, ease: "back.out(3)" });
+    gsap.to(fechas[n], { autoAlpha: n <= k ? 1 : 0, duration: animar ? 0.4 : 0, delay: animar && n === k ? dur - 0.3 : 0 });
+  });
+  gsap.to(et, { x: +p.getAttribute("cx") - 1190, y: +p.getAttribute("cy") - 173.6, duration: dur, ease: "power1.inOut" });
+  gsap.to(valorEvolucion, { v: VALORES_EVOLUCION[k], duration: dur, ease: "power1.out", onUpdate: function () {
+    var n = Math.round(valorEvolucion.v / 100) * 100;
+    valor.textContent = (k === VALORES_EVOLUCION.length - 1 ? "más de " : "≈") + n.toLocaleString("es-AR");
+  } });
+  // el último punto late: "y sigue creciendo"
+  gsap.killTweensOf("#n3e-ultimo", "opacity");
+  if (k === puntos.length - 1 && animar) gsap.to("#n3e-ultimo", { opacity: 0.6, duration: 1.2, delay: dur, ease: "sine.inOut", yoyo: true, repeat: -1 });
+  else gsap.set("#n3e-ultimo", { opacity: 1 });
+}
 var partidoDif1 = null, partidoDif2 = null, partidoDif3 = null, letrasPrompt = null;
 var tipeo = { n: 0, mostradas: 0 };
 var partidoPractica = null, palabrasPractica = null;
@@ -476,8 +507,9 @@ function iniciar() {
     },
 
     /* ============ Evolución de la cantidad de imágenes (gráfico) ============
-       La línea se dibuja de izquierda a derecha, el área la acompaña y cada punto aparece
-       justo cuando la línea llega a él; al final la etiqueta cuenta hasta 16.000 millones. */
+       Tres datos. La entrada muestra sólo el primero; cada gesto de avanzar dibuja la línea hasta el siguiente punto
+       (el área la acompaña) y la etiqueta lo sigue contando hasta su valor. Volver deshace el último tramo.
+       Cuando ya se vieron los tres, el gesto avanza de pantalla. */
     Recorrido.pantalla({
       el: "#n3-evolucion",
       preparar: function () {
@@ -492,59 +524,34 @@ function iniciar() {
         gsap.set("#n3e-revela-rect", { attr: { width: 0 } });
         // en SVG, GSAP escala desde la esquina si no se le dice el centro
         gsap.set(".n3e-punto", { scale: 0, transformOrigin: "50% 50%" });
-        gsap.set("#n3e-etiqueta", { autoAlpha: 0, scale: 0.6, transformOrigin: "50% 100%" });   // la posición la pone el recorrido (primera fecha)
+        gsap.set("#n3e-etiqueta", { autoAlpha: 0, scale: 0.6, transformOrigin: "50% 100%" });
         gsap.set("#n3e-pie", { autoAlpha: 0, y: 20 });
         gsap.set("#n3e-personaje", { autoAlpha: 0, scale: 0.85, x: -60 * d, transformOrigin: "50% 100%" });
         gsap.set("#n3e-sombra-personaje", { autoAlpha: 0, scaleX: 0.4 });
-        valorEvolucion.v = 0;
-        document.getElementById("n3e-valor").textContent = "0";
+        evolucionIr(0, false);
       },
       entrar: function () {
-        var linea = document.getElementById("n3e-linea"), largo = linea.getTotalLength();
-        var DURA = 2.6, INICIO = 1.6;   // duración del trazo y momento en que arranca
-        var valor = document.getElementById("n3e-valor");
         entrada = gsap.timeline()
           .to(partidoEvolucion.words, { autoAlpha: 1, x: 0, rotation: 0, duration: 0.7, stagger: 0.06, ease: "back.out(1.5)" })
           .to("#n3e-tarjeta", { autoAlpha: 1, x: 0, duration: 0.7, ease: "power3.out" }, "-=0.4")
           .to("#n3e-personaje", { autoAlpha: 1, scale: 1, x: 0, duration: 0.9, ease: "back.out(1.4)" }, "<")
           .to("#n3e-sombra-personaje", { autoAlpha: 1, scaleX: 1, duration: 0.8, ease: "power2.out" }, "<0.1")
           .to(".n3e-grilla", { autoAlpha: 1, duration: 0.5 }, "-=0.5")
-          .to(".n3e-fechas text", { autoAlpha: 1, duration: 0.3, stagger: 0.08 }, "-=0.2")
-          // el trazo y el área avanzan juntos (el área se revela con un rectángulo que se ensancha)
-          .to(linea, { strokeDashoffset: 0, duration: DURA, ease: "none" }, INICIO)
-          .to("#n3e-revela-rect", { attr: { width: 1200 }, duration: DURA, ease: "none" }, INICIO);
-        // cada punto aparece cuando la línea pasa por él (según su posición a lo largo del trazo)
-        var recorrido = 0, prev = null;
-        document.querySelectorAll("#n3e-grafico .n3e-punto").forEach(function (p) {
-          var x = +p.getAttribute("cx"), y = +p.getAttribute("cy");
-          if (prev) recorrido += Math.hypot(x - prev.x, y - prev.y);
-          prev = { x: x, y: y };
-          entrada.to(p, { scale: 1, duration: 0.35, ease: "back.out(3)" }, INICIO + DURA * recorrido / largo - 0.05);
-        });
-        entrada
-          .to("#n3e-etiqueta", { autoAlpha: 1, scale: 1, duration: 0.5, ease: "back.out(2.2)" }, INICIO + DURA)
-          .to("#n3e-pie", { autoAlpha: 1, y: 0, duration: 0.6, ease: "power3.out" }, "-=0.6")
+          .to(".n3e-fechas text:first-child", { autoAlpha: 1, duration: 0.3 }, "-=0.2")
+          .to(".n3e-punto:first-of-type", { scale: 1, duration: 0.35, ease: "back.out(3)" })
+          .to("#n3e-etiqueta", { autoAlpha: 1, scale: 1, duration: 0.5, ease: "back.out(2.2)" })
+          .to("#n3e-pie", { autoAlpha: 1, y: 0, duration: 0.6, ease: "power3.out" }, "-=0.3")
           .add(function () {
             bucles.push(gsap.to("#n3e-personaje", { y: -14, duration: 1.9, ease: "sine.inOut", yoyo: true, repeat: -1 }));
             bucles.push(gsap.to("#n3e-sombra-personaje", { scaleX: 0.82, opacity: 0.6, duration: 1.9, ease: "sine.inOut", yoyo: true, repeat: -1 }));
-            // el último punto late: "y sigue creciendo"
-            bucles.push(gsap.to("#n3e-ultimo", { scale: 1.2, opacity: 0.8, duration: 1.2, ease: "sine.inOut", yoyo: true, repeat: -1 }));
-            bucles.push(gsap.to("#n3e-etiqueta", { y: "-=6", duration: 1.2, ease: "sine.inOut", yoyo: true, repeat: -1 }));
           });
         return entrada;
       },
       salir: detener
-    }, { items: ".n3e-punto", puntos: "#n3e-puntos", que: "momento", escala: 1.5, inicio: 0,   // arranca en la primera fecha
-      // la etiqueta va hasta el punto elegido y muestra su valor (leído del gráfico)
-      marcar: function (i, items, el, animar) {
-        var VALORES = ["≈1.000", "≈3.000", "≈6.500", "≈13.000", null];
-        var et = document.getElementById("n3e-etiqueta"), ult = document.getElementById("n3e-ultimo");
-        var p = i < 0 ? ult : items[i];
-        gsap.killTweensOf(et, "x,y");
-        gsap.to(et, { x: +p.getAttribute("cx") - 1190, y: +p.getAttribute("cy") - 173.6, duration: animar ? 0.45 : 0, ease: "power3.out" });
-        var v = i < 0 ? null : VALORES[i];
-        et.querySelector("text").innerHTML = v ? v + " millones" : '&gt;<tspan id="n3e-valor">16.000</tspan> millones';
-      } }),
+    }, { items: ".n3e-punto", puntos: "#n3e-puntos", revelar: true,
+      siguiente: "cómo crece la cantidad de imágenes",
+      mostrar: function (k) { evolucionIr(k, true); },
+      ocultar: function (k) { evolucionIr(k - 1, true); } }),
 
     /* ============ ¿Qué sos ahora? (antes "Pantalla 4") ============ */
     {
