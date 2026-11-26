@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="es"><head><meta charset="utf-8"><title>Prueba de cuerpos</title></head>
+<body style="margin:0;background:#eef0f3;font:bold 20px sans-serif;color:#333">
+<!-- Prueba de los cuerpos con ropa (bebé, niño, adulto) con distintos visitantes: piel, peinado, color de pelo y de ropa.
+     Cada fila es un visitante; cada columna, una etapa. Recargá la página para ver otros colores de ropa al azar. -->
+<canvas id="c" width="1920" height="1080"></canvas>
+<script src="../js/personaje.js"></script>
+<script>
+var visitantes = [
+  { piel: "#ffe3cf", pelo: "pelo52", colorPelo: "#e8c76a", boca: "sonrisa", anteojos: false },
+  { piel: "#a8704a", pelo: "pelo8",  colorPelo: "#2b1d14", boca: "neutra",  anteojos: true },
+  { piel: "#d9a074", pelo: "pelo50", colorPelo: "#b8452d", boca: "neutra",  anteojos: false },
+  { piel: "#f5c9a5", pelo: "pelo9",  colorPelo: "#6b4226", boca: "sonrisa", anteojos: true },
+  { piel: "#6e4630", pelo: "pelo54", colorPelo: "#2b1d14", boca: "neutra",  anteojos: false },
+  { piel: "#f5c9a5", pelo: "ninguno", colorPelo: "#2b1d14", boca: "neutra", anteojos: false }
+];
+var etapas = ["bebe", "nino", "adulto"];
+var colores = ["#ff8a80", "#ffd166", "#7bd389", "#6ec6ff", "#b39ddb", "#f48fb1", "#ffab40", "#4db6ac", "#5c6bc0", "#e57373"];
+function azar() { return colores[Math.floor(Math.random() * colores.length)]; }
+Personaje.cargar("../assets/carausuario/").then(function () {
+  var ctx = document.getElementById("c").getContext("2d");
+  // dos visitantes por fila de la pantalla: [bebé niño adulto]  [bebé niño adulto]
+  visitantes.forEach(function (v, i) {
+    var r = Object.assign({}, Personaje.PREDETERMINADO, v,
+      { ropa: { ropa1: azar(), ropa2: azar(), detalle: azar(), acento: azar() } });
+    var col = i % 2, fila = Math.floor(i / 2), x0 = col * 960, y0 = fila * 360;
+    etapas.forEach(function (e, k) {
+      var alto = 340 * Personaje.ETAPAS[e].tamano;
+      Personaje.dibujar(ctx, Object.assign({ etapa: e }, r),
+        { x: x0 + 40 + k * 300 + (300 - Personaje.ancho(alto)) / 2, y: y0 + 350 - alto, alto: alto });
+    });
+  });
+});
+</script>
+</body></html>

@@ -33,22 +33,23 @@ var Personaje = (function () {
     brazoBebe: de800("brazo_bebe.png",  [369, 318, 70, 107]),
     ojos:   { src: "ojos1.png",      recorte: [163, 394, 2074, 963],  centro: [1020, 790],  ancho: 520 },
     cejas:  { src: "cejas1.png",     recorte: [183, 705, 2033, 321],  centro: [1020, 610],  ancho: 500 },
-    // pelos: todos vienen alineados con la cabeza (mismo lienzo de 800 que cara_base), relleno blanco y líneas negras
-    pelo3:   de800("pelo3.png",   [237, 133, 325, 200]),
-    pelo4:   de800("pelo4.png",   [227, 114, 342, 212]),
-    pelo5:   de800("pelo5.png",   [226, 102, 346, 224]),
-    pelo6:   de800("pelo6.png",   [212, 95, 370, 235]),
-    pelo7:   de800("pelo7.png",   [211, 90, 371, 246]),
-    pelo8:   de800("pelo8.png",   [196, 67, 387, 241]),
-    pelo9:   de800("pelo9.png",   [232, 105, 328, 231]),
-    pelo10:  de800("pelo10.png",  [229, 109, 339, 257]),
-    pelo11:  de800("pelo11.png",  [211, 117, 360, 255]),
+    // pelos: todos vienen alineados con la cabeza (mismo lienzo de 800 que cara_base), relleno blanco y líneas negras.
+    // Se usa el lienzo entero (no un recorte), así si se edita un pelo no hay que cambiar nada acá.
+    pelo3:   de800("pelo3.png",   [0, 0, 800, 800]),
+    pelo4:   de800("pelo4.png",   [0, 0, 800, 800]),
+    pelo5:   de800("pelo5.png",   [0, 0, 800, 800]),
+    pelo6:   de800("pelo6.png",   [0, 0, 800, 800]),
+    pelo7:   de800("pelo7.png",   [0, 0, 800, 800]),
+    pelo8:   de800("pelo8.png",   [0, 0, 800, 800]),
+    pelo9:   de800("pelo9.png",   [0, 0, 800, 800]),
+    pelo10:  de800("pelo10.png",  [0, 0, 800, 800]),
+    pelo11:  de800("pelo11.png",  [0, 0, 800, 800]),
     // pelos de mujer (pelo50 en adelante): mismo lienzo de 800, alineados con la cabeza
-    pelo50:  de800("pelo50.png",  [165, 127, 416, 273]),
-    pelo51:  de800("pelo51.png",  [204, 133, 386, 275]),
-    pelo52:  de800("pelo52.png",  [210, 135, 413, 278]),
-    pelo53:  de800("pelo53.png",  [132, 175, 533, 321]),
-    pelo54:  de800("pelo54.png",  [194, 129, 406, 269])
+    pelo50:  de800("pelo50.png",  [0, 0, 800, 800]),
+    pelo51:  de800("pelo51.png",  [0, 0, 800, 800]),
+    pelo52:  de800("pelo52.png",  [0, 0, 800, 800]),
+    pelo53:  de800("pelo53.png",  [0, 0, 800, 800]),
+    pelo54:  de800("pelo54.png",  [0, 0, 800, 800])
   };
   /* Ropa y accesorios: vienen centrados en su lienzo de 800 (no sobre el cuerpo). Cada uno dice dónde va su centro
      sobre el cuerpo (coordenadas del lienzo de 800 del cuerpo) y a qué escala. */
@@ -65,17 +66,41 @@ var Personaje = (function () {
     ["nino_buzo",     [277, 321, 246, 162], [404, 490], 1.0],
     ["adulto_camisa", [276, 323, 238, 156], [403, 488], 1.0],
     ["adulto_pantalon", [333, 311, 133, 173], [404, 562], 0.86],
-    ["adulto_traje",  [282, 326, 234, 152], [404, 490], 1.0],
-    ["anteojos",      [313, 364, 173, 66],  [400, 307], 0.98]
+    ["adulto_traje",  [282, 326, 234, 152], [404, 490], 1.0]
   ].forEach(function (a) { PIEZAS[a[0]] = prenda(a[0] + ".png", a[1], a[2], a[3]); });
+  // anteojos: vienen ubicados sobre los ojos; ESCALA_ANTEOJOS los achica o agranda sin moverlos del centro de los ojos
+  var ESCALA_ANTEOJOS = 0.85;
+  PIEZAS.anteojos = prenda("anteojos.png", [281, 254, 236, 108], [399, 308], ESCALA_ANTEOJOS);
 
   /* Etapas de la evolución: el mismo visitante (piel, pelo, ojos, boca), cambia el cuerpo, el tamaño y la ropa.
      ropa: [pieza, color] en el orden en que se dibuja (lo de abajo primero). */
+  /* Cuerpos de cada etapa: vienen con la cabeza, los brazos y la ropa en una sola imagen, con cada zona pintada de un
+     color de código. herramientas/separar_cuerpos.py los separa en capas (assets/carausuario/capas/): una por zona
+     (piel, ropa1, ropa2, detalle, acento), que acá se tiñen, y las líneas negras, que van encima.
+     cabeza = [x, y, escala]: dónde está el centro de la cabeza (lienzo de 800, a la altura más ancha) y cuánto más
+     grande es que la de cara_base; con eso se ubican los ojos, las cejas, el pelo y la boca (los 3 cuerpos no miden igual). */
+  var ZONAS = ["piel", "ropa1", "ropa2", "detalle", "acento"];
   var ETAPAS = {
-    bebe:   { cuerpo: "bebe", tamano: 0.62, ropa: [["bebe_enterito", "#9fd3f2"], ["bebe_babero", "#fff6c8"]] },
-    nino:   { cuerpo: "base", tamano: 0.82, brazos: false, ropa: [["nino_pantalon", "#5b7fc4"], ["nino_remera", "#ffd166"], ["nino_buzo", "#ef6f6c"]] },
-    adulto: { cuerpo: "base", tamano: 1, brazos: false,  ropa: [["adulto_pantalon", "#3c4252"], ["adulto_camisa", "#ffffff"], ["adulto_traje", "#4a5878"]] }
+    bebe:   { cuerpo: "cuerpo_bebe",   tamano: 0.62, cabeza: [398.5, 320, 1.064] },
+    nino:   { cuerpo: "cuerpo_nino",   tamano: 0.82, cabeza: [403, 317, 1.018] },
+    adulto: { cuerpo: "cuerpo_adulto", tamano: 1,    cabeza: [399.5, 316, 1.071] }
   };
+  var CABEZA_BASE = [398.5, 317];   // la de cara_base, sobre la que están ubicados los rasgos
+  Object.keys(ETAPAS).forEach(function (k) {
+    var c = ETAPAS[k].cuerpo;
+    ZONAS.concat("lineas").forEach(function (z) { PIEZAS[c + "_" + z] = de800("capas/" + c + "_" + z + ".png", [0, 0, 800, 800]); });
+  });
+  // colores para la ropa (cuando la cámara no ve la remera, o para las otras prendas)
+  var COLORES_ROPA = ["#ff8a80", "#ffd166", "#7bd389", "#6ec6ff", "#b39ddb", "#f48fb1", "#ffab40", "#4db6ac",
+                      "#5c6bc0", "#e57373", "#aed581", "#4fc3f7", "#ba68c8", "#90a4ae"];
+  // los colores de la ropa de un visitante: los que guardó la cámara, o unos fijos según su id (siempre los mismos)
+  function coloresRopa(rasgos) {
+    if (rasgos.ropa) return rasgos.ropa;
+    var s = Math.abs(rasgos.id || 7) % 9973;
+    function c(k) { return COLORES_ROPA[(s * (k + 3) + k * 5) % COLORES_ROPA.length]; }
+    return { ropa1: c(0), ropa2: c(1), detalle: c(2), acento: c(3) };
+  }
+
 
   // la caja del personaje dentro del cuerpo (lo que se ve), en coordenadas del cuerpo
   var CAJA = { x: 380, y: 160, w: 1300, h: 1760 };
@@ -108,7 +133,7 @@ var Personaje = (function () {
     pelo53: { largo: 0.8,  flequillo: 0.5, rulos: 0.5 }, // dos colitas
     pelo54: { largo: 1,    flequillo: 0.3, rulos: 1 }  // largo con rulos
   };
-  var ANTEOJOS = 0.35;       // desde cuánto borde sobre el puente de la nariz se toma como anteojos (calibrar con la cámara)    // la cámara ve la piel más oscura de lo que es
+  var ANTEOJOS = 0.35;       // desde cuánto borde sobre el puente de la nariz se toma como anteojos (calibrar con la cámara)
   var OJOS = [{ x: 881, y: 790 }, { x: 1159, y: 790 }], RADIO_OJO = 124;
   var BOCA = { centro: [1020, 975], ancho: 150 };
   /* Brazos del bebé: giran desde el hombro (coordenadas del cuerpo). pivote = el hombro dentro del recorte del png;
@@ -255,12 +280,29 @@ var Personaje = (function () {
     // orden: cabeza → brazos → cuerpo → cara (ojos, cejas, pelo, boca).
     // op.parte = "fondo" dibuja sólo la cabeza; "frente", todo lo que va arriba de los brazos (para moverlos aparte en el medio)
     var etapa = ETAPAS[rasgos.etapa];
-    var bebe = (etapa ? etapa.cuerpo : rasgos.cuerpo) === "bebe", piel = n >= 2 ? rasgos.piel : null;
+    if (etapa) { dibujarEtapa(ctx, rasgos, etapa, E, ox, oy, n); return; }
+    var bebe = rasgos.cuerpo === "bebe", piel = n >= 2 ? rasgos.piel : null;
     if (op.parte !== "frente" && !bebe && n >= 1) pieza(ctx, "cara", piel, E, ox, oy);
     if (op.parte === "fondo") return;
-    if (!op.parte && n >= 2 && op.brazos !== false && !(etapa && etapa.brazos === false)) brazosQuietos(ctx, rasgos, op);   // con mangas, los brazos quedan adentro de la ropa
+    if (!op.parte && n >= 2 && op.brazos !== false) brazosQuietos(ctx, rasgos, op);
     if (n >= 1) pieza(ctx, bebe ? "bebe" : "base", piel, E, ox, oy);
-    if (etapa && n >= 2) etapa.ropa.forEach(function (r) { pieza(ctx, r[0], r[1], E, ox, oy); });
+    rasgosCara(ctx, rasgos, E, ox, oy, n);
+  }
+  // un cuerpo de etapa (con la ropa puesta): cada zona de su color, las líneas encima y después la cara, ubicada en su cabeza
+  function dibujarEtapa(ctx, rasgos, etapa, E, ox, oy, n) {
+    var col = coloresRopa(rasgos), c = etapa.cuerpo;
+    if (n >= 1) ZONAS.forEach(function (z) { pieza(ctx, c + "_" + z, n >= 2 ? (z === "piel" ? rasgos.piel : col[z]) : "#ffffff", E, ox, oy); });
+    if (n >= 1) pieza(ctx, c + "_lineas", null, E, ox, oy);
+    // los rasgos están ubicados para la cabeza de cara_base: se llevan a la cabeza de este cuerpo
+    function px(x) { return ox + (1024 + (x - 400) * K800 - CAJA.x) * E; }
+    function py(y) { return oy + (800 + (y - 310) * K800 - CAJA.y) * E; }
+    var k = etapa.cabeza;
+    ctx.save();
+    ctx.translate(px(k[0]), py(k[1])); ctx.scale(k[2], k[2]); ctx.translate(-px(CABEZA_BASE[0]), -py(CABEZA_BASE[1]));
+    rasgosCara(ctx, rasgos, E, ox, oy, n);
+    ctx.restore();
+  }
+  function rasgosCara(ctx, rasgos, E, ox, oy, n) {
     // las cejas van debajo del pelo (el flequillo las tapa); los ojos, los anteojos y la boca, arriba de todo
     // (los pelos largos o con flequillo no pueden tapar la cara)
     if (n >= 4 && rasgos.cejas) pieza(ctx, "cejas", null, E, ox, oy);
@@ -294,6 +336,14 @@ var Personaje = (function () {
       return ("0" + Math.min(255, Math.round(255 * Math.pow(v / 255, 1 / f))).toString(16)).slice(-2);
     }).join("");
   }
+  // la ropa: la prenda principal del color de la remera que ve la cámara (si la ve); las demás, al azar de la paleta
+  function ropaParecida(muestras) {
+    var vistos = muestras.map(function (m) { return m.ropa; }).filter(function (c) { return typeof c === "string"; });
+    var azar = COLORES_ROPA.slice().sort(function () { return Math.random() - 0.5; });
+    var ropa1 = vistos.length ? masVotado(vistos.map(function (c) { return masParecido(aclarar(c, LUZ_PELO), COLORES_ROPA); })) : azar[0];
+    azar = azar.filter(function (c) { return c !== ropa1; });
+    return { ropa1: ropa1, ropa2: azar[0], detalle: azar[1], acento: azar[2] };
+  }
   // el peinado más parecido a lo que midió la cámara (promedio de las muestras)
   function peinadoParecido(muestras) {
     function prom(k) { var v = muestras.map(function (m) { return m[k]; }).filter(function (x) { return typeof x === "number"; });
@@ -326,7 +376,8 @@ var Personaje = (function () {
       cejas: true,
       anteojos: conAnteojos > muestras.length / 2,
       boca: sonrisas >= recientes.length / 2 ? "sonrisa" : "neutra",
-      apertura: 0.35 + t * 0.65
+      apertura: 0.35 + t * 0.65,
+      ropa: ropaParecida(muestras)
     };
   }
 

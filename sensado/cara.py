@@ -10,6 +10,7 @@
 #   largo     = cuánto pelo hay a los costados de la mandíbula y más abajo (0 corto … 1 largo, por los hombros)
 #   flequillo = si la frente está tapada por pelo (0 … 1)
 #   rulos     = textura del pelo arriba de la cabeza (más alto = más rulos / ondas); el umbral lo decide la web
+#   ropa      = color de la remera (debajo del mentón), o null si no se ve
 #   anteojos = cuánto borde hay sobre el puente de la nariz, entre los ojos (0 … 1): sin anteojos es piel lisa
 #              (valor bajo); el armazón deja una línea marcada (valor alto). El umbral lo decide la web.
 #   cara:nadie            (cuando la persona se va)
@@ -209,12 +210,16 @@ class DetectorCara(object):
         del self.puentes[:-12]
         anteojos = sorted(self.puentes)[len(self.puentes) // 2]
 
+        # ropa: el color de la remera, un poco más abajo del mentón (si está dentro de la imagen)
+        ropa = _muestra(frame, cx, my + alto_cara * 0.55, r * 1.5)
+
         x = sum(p.x for p in lm) / len(lm)
         if config.INVERTIR_X:
             x = 1 - x
         self.rasgos = {'piel': _hex(piel), 'pelo': _hex(pelo), 'pelado': pelado,
                        'sonrisa': round(sonrisa, 2), 'ojos': round(ojos, 3), 'anteojos': round(anteojos, 3), 'x': round(x, 3),
                        'largo': round(largo, 2), 'flequillo': round(flequillo, 2), 'rulos': round(rulos, 3),
+                       'ropa': _hex(ropa) if ropa else None,
                        'muestra_pelo': (fx, y_pelo), 'r': r}
         datos = {k: v for k, v in self.rasgos.items() if k not in ('muestra_pelo', 'r')}
         return 'cara:' + json.dumps(datos)
