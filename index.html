@@ -88,6 +88,12 @@
     font-size: 13px; color: #fff; user-select: none;
   }
   #panel[hidden] { display: none; }
+  /* prueba de caraUsuario en vivo (se abre desde el panel; Escape o el botón la cierran) */
+  #prueba-cara { position: fixed; inset: 0; z-index: 900; background: #0b1024; }
+  #prueba-cara[hidden] { display: none; }
+  #prueba-cara iframe { width: 100%; height: 100%; border: 0; }
+  #prueba-cara button { position: absolute; top: 14px; right: 14px; z-index: 2; font: 600 15px system-ui, sans-serif; padding: 8px 16px;
+    border-radius: 999px; border: 2px solid #fff; background: rgba(255,255,255,.15); color: #fff; cursor: pointer; }
   #panel .fila { display: flex; gap: 6px; flex-wrap: wrap; }
   #panel button {
     font: inherit; color: #fff; background: #26414f; border: 1px solid #ffffff30; border-radius: 6px;
@@ -159,9 +165,12 @@
   </div>
   <div class="etq">Cámara (gestos con la mano)</div>
   <div id="estado-camara" class="etq" style="font-size:13px">⚪ buscando el sensado…</div>
+  <div class="fila"><button type="button" tabindex="-1" id="btn-prueba-cara">Ver mi personaje en vivo (caraUsuario)</button></div>
   <div id="estado"></div>
   <div class="etq">Tecla D: ocultar/mostrar este panel</div>
 </div>
+
+<div id="prueba-cara" hidden><button type="button" tabindex="-1" id="btn-cerrar-prueba">✕ Cerrar (Esc)</button><iframe title="Prueba de caraUsuario"></iframe></div>
 
 <script src="js/manos.js"></script>
 <script>
@@ -660,6 +669,20 @@ function alternarPanel() {
 /* ---------- Arranque ---------- */
 irA(0);
 window.focus();
+
+/* ---------- Panel: ver el personaje en vivo (pruebas/carausuario.html) ----------
+   Se abre encima de todo, sin cortar el recorrido; se carga al abrir y se descarga al cerrar (así no queda usando la cámara). */
+(function () {
+  const capa = document.getElementById("prueba-cara"), marco = capa.querySelector("iframe");
+  function abrir() { marco.src = "pruebas/carausuario.html"; capa.hidden = false; }
+  function cerrar() { capa.hidden = true; marco.src = "about:blank"; try { window.focus(); } catch (e) {} }
+  document.getElementById("btn-prueba-cara").addEventListener("click", abrir);
+  document.getElementById("btn-cerrar-prueba").addEventListener("click", cerrar);
+  window.addEventListener("keydown", (e) => { if (e.code === "Escape" && !capa.hidden) cerrar(); });
+  marco.addEventListener("load", () => {   // Escape también con el foco adentro de la prueba
+    try { marco.contentWindow.addEventListener("keydown", (e) => { if (e.code === "Escape") cerrar(); }); } catch (e) {}
+  });
+})();
 </script>
 </body>
 </html>
