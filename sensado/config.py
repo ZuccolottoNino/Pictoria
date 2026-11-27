@@ -65,11 +65,40 @@ MENSAJE_ADELANTE = 'siguiente'
 DIR_MENSAJE_ATRAS = -1        # mano izquierda
 DIR_MENSAJE_ADELANTE = +1     # mano derecha
 
-# ---------------------------------------------------------------------------
-# Cara del visitante (caraUsuario) — cara.py
-# ---------------------------------------------------------------------------
-CARA = True                   # False = no detecta caras (sólo gestos)
-CARA_INTERVALO = 0.25         # cada cuánto se analiza la cara (s); más bajo = más CPU
-CARA_OLVIDO = 1.5             # s sin ver la cara para avisar 'cara:nadie'
-CARA_ALTURA_PELO = 0.12       # dónde se toma el color de pelo: fracción del alto de la cara arriba de la frente
-CARA_UMBRAL_PELADO = 45       # si el "pelo" se parece a la piel menos que esto, se toma como pelado
+# #############################################################################
+# ##  AJUSTES DEL SENSADO DE LA PERSONA (cara.py) — cómo mide la cámara       ##
+# ##  La otra mitad (qué se decide con estas medidas: umbrales de pelo largo, ##
+# ##  rulos, anteojos, sonrisa, colores) está en js/personaje.js, en el       ##
+# ##  bloque "AJUSTES DEL SENSADO DE LA PERSONA", al principio del archivo.   ##
+# #############################################################################
+# Para ver los números en vivo: tecla D en la muestra → "Ver mi personaje en vivo".
+# IMPORTANTE: después de cambiar algo acá hay que cerrar y volver a abrir el sensado
+#   (Ctrl+C en la ventana negra y de nuevo: C:\Python312\python.exe sensado_manos.py).
+
+CARA = True                   # False = no detecta caras (sólo gestos). Útil si la compu anda lenta.
+
+CARA_INTERVALO = 0.25         # cada cuántos segundos se analiza la cara. Más bajo = responde más rápido pero usa más CPU.
+                              #   Ej.: si los gestos se traban, subilo a 0.4.
+
+CARA_OLVIDO = 1.5             # segundos sin ver una cara para decidir que la persona se fue ("no veo a nadie").
+                              #   Ej.: si "se olvida" de la persona cuando gira la cabeza un momento, subilo a 3.
+
+CARA_ALTURA_PELO = 0.12       # dónde se toma el COLOR del pelo: cuánto más arriba de la frente (en altos de cara).
+                              #   Ej.: si el color de pelo sale como el fondo (gente con poco pelo arriba), bajalo a 0.07.
+                              #        si sale color piel (toma la frente), subilo a 0.18.
+
+CARA_UMBRAL_PELADO = 45       # si el color "del pelo" se parece a la piel (diferencia menor a esto), se toma como pelado.
+                              #   Ej.: a gente con pelo rubio/claro le sale pelado → bajalo a 30.
+                              #        a un pelado le sale pelo → subilo a 60.
+
+CARA_TOLERANCIA_PELO = 45     # cuánto se puede alejar un color del color del pelo para seguir contando como pelo
+                              # (para medir el largo y el flequillo). Más alto = encuentra pelo más fácil (pero puede
+                              # confundir sombras o el fondo con pelo).
+                              #   Ej.: el pelo largo marca casi 0 aunque se ve el pelo → subilo a 60.
+                              #        a todos les sale pelo largo o flequillo → bajalo a 35.
+
+CARA_PESO_HOMBROS = 1.6       # cuánto pesa el pelo que cae sobre los hombros en el "largo".
+                              # 1.6 → con ~40 % de los puntos de un hombro con pelo, el largo pasa 0.65 (= "largo").
+                              #   Ej.: una chica de pelo largo y lacio (sin volumen arriba) sale con pelo corto → subilo a 2.
+                              #        a chicos de pelo corto les sale largo (remera oscura parecida al pelo) → bajalo a 1.2.
+# ######################## FIN DE LOS AJUSTES DEL SENSADO ########################

@@ -14,6 +14,80 @@
 
    rasgos = { cuerpo: "bebe" | "base", piel, colorPelo, pelo: "pelo3" … "pelo11" | "ninguno", cejas: bool, boca: "neutra" | "sonrisa", apertura: 0.35..1 } */
 var Personaje = (function () {
+
+  /* #####################################################################################################################
+     ##  AJUSTES DEL SENSADO DE LA PERSONA (cómo se arma el personaje con lo que ve la cámara)                            ##
+     ##  Todo lo que hay que tocar el día de la muestra está acá. La otra mitad está en sensado/config.py (bloque CARA).  ##
+     #####################################################################################################################
+
+     CÓMO CALIBRAR
+       1. Abrí el sensado (cd sensado  →  C:\Python312\python.exe sensado_manos.py).
+       2. En la muestra, tecla D → "Ver mi personaje en vivo (caraUsuario)" (o abrí pruebas/carausuario.html).
+       3. Parate frente a la cámara. A la derecha, "Lo que mide la cámara" muestra los números de abajo (0 … 1)
+          y "Lo que decide el programa" muestra qué eligió.
+       4. Si algo sale mal, mirá el número que midió, compará con el umbral de acá y movelo.
+          Guardá el archivo y recargá la página (F5). No hace falta reiniciar Python para estos valores.
+     Regla general: un UMBRAL es "desde cuánto". Bajarlo = lo detecta más fácil; subirlo = más difícil. */
+
+  // ---------- COLOR DE PIEL Y DE PELO ----------
+  // El lugar es oscuro y la cámara ve todo más oscuro de lo que es. Antes de elegir el color de la paleta,
+  // se aclara lo que vio la cámara. 1 = tal cual; más alto = más claro.
+  //   Ejemplo: a todos les sale la piel más oscura de lo que es → subí LUZ_PIEL a 1.8.
+  //            a todos les sale la piel muy clara (blanca) → bajá LUZ_PIEL a 1.3.
+  //            el pelo castaño sale negro → subí LUZ_PELO a 1.5.   El pelo negro sale castaño → bajala a 1.2.
+  //   (LUZ_PELO también aclara el color de la remera.)
+  var LUZ_PIEL = 1.6;
+  var LUZ_PELO = 1.35;
+
+  // ---------- LARGO DEL PELO ----------
+  // "Largo del pelo" (0 … 1) = cuánto pelo ve la cámara al costado de la mandíbula, del cuello y sobre los hombros.
+  //   0 … MUY_CORTO       → muy corto (rapado)
+  //   MUY_CORTO … CORTO   → corto
+  //   CORTO … LARGO       → medio
+  //   LARGO … 1           → largo
+  //   Ejemplo: una chica de pelo largo marca 0.55 y sale "medio" → bajá LARGO a 0.5.
+  //            un chico de pelo corto marca 0.35 y sale "medio" → subí CORTO a 0.4.
+  //   (Si el pelo largo marca muy poco, también se puede subir CARA_PESO_HOMBROS en sensado/config.py.)
+  var MUY_CORTO = 0.10;
+  var CORTO = 0.3;
+  var LARGO = 0.65;
+
+  // ---------- FLEQUILLO ----------
+  // "Flequillo" (0 … 1) = cuánto de la frente tapa el pelo. Desde CON_FLEQUILLO se eligen peinados con flequillo.
+  //   Ejemplo: alguien con flequillo marca 0.4 y sale sin → bajá a 0.35.  Le sale flequillo a gente sin → subí a 0.75.
+  var CON_FLEQUILLO = 0.6;
+
+  // ---------- RULOS ----------
+  // "Rulos" (0 … ~1) = textura del pelo arriba de la cabeza (los rulos y las ondas tienen muchos bordes; el lacio, pocos).
+  //   Ejemplo: una persona con rulos marca 0.25 y sale lacio → bajá RULOS a 0.2.
+  //            gente de pelo lacio sale con rulos (pasa con luz dura o pelo despeinado) → subí a 0.45.
+  var RULOS = 0.35;
+
+  // ---------- ANTEOJOS ----------
+  // "Anteojos" (0 … 1) = cuánto borde hay entre los ojos, sobre el puente de la nariz (el armazón deja una línea).
+  // Sale con anteojos si más de la mitad de los cuadros superan ANTEOJOS.
+  //   Ejemplo: con anteojos marca 0.25 y no los pone → bajá a 0.2.   Sin anteojos marca 0.4 y se los pone → subí a 0.5.
+  //   (Los armazones finos o transparentes marcan poco: puede que no se detecten nunca.)
+  var ANTEOJOS = 0.35;
+  var ESCALA_ANTEOJOS = 0.85;   // tamaño del dibujo de los anteojos (1 = original; 0.85 = 15 % más chicos)
+
+  // ---------- SONRISA ----------
+  // "Sonrisa" (0 … 1). Se mira lo de los últimos ~2 segundos: si sonreís cuando se arma, sale sonriendo.
+  //   Ejemplo: sonriendo marca 0.1 y sale seria → bajá SONRISA a 0.08.   Seria marca 0.2 y sale sonriendo → subí a 0.3.
+  var SONRISA = 0.15;
+
+  // ---------- FORMA DE LOS OJOS ----------
+  // "Ojos abiertos" = alto / ancho del ojo. Hasta OJOS_ACHINADOS sale con ojos bien achinados; desde OJOS_REDONDOS,
+  // redondos; en el medio, algo intermedio. Con la cámara de la muestra, ojos comunes dan ~0.40.
+  //   Ejemplo: a todos les salen ojos achinados → bajá los dos (0.22 y 0.36). A nadie le salen achinados → subilos.
+  var OJOS_ACHINADOS = 0.26;
+  var OJOS_REDONDOS = 0.42;
+
+  // ---------- MIRADA ----------
+  // Cuánto se mueven las pupilas para seguirte (en el tutorial). 0 = no se mueven; 50 = casi tocan el borde del ojo.
+  var MIRADA_MAX = 34;
+  /* ##################################### FIN DE LOS AJUSTES DEL SENSADO ##################################### */
+
   /* Cada pieza: recorte útil del png (x, y, ancho, alto, en el archivo) y dónde va su centro sobre el cuerpo
      (coordenadas del cuerpo, 2048x2048), con qué ancho. */
   /* Las piezas nuevas vienen en un lienzo de 800x800, todas alineadas con el cuerpo: se pasan a las coordenadas
@@ -71,8 +145,6 @@ var Personaje = (function () {
     ["adulto_pantalon", [333, 311, 133, 173], [404, 562], 0.86],
     ["adulto_traje",  [282, 326, 234, 152], [404, 490], 1.0]
   ].forEach(function (a) { PIEZAS[a[0]] = prenda(a[0] + ".png", a[1], a[2], a[3]); });
-  // anteojos: vienen ubicados sobre los ojos; ESCALA_ANTEOJOS los achica o agranda sin moverlos del centro de los ojos
-  var ESCALA_ANTEOJOS = 0.85;
   PIEZAS.anteojos = prenda("anteojos.png", [281, 254, 236, 108], [399, 308], ESCALA_ANTEOJOS);
 
   /* Etapas de la evolución: el mismo visitante (piel, pelo, ojos, boca), cambia el cuerpo, el tamaño y la ropa.
@@ -111,20 +183,6 @@ var Personaje = (function () {
     piel: ["#ffe3cf", "#f5c9a5", "#d9a074", "#a8704a", "#6e4630"],
     pelo: ["#2b1d14", "#6b4226", "#c28a4a", "#e8c76a", "#9a9a9a", "#b8452d"]
   };
-  // medida de la cámara (alto/ancho del ojo): con la cámara de la muestra, ojos comunes dan ~0.40
-  var OJOS_ACHINADOS = 0.26, OJOS_REDONDOS = 0.42;
-  var SONRISA = 0.15;        // desde cuánto se toma como sonrisa (0 … 1)
-  // el lugar es oscuro: la cámara ve todo más oscuro de lo que es. Se levantan los colores con una curva
-  // (los oscuros suben más que los claros) antes de buscar el más parecido de la paleta.
-  var LUZ_PIEL = 1.6, LUZ_PELO = 1.35;   // 1 = como lo ve la cámara; más alto = más claro
-  /* Peinados por categoría. La cámara mide el largo (0 … 1), el flequillo (0 … 1) y los rulos (textura); con eso se decide
-     la categoría y dentro de ella se elige uno al azar (así no salen todos iguales). Si hay flequillo, se prefieren los
-     que tienen flequillo (FLEQUILLOS). Umbrales para calibrar con la cámara (pruebas/carausuario.html muestra los valores): */
-  var MUY_CORTO = 0.10;  // largo hasta esto = pelo muy corto (rapado)
-  var CORTO = 0.3;       // largo por debajo de esto = pelo corto
-  var LARGO = 0.65;      // largo desde esto = pelo largo (entre los dos = medio)
-  var CON_FLEQUILLO = 0.6;
-  var RULOS = 0.35;      // textura desde la que se toma como pelo con rulos
   var CATEGORIAS = {
     "muy corto":       ["pelo3"],
     "corto":           ["pelo4", "pelo6", "pelo7", "pelo9"],
@@ -135,7 +193,6 @@ var Personaje = (function () {
   };
   var FLEQUILLOS = ["pelo6", "pelo50", "pelo51"];   // (pelo3 es muy corto, sin flequillo)
 
-  var ANTEOJOS = 0.35;       // desde cuánto borde sobre el puente de la nariz se toma como anteojos (calibrar con la cámara)
   var OJOS = [{ x: 881, y: 790 }, { x: 1159, y: 790 }], RADIO_OJO = 124;
   var BOCA = { centro: [1020, 975], ancho: 150 };
   /* Brazos del bebé: giran desde el hombro (coordenadas del cuerpo). pivote = el hombro dentro del recorte del png;
@@ -306,7 +363,7 @@ var Personaje = (function () {
   }
   /* Hacia dónde mira: Personaje.mirar(x, y), de -1 a 1 (0, 0 = al frente). Mueve la pupila dentro del ojo
      (hasta MIRADA_MAX, en coordenadas del cuerpo) y los brillos un poco menos, para que el ojo se vea vivo. */
-  var MIRADA_MAX = 34, mirada = { x: 0, y: 0 };
+  var mirada = { x: 0, y: 0 };
   function mirar(x, y) { mirada.x = Math.max(-1, Math.min(1, x || 0)); mirada.y = Math.max(-1, Math.min(1, y || 0)); }
   function ojos(ctx, rasgos, E, ox, oy) {
     var dx = mirada.x * MIRADA_MAX * E, dy = mirada.y * MIRADA_MAX * 0.6 * E;

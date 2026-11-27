@@ -165,19 +165,33 @@ class DetectorCara(object):
         # un punto cuenta como pelo si se parece al pelo bastante más que al fondo y que a la piel.
         cx = (P(COSTADO_IZQ)[0] + P(COSTADO_DER)[0]) / 2
         fondo = [c for c in (_muestra(frame, cx + s * ancho_cara * 1.15, fy, r) for s in (-1, 1)) if c]
-        def es_pelo(px, py):
+        my = P(MENTON)[1]
+        # ropa: el color de la remera, un poco más abajo del mentón (si está dentro de la imagen)
+        ropa = _muestra(frame, cx, my + alto_cara * 0.55, r * 1.5)
+        def es_pelo(px, py, contra_ropa=False):
             c = _muestra(frame, px, py, r)
             if not c or pelado:
                 return 0.0
             dp, ds = _distancia(c, pelo), _distancia(c, piel)
             df = min([_distancia(c, f) for f in fondo] or [999])
-            return 1.0 if dp < 45 and dp < ds * 0.7 and dp < df * 0.7 else 0.0
-        my = P(MENTON)[1]
-        # largo: a los costados de la mandíbula, a la altura del mentón y por debajo (hombros)
-        puntos_largo = [(P(COSTADO_IZQ)[0] - ancho_cara * 0.08, my - alto_cara * 0.2), (P(COSTADO_DER)[0] + ancho_cara * 0.08, my - alto_cara * 0.2),
-                        (P(COSTADO_IZQ)[0] - ancho_cara * 0.05, my + alto_cara * 0.1), (P(COSTADO_DER)[0] + ancho_cara * 0.05, my + alto_cara * 0.1),
-                        (P(COSTADO_IZQ)[0], my + alto_cara * 0.35), (P(COSTADO_DER)[0], my + alto_cara * 0.35)]
-        largo = sum(es_pelo(*q) for q in puntos_largo) / len(puntos_largo)
+            if contra_ropa and ropa:   # sobre los hombros: que no sea la remera (si la remera es del color del pelo, no se cuenta)
+                df = min(df, _distancia(c, ropa))
+            return 1.0 if dp < config.CARA_TOLERANCIA_PELO and dp < ds * 0.7 and dp < df * 0.7 else 0.0
+        # largo, de dos formas (se queda con la mayor):
+        #  cerca = a los costados de la mandíbula y del cuello (pelo que cae pegado a la cara)
+        #  hombros = una grilla más abajo y más afuera, sobre los hombros (pelo largo y lacio, sin volumen arriba).
+        #  Cuenta el lado con más pelo, porque muchas veces el pelo de un lado va para atrás.
+        xi, xd = P(COSTADO_IZQ)[0], P(COSTADO_DER)[0]
+        puntos_cerca = [(xi - ancho_cara * 0.08, my - alto_cara * 0.2), (xd + ancho_cara * 0.08, my - alto_cara * 0.2),
+                        (xi - ancho_cara * 0.05, my + alto_cara * 0.1), (xd + ancho_cara * 0.05, my + alto_cara * 0.1),
+                        (xi, my + alto_cara * 0.35), (xd, my + alto_cara * 0.35)]
+        cerca = sum(es_pelo(*q) for q in puntos_cerca) / len(puntos_cerca)
+        lados = []
+        for s, x0 in ((-1, xi), (1, xd)):
+            grilla = [(x0 + s * ancho_cara * dx, my + alto_cara * dy) for dx in (-0.05, 0.1, 0.25) for dy in (0.3, 0.55, 0.8)]
+            lados.append(sum(es_pelo(x, y, True) for x, y in grilla) / len(grilla))
+        hombros = min(1.0, max(lados) * config.CARA_PESO_HOMBROS)
+        largo = max(cerca, hombros)
         # flequillo: la frente, entre las cejas y el nacimiento del pelo
         fr = P(FRENTE)
         flequillo = (es_pelo(fr[0], fr[1] - alto_cara * 0.05) + es_pelo(fr[0] - ancho_cara * 0.18, fr[1]) +
@@ -209,9 +223,6 @@ class DetectorCara(object):
         self.puentes.append(_bordes(gris, P(PUENTE)[0], P(PUENTE)[1], ancho_cara * 0.14, alto_cara * 0.08))
         del self.puentes[:-12]
         anteojos = sorted(self.puentes)[len(self.puentes) // 2]
-
-        # ropa: el color de la remera, un poco más abajo del mentón (si está dentro de la imagen)
-        ropa = _muestra(frame, cx, my + alto_cara * 0.55, r * 1.5)
 
         x = sum(p.x for p in lm) / len(lm)
         if config.INVERTIR_X:
